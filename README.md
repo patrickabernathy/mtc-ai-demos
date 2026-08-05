@@ -11,7 +11,8 @@ finished.
 
 | Column | What it means |
 |---|---|
-| **To Do** | Agreed, shaped, not started |
+| **Backlog** | Raw. Somebody wants it; we haven't shaped it or agreed to it yet |
+| **To Do** | Shaped, agreed, not started |
 | **In Progress** | Somebody is actively on it |
 | **Needs Feature Validation** | Built — does it do the right thing? |
 | **Needs Approval** | Waiting on a decision |
