@@ -1,3 +1,36 @@
-<p>
-This is a demo website
-</p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>The Demo Page</title>
+  </head>
+
+    <body>
+        <form id="myForm">
+            <label for="firstName">First Name</label>
+            <input type="text" class="text" id="firstName" name="firstName">
+
+            <label for="lastName">Last Name</label>
+            <input type="text" class="text" id="lastName" name="lastName">
+
+            <label for="email">Email</label>
+            <input type="email" class="text" id="email" name="email">
+
+            <button type="button" onclick="showAlert()">Submit</button>
+        </form>
+    
+    
+        <script>
+            function showAlert() {
+            var firstName = document.getElementsByClassName("text").value;
+            var lastName = document.getElementById("lastName").value;
+            var email = document.getElementById("email").value;
+
+            alert("First Name: " + firstName + "\nLast Name: " + lastName + "\nEmail: " + email);
+            }
+        </script>
+    
+    </body>
+
+
+</html>
