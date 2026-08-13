@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>CSS For Funs</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style2.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+    <style>
+        /*
+        .special {
+            color: darkred;
+            font-weight: normal;
+            font-size: 20px;
+        }
+        footer a     { color: gray; }     
+        nav a        { font-weight: bold; } 
+        .red { color: red; }      
+        .bold { font-weight: bold; }
+        
+        nav .link    { color: teal; }  
+        */
+
+        /* descendant selector (space): any .red element INSIDE a ul, any depth, any tag */
+        ul .red { color: red; }
+
+        /* compound selector (no space): an element that IS a ul AND has class red */
+        ul.red { border: 2px solid green; }
+
+        .card { 
+            padding: 20px;
+            margin: 10px; border:
+            1px solid gray;
+            text-align: center;
+            color: red;
+            margin-bottom: 200px;
+            border-radius: 8px;   
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .card input { color: red; }
+    </style>
+</head>
+<body>
+    <nav>
+        This is my nav bar
+        <a href="https://google.com">Google</a>
+        <a class="link red" href="https://google.com">Google</a>
+    </nav>
+
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="basic-addon1">@</span>
+  </div>
+  <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+</div>
+
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <div class="input-group-text">
+      <input type="checkbox" aria-label="Checkbox for following text input">
+    </div>
+  </div>
+  <input type="text" class="form-control" aria-label="Text input with checkbox">
+</div>
+
+<button type="button" class="btn btn-primary">Primary</button>
+<button type="button" class="btn btn-secondary">Secondary</button>
+<button type="button" class="btn btn-success">Success</button>
+<button type="button" class="btn btn-danger">Danger</button>
+<button type="button" class="btn btn-warning">Warning</button>
+<button type="button" class="btn btn-info">Info</button>
+<button type="button" class="btn btn-light">Light</button>
+<button type="button" class="btn btn-dark">Dark</button>
+
+    <h1>Hopefully this is huge</h1>
+    <ul>
+        <li class="red bold">Coffee — $4</li>
+        <li class="special">Drinks — $3</li>
+        <li class="special">Milk</li>
+        <li><a href="https://google.com">Google Link</a></li>
+    </ul>
+
+    <ul class="red">
+        <li>This whole list gets a red border, since the ul itself has class "red"</li>
+    </ul>
+
+    <br>
+    
+    <div class="card">
+        <label for="submittext">Firstname</label>
+        <input id="submittext" type="text"/>
+        <input type="button" value="Submit"/>
+    </div>
+    <div>
+        <input type="button" value="Click me2"/>
+    </div>
+
+
+    <form action="mailto:someone@example.com" method="post" enctype="text/plain">
+        <label for="mailname">Name</label>
+        <input id="mailname" name="name" type="text"/>
+
+        <label for="mailmessage">Message</label>
+        <input id="mailmessage" name="message" type="text"/>
+
+        <input type="submit" value="Send"/>
+    </form>
+
+    <footer>
+        This is my footer
+        <a href="https://google.com">Google Footer</a>
+    </footer>
+</body>
+</html>
