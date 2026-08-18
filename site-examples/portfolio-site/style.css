@@ -1,0 +1,62 @@
+/* Portfolio accent layer on top of Bootstrap. */
+:root {
+  --port-accent: #5b4bff;
+  --port-dark: #14142b;
+}
+
+body {
+  color: var(--port-dark);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.avatar-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--port-accent), #8f7dff);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.75rem;
+  font-weight: 700;
+  margin: 0 auto;
+}
+
+.skill-card i {
+  color: var(--port-accent);
+}
+
+/* Cards lift on hover -- not a Bootstrap default. */
+.skill-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.skill-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(20, 20, 43, 0.1);
+}
+
+.site-footer {
+  background: var(--port-dark);
+}
+
+.site-footer a {
+  color: #fff;
+  font-size: 1.4rem;
+  margin: 0 0.6rem;
+}
+
+.site-footer a:hover {
+  color: var(--port-accent);
+}
+
+/* Every other skill card gets a subtly tinted top border --
+   demonstrates :nth-child without touching the Bootstrap classes. */
+.skill-card:nth-child(even) {
+  border-top: 3px solid var(--port-accent);
+}

@@ -1,0 +1,105 @@
+/* Small custom layer on top of Bootstrap -- variables, hero art,
+   and the hand-styled hours table Bootstrap doesn't give you for free. */
+:root {
+  --brew-cream: #fdf6ec;
+  --brew-ink: #2b2117;
+  --brew-gold: #d9a441;
+}
+
+body {
+  background: var(--brew-cream);
+  color: var(--brew-ink);
+}
+
+.navbar-brand i {
+  color: var(--brew-gold);
+}
+
+.hero {
+  background: linear-gradient(135deg, #2f5d50, #234942);
+  color: #fff;
+  padding: 5rem 0;
+}
+
+.hero .btn-cta {
+  background: var(--brew-gold);
+  color: var(--brew-ink);
+  font-weight: bold;
+  border: none;
+}
+
+.hero .btn-cta:hover {
+  background: #c4932f;
+  color: var(--brew-ink);
+}
+
+/* Specials cards get a little lift on hover -- Bootstrap's .card
+   doesn't do this, so it's layered on here. */
+.specials .card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border-color: #e7dcc8;
+}
+
+.specials .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(43, 33, 23, 0.12);
+}
+
+.specials .card i {
+  color: var(--brew-gold);
+}
+
+.specials .price {
+  color: #b23a2f;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+/* Hours table: plain HTML table, styled entirely with custom
+   selectors instead of Bootstrap's .table classes. */
+.hours-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hours-table caption {
+  text-align: left;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.hours-table td {
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid #e7dcc8;
+}
+
+.hours-table tr:nth-child(even) {
+  background: #fbeedb;
+}
+
+.hours-table tr:hover td {
+  background: #f3e1bf;
+}
+
+.hours-table td:first-child {
+  font-weight: 600;
+}
+
+.contact-icons li i {
+  width: 1.5rem;
+  color: #2f5d50;
+}
+
+.site-footer {
+  background: var(--brew-ink);
+}
+
+.site-footer a {
+  color: var(--brew-cream);
+  font-size: 1.4rem;
+  margin: 0 0.5rem;
+}
+
+.site-footer a:hover {
+  color: var(--brew-gold);
+}

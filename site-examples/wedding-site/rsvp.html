@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RSVP &mdash; Emma &amp; Noah</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">Emma &amp; Noah</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="index.html#details">Details</a></li>
+            <li class="nav-item"><a class="nav-link active" href="rsvp.html">RSVP</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container py-5">
+      <h1 class="mb-4 text-center">RSVP</h1>
+      <p class="text-muted text-center mb-5">Kindly respond by September 1st, 2026.</p>
+
+      <div class="row g-5">
+        <div class="col-md-6">
+          <form action="mailto:emmaandnoah@example.com" method="post" enctype="text/plain">
+            <div class="mb-3">
+              <label for="name" class="form-label">Full Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                <input type="text" class="form-control" id="name" name="name" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                <input type="email" class="form-control" id="email" name="email" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="guests" class="form-label">Number of Guests</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-users"></i></span>
+                <input type="number" class="form-control" id="guests" name="guests" min="1" value="1">
+              </div>
+            </div>
+            <div class="mb-4">
+              <label for="meal" class="form-label">Meal Choice</label>
+              <select class="form-select" id="meal" name="meal">
+                <option>Herb-Roasted Chicken</option>
+                <option>Grilled Salmon</option>
+                <option>Wild Mushroom Risotto (Vegetarian)</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fa-solid fa-envelope-open-text"></i> Send RSVP</button>
+          </form>
+        </div>
+
+        <div class="col-md-6">
+          <h2 class="h5 mb-3">Schedule</h2>
+          <table class="schedule-table mb-4">
+            <caption>Saturday, October 17, 2026</caption>
+            <tbody>
+              <tr><td>4:00 PM</td><td>Ceremony</td></tr>
+              <tr><td>5:00 PM</td><td>Cocktail Hour</td></tr>
+              <tr><td>5:30 PM</td><td>Reception &amp; Dinner</td></tr>
+              <tr><td>7:00 PM</td><td>Dancing</td></tr>
+            </tbody>
+          </table>
+
+          <h2 class="h5 mb-3">Questions?</h2>
+          <ul class="list-unstyled contact-icons">
+            <li class="mb-2"><i class="fa-solid fa-map-pin"></i> Willowbrook Farm</li>
+            <li class="mb-2"><i class="fa-solid fa-phone"></i> (555) 019-4477</li>
+            <li class="mb-2"><i class="fa-solid fa-envelope"></i> emmaandnoah@example.com</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer text-center py-4 text-white">
+      <p class="mb-0 small">With love, Emma &amp; Noah &mdash; October 17, 2026</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
