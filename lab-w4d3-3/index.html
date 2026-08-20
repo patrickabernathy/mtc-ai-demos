@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Blue Door Café — Build your order</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============================================================
+     INSTRUCTIONS — delete everything from here down to the
+     "END INSTRUCTIONS" comment when you don't want it any more.
+     (There's a matching block at the bottom of styles.css.)
+     ============================================================ -->
+<div class="instructions">
+  <h2>What to make this page do</h2>
+  <p>
+    Five things on a menu, each with an <b>Add</b> button that currently does nothing.
+    An empty order list. A total that says <code>0.00</code> and never changes.
+    Your job is to wire it up.
+  </p>
+  <p>
+    The HTML and CSS are finished. <code>script.js</code> is already connected at the
+    bottom of this page, and it is empty.
+  </p>
+
+  <p class="check">
+    <b>First, prove the connection.</b> Put <code>console.log('connected');</code> in
+    <code>script.js</code>, reload this page, and open the console
+    (right-click &rarr; Inspect &rarr; Console). If you don't see the word
+    <b>connected</b>, stop and fix that before writing anything else.
+  </p>
+
+  <h3>Action 1 &mdash; Required</h3>
+  <p>
+    Clicking <b>Add</b> next to the latte makes the word <i>Latte</i> appear in the
+    empty order box. One item, one button. Get that working before you touch the
+    other four.
+  </p>
+
+  <h3>Action 2 &mdash; Required</h3>
+  <p>
+    Clicking it again adds a <b>second</b> line &mdash; the first one stays. Two lattes
+    means two lines in the box. If your second click replaces the first line instead of
+    joining it, that's the right bug to be looking at.
+  </p>
+
+  <h3>Action 3 &mdash; Required</h3>
+  <p>
+    The total keeps up. Every time something is added, the number next to
+    <b>Total</b> goes up by the price of that item.
+  </p>
+  <p>
+    <b>Read the price off the page</b> &mdash; don't type the number into your
+    JavaScript. Every price on this menu has its own id
+    (<code>price-latte</code>, <code>price-drip</code>, and so on), and every total is
+    sitting in <code>total</code>. Take what's there, add to it, put it back.
+  </p>
+
+  <h3>Action 4 &mdash; Optional</h3>
+  <p>
+    Wire up the other four buttons, then <b>Start over</b> &mdash; it empties the order
+    box and puts the total back to <code>0.00</code>.
+  </p>
+
+  <h3>The names you'll need</h3>
+  <table>
+    <tr><th>On the page</th><th>Its id</th></tr>
+    <tr><td>Add buttons</td><td><code>add-latte</code>, <code>add-drip</code>, <code>add-croissant</code>, <code>add-biscuit</code>, <code>add-juice</code></td></tr>
+    <tr><td>The prices</td><td><code>price-latte</code>, <code>price-drip</code>, <code>price-croissant</code>, <code>price-biscuit</code>, <code>price-juice</code></td></tr>
+    <tr><td>The empty order box</td><td><code>order</code></td></tr>
+    <tr><td>The total</td><td><code>total</code></td></tr>
+    <tr><td>Start over button</td><td><code>clear-order</code></td></tr>
+  </table>
+
+  <p class="warn">
+    <b>Expect this, and don't fix it in a hurry.</b> You add one latte and the total reads
+    <code>0.003.00</code>. It isn't a typo and your maths isn't wrong &mdash; JavaScript
+    did exactly what you asked and the answer is useless. Write this one down carefully,
+    all four columns. It is the single most useful thing you can bring back to class,
+    and next week starts with it.
+  </p>
+</div>
+<!-- ============================ END INSTRUCTIONS ============================ -->
+
+<header>
+  <p class="kicker">The Blue Door Café &middot; Main St</p>
+  <h1>Build your order</h1>
+  <p class="lede">
+    Tap what you want, pick it up at the counter. We start pouring at six and
+    the biscuits are gone by nine.
+  </p>
+</header>
+
+<main>
+
+  <ul class="menu">
+    <li class="item">
+      <div class="what">
+        <span class="name">Latte</span>
+        <span class="note">Whole, oat, or skim. Nobody judges.</span>
+      </div>
+      <span class="price">$<span id="price-latte">3.00</span></span>
+      <button type="button" id="add-latte">Add</button>
+    </li>
+
+    <li class="item">
+      <div class="what">
+        <span class="name">Drip coffee</span>
+        <span class="note">Bottomless before 8 AM.</span>
+      </div>
+      <span class="price">$<span id="price-drip">2.00</span></span>
+      <button type="button" id="add-drip">Add</button>
+    </li>
+
+    <li class="item">
+      <div class="what">
+        <span class="name">Croissant</span>
+        <span class="note">Baked here, at four in the morning.</span>
+      </div>
+      <span class="price">$<span id="price-croissant">2.50</span></span>
+      <button type="button" id="add-croissant">Add</button>
+    </li>
+
+    <li class="item">
+      <div class="what">
+        <span class="name">Breakfast biscuit</span>
+        <span class="note">Egg, cheese, and something from the griddle.</span>
+      </div>
+      <span class="price">$<span id="price-biscuit">4.25</span></span>
+      <button type="button" id="add-biscuit">Add</button>
+    </li>
+
+    <li class="item">
+      <div class="what">
+        <span class="name">Orange juice</span>
+        <span class="note">Squeezed this morning. Pulp, unavoidably.</span>
+      </div>
+      <span class="price">$<span id="price-juice">3.50</span></span>
+      <button type="button" id="add-juice">Add</button>
+    </li>
+  </ul>
+
+  <section class="ticket">
+    <h2>Your order</h2>
+
+    <!-- This list is empty on purpose. Putting things in it is your job. -->
+    <ul id="order" class="order"></ul>
+
+    <p class="total-line">
+      <span>Total</span>
+      <span class="amount">$<span id="total">0.00</span></span>
+    </p>
+
+    <button type="button" class="ghost" id="clear-order">Start over</button>
+  </section>
+
+</main>
+
+<footer>
+  <p>The Blue Door Café &middot; open 6 AM &ndash; 2 PM &middot; closed Mondays</p>
+  <p class="small">Practice page for the MTC AI-Enabled Full-Stack Developer program. Not a real café.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

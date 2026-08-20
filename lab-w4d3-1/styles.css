@@ -1,0 +1,229 @@
+/* Dogwood Dental — appointment request page
+   Plain CSS. No frameworks, nothing to install. */
+
+:root {
+  --paper: #f7f6f3;
+  --card: #ffffff;
+  --ink: #191d1f;
+  --ink-2: #4a5257;
+  --ink-3: #7b848a;
+  --rule: #e2e0da;
+  --accent: #0f6b6b;
+  --accent-soft: #e2efee;
+  --warn: #9c4a2f;
+  --warn-soft: #f8e8e2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #12161a;
+    --card: #1a2026;
+    --ink: #e9ecee;
+    --ink-2: #b0b8bd;
+    --ink-3: #848d93;
+    --rule: #2a333b;
+    --accent: #5cb8b0;
+    --accent-soft: #15272a;
+    --warn: #d3806a;
+    --warn-soft: #2b1a15;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0 auto;
+  padding: 0 22px 70px;
+  max-width: 720px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif;
+}
+
+/* ---------- header ---------- */
+
+header {
+  padding: 44px 0 26px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 32px;
+}
+
+.kicker {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+h1 {
+  margin: 0 0 12px;
+  font-size: 34px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 17px;
+  color: var(--ink-2);
+}
+
+/* ---------- the form ---------- */
+
+form {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 26px 24px;
+}
+
+.field { margin-bottom: 18px; }
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--ink-2);
+}
+
+.opt {
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 11px 13px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+}
+
+textarea { resize: vertical; }
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+button {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 650;
+  color: #ffffff;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 22px;
+  cursor: pointer;
+}
+
+button:hover { filter: brightness(1.1); }
+
+/* ---------- the empty message box ---------- */
+
+.message {
+  margin-top: 20px;
+  min-height: 62px;
+  padding: 18px 20px;
+  background: var(--accent-soft);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+/* ---------- footer ---------- */
+
+footer {
+  margin-top: 44px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+
+footer p { margin: 0 0 5px; }
+.small { font-size: 12.5px; }
+
+/* ==========================================================================
+   INSTRUCTIONS BOX
+   Delete from here to the end of the file, along with the matching block
+   at the top of index.html. Nothing else on the page depends on it.
+   ========================================================================== */
+
+.instructions {
+  margin: 26px 0 0;
+  padding: 22px 24px;
+  background: var(--card);
+  border: 2px dashed var(--accent);
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--ink-2);
+}
+
+.instructions h2 {
+  margin: 0 0 12px;
+  font-size: 19px;
+  color: var(--ink);
+}
+
+.instructions h3 {
+  margin: 20px 0 6px;
+  font-size: 15px;
+  color: var(--accent);
+  letter-spacing: 0.01em;
+}
+
+.instructions p { margin: 0 0 10px; max-width: 62ch; }
+
+.instructions code {
+  font-family: ui-monospace, Consolas, Menlo, monospace;
+  font-size: 13.5px;
+  background: var(--accent-soft);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.instructions table {
+  border-collapse: collapse;
+  margin: 8px 0 4px;
+  font-size: 14px;
+}
+
+.instructions th,
+.instructions td {
+  text-align: left;
+  padding: 5px 14px 5px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.instructions th {
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.instructions .check {
+  padding: 12px 15px;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+}
+
+.instructions .warn {
+  margin-top: 18px;
+  padding: 12px 15px;
+  background: var(--warn-soft);
+  border-left: 3px solid var(--warn);
+}
+
+/* ===================== END INSTRUCTIONS BOX ===================== */

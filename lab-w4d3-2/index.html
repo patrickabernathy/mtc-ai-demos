@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Riverside Roasters — Start a coffee subscription</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============================================================
+     INSTRUCTIONS — delete everything from here down to the
+     "END INSTRUCTIONS" comment when you don't want it any more.
+     (There's a matching block at the bottom of styles.css.)
+     ============================================================ -->
+<div class="instructions">
+  <h2>What to make this page do</h2>
+  <p>
+    Right now all three cards are on the screen at once, and the
+    <b>Next</b> and <b>Back</b> buttons do nothing. That's on purpose. Your job is to
+    turn this long form into <b>one card at a time</b>.
+  </p>
+  <p>
+    The HTML and CSS are finished. <code>script.js</code> is already connected at the
+    bottom of this page, and it is empty.
+  </p>
+
+  <p class="check">
+    <b>First, prove the connection.</b> Put <code>console.log('connected');</code> in
+    <code>script.js</code>, reload this page, and open the console
+    (right-click &rarr; Inspect &rarr; Console). If you don't see the word
+    <b>connected</b>, stop and fix that before writing anything else.
+  </p>
+
+  <p class="check">
+    <b>You already have the tool for this.</b> The stylesheet contains a class called
+    <code>hidden</code> that does nothing except make something disappear. Adding and
+    removing that one class from a card is the whole trick:
+    <code>document.getElementById('step-2').classList.add('hidden');</code>
+  </p>
+
+  <h3>Action 1 &mdash; Required</h3>
+  <p>
+    When the page loads, only <b>Step 1</b> is showing. Cards 2 and 3 are hidden.
+  </p>
+
+  <h3>Action 2 &mdash; Required</h3>
+  <p>
+    Clicking <b>Next</b> on step 1 hides step 1 and shows step 2. Clicking <b>Next</b> on
+    step 2 hides step 2 and shows step 3. That's the whole wizard &mdash; two clicks,
+    four lines.
+  </p>
+
+  <h3>Action 3 &mdash; Required</h3>
+  <p>
+    The <b>Back</b> buttons do the reverse. Somebody who clicks Next by mistake has to be
+    able to get out of it, and a wizard with no way back is a trap.
+  </p>
+
+  <h3>Action 4 &mdash; Optional</h3>
+  <p>
+    Clicking <b>Place order</b> shows a message in the empty box at the bottom that
+    repeats back what they picked &mdash; the coffee, the grind, and the name they typed.
+  </p>
+
+  <h3>Action 5 &mdash; Optional, and it will fight you</h3>
+  <p>
+    Make the three dots at the top keep up. The current step's dot has the class
+    <code>on</code>; the others don't. Move it as they move.
+  </p>
+
+  <h3>The names you'll need</h3>
+  <table>
+    <tr><th>On the page</th><th>Its id</th></tr>
+    <tr><td>The three cards</td><td><code>step-1</code>, <code>step-2</code>, <code>step-3</code></td></tr>
+    <tr><td>The three dots</td><td><code>dot-1</code>, <code>dot-2</code>, <code>dot-3</code></td></tr>
+    <tr><td>Next buttons</td><td><code>next-1</code>, <code>next-2</code></td></tr>
+    <tr><td>Back buttons</td><td><code>back-2</code>, <code>back-3</code></td></tr>
+    <tr><td>The last button</td><td><code>place-order</code></td></tr>
+    <tr><td>Which coffee (dropdown)</td><td><code>coffee</code></td></tr>
+    <tr><td>Which grind (dropdown)</td><td><code>grind</code></td></tr>
+    <tr><td>How many bags</td><td><code>bags</code></td></tr>
+    <tr><td>Their name</td><td><code>name</code></td></tr>
+    <tr><td>The empty box your message goes in</td><td><code>message</code></td></tr>
+  </table>
+
+  <p class="warn">
+    <b>Expect this one.</b> The console says <code>null</code>, or
+    <i>"cannot read properties of null"</i>. That means you asked the page for something
+    that isn't there under that name. Check the id in the HTML against the one in your
+    JavaScript, one character at a time &mdash; it is almost always a capital letter or a
+    missing dash. Write it in your log before you fix it.
+  </p>
+</div>
+<!-- ============================ END INSTRUCTIONS ============================ -->
+
+<header>
+  <p class="kicker">Riverside Roasters &middot; Columbia, SC</p>
+  <h1>Start a coffee subscription</h1>
+  <p class="lede">
+    Three steps. Pick a coffee, tell us how you make it, tell us where to send it.
+    Cancel any time; nobody will call you.
+  </p>
+</header>
+
+<ol class="dots">
+  <li id="dot-1" class="on">Coffee</li>
+  <li id="dot-2">How you brew</li>
+  <li id="dot-3">You</li>
+</ol>
+
+<main>
+
+  <section class="card" id="step-1">
+    <p class="step-label">Step 1 of 3</p>
+    <h2>Pick a coffee</h2>
+
+    <div class="field">
+      <label for="coffee">Which one?</label>
+      <select id="coffee">
+        <option>Congaree Breakfast &mdash; bright, easy, drink it every day</option>
+        <option>Broad River Dark &mdash; heavy, smoky, for people who add nothing</option>
+        <option>Sunday Decaf &mdash; genuinely good, genuinely decaf</option>
+        <option>Roaster's Pick &mdash; we choose, it changes monthly</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="bags">How many bags a month?</label>
+      <select id="bags">
+        <option>1 bag</option>
+        <option>2 bags</option>
+        <option>4 bags</option>
+      </select>
+    </div>
+
+    <div class="actions">
+      <button type="button" id="next-1">Next</button>
+    </div>
+  </section>
+
+  <section class="card" id="step-2">
+    <p class="step-label">Step 2 of 3</p>
+    <h2>How you brew</h2>
+
+    <div class="field">
+      <label for="grind">Grind</label>
+      <select id="grind">
+        <option>Whole bean &mdash; I grind it myself</option>
+        <option>Coarse &mdash; French press</option>
+        <option>Medium &mdash; drip machine</option>
+        <option>Fine &mdash; espresso</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="day">Delivery day</label>
+      <select id="day">
+        <option>First Monday of the month</option>
+        <option>First Thursday of the month</option>
+        <option>Whenever it's roasted</option>
+      </select>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="ghost" id="back-2">Back</button>
+      <button type="button" id="next-2">Next</button>
+    </div>
+  </section>
+
+  <section class="card" id="step-3">
+    <p class="step-label">Step 3 of 3</p>
+    <h2>Where it goes</h2>
+
+    <div class="field">
+      <label for="name">Your name</label>
+      <input type="text" id="name" placeholder="Sam Ortega">
+    </div>
+
+    <div class="field">
+      <label for="email">Email address</label>
+      <input type="text" id="email" placeholder="you@example.com">
+    </div>
+
+    <div class="field">
+      <label for="address">Street address</label>
+      <input type="text" id="address" placeholder="118 Gervais St, Columbia SC">
+    </div>
+
+    <div class="actions">
+      <button type="button" class="ghost" id="back-3">Back</button>
+      <button type="button" id="place-order">Place order</button>
+    </div>
+  </section>
+
+  <!-- This box is empty on purpose. Putting something in it is your job. -->
+  <div id="message" class="message"></div>
+
+</main>
+
+<footer>
+  <p>Riverside Roasters &middot; roasted Tuesdays &middot; (803) 555-0177</p>
+  <p class="small">Practice page for the MTC AI-Enabled Full-Stack Developer program. Not a real coffee roaster.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

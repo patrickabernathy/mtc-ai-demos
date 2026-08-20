@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dogwood Dental — Request an appointment</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============================================================
+     INSTRUCTIONS — delete everything from here down to the
+     "END INSTRUCTIONS" comment when you don't want it any more.
+     (There's a matching block at the bottom of styles.css.)
+     ============================================================ -->
+<div class="instructions">
+  <h2>What to make this page do</h2>
+  <p>
+    The HTML and CSS are finished. The file <code>script.js</code> is already connected
+    at the bottom of this page, and it is empty. Everything below is your job.
+  </p>
+
+  <p class="check">
+    <b>First, prove the connection.</b> Put <code>console.log('connected');</code> in
+    <code>script.js</code>, reload this page, and open the console
+    (right-click &rarr; Inspect &rarr; Console). If you don't see the word
+    <b>connected</b>, stop and fix that before writing anything else.
+  </p>
+
+  <h3>Action 1 &mdash; Required</h3>
+  <p>
+    Someone types their name and email and clicks <b>Request appointment</b>.
+    A message appears in the empty grey box under the form that
+    <b>shows what they actually typed</b>. Not a fixed sentence &mdash; their name has to be in it.
+  </p>
+
+  <h3>Action 2 &mdash; Required</h3>
+  <p>
+    Someone clicks <b>Request appointment</b> with the name or email box empty.
+    The same box says something useful instead &mdash; <i>"We need a name and an email
+    address"</i> &mdash; not a blank space, and not nothing at all.
+  </p>
+
+  <h3>Action 3 &mdash; Optional</h3>
+  <p>
+    After a successful request, empty the boxes so the next person can type in them,
+    and include the day they chose in the message.
+  </p>
+
+  <h3>The names you'll need</h3>
+  <table>
+    <tr><th>On the page</th><th>Its id</th></tr>
+    <tr><td>The whole form</td><td><code>request-form</code></td></tr>
+    <tr><td>Name box</td><td><code>name</code></td></tr>
+    <tr><td>Email box</td><td><code>email</code></td></tr>
+    <tr><td>Preferred day dropdown</td><td><code>day</code></td></tr>
+    <tr><td>The button</td><td><code>submit-button</code></td></tr>
+    <tr><td>The empty box your message goes in</td><td><code>message</code></td></tr>
+  </table>
+
+  <p class="warn">
+    <b>Expect this one.</b> You click the button and the whole page flashes, your typing
+    vanishes, and it looks like nothing happened. That's the form doing its original job.
+    Write it in your log before you go looking for the fix.
+  </p>
+</div>
+<!-- ============================ END INSTRUCTIONS ============================ -->
+
+<header>
+  <p class="kicker">Dogwood Dental &middot; Cayce, SC</p>
+  <h1>Request an appointment</h1>
+  <p class="lede">
+    Tell us who you are and when you'd like to come in. We answer requests
+    the same day, Monday through Thursday.
+  </p>
+</header>
+
+<main>
+  <form id="request-form" novalidate>
+    <div class="field">
+      <label for="name">Your name</label>
+      <input type="text" id="name" placeholder="Dana Whitfield">
+    </div>
+
+    <div class="field">
+      <label for="email">Email address</label>
+      <input type="text" id="email" placeholder="you@example.com">
+    </div>
+
+    <div class="field">
+      <label for="phone">Phone <span class="opt">(optional)</span></label>
+      <input type="text" id="phone" placeholder="(803) 555-0134">
+    </div>
+
+    <div class="field">
+      <label for="day">Preferred day</label>
+      <select id="day">
+        <option>Monday</option>
+        <option>Tuesday</option>
+        <option>Wednesday</option>
+        <option>Thursday</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="reason">What do you need? <span class="opt">(optional)</span></label>
+      <textarea id="reason" rows="3" placeholder="Cleaning, a chipped tooth, something hurts&hellip;"></textarea>
+    </div>
+
+    <button type="submit" id="submit-button">Request appointment</button>
+  </form>
+
+  <!-- This box is empty on purpose. Putting something in it is your job. -->
+  <div id="message" class="message"></div>
+</main>
+
+<footer>
+  <p>Dogwood Dental &middot; 1420 Knox Abbott Dr &middot; (803) 555-0134</p>
+  <p class="small">Practice page for the MTC AI-Enabled Full-Stack Developer program. Not a real dental office.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
