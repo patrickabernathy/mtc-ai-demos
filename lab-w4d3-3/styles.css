@@ -168,12 +168,47 @@ button.ghost {
   font-size: 15.5px;
 }
 
+/* One line in the order. Whatever you put in it sits on the left;
+   a Remove button gets pushed over to the right. */
 .order li {
-  padding: 3px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
   border-bottom: 1px dotted var(--rule);
 }
 
 .order li:last-child { border-bottom: none; }
+
+/* --------------------------------------------------------------
+   For the Remove button you build in JavaScript. Give the button
+   class="remove" and it lands on the right, sized to match the row.
+   Nothing here happens on its own — no such button exists until
+   your code makes one.
+   -------------------------------------------------------------- */
+
+.order .remove {
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding: 3px 11px;
+  font-size: 12.5px;
+  font-weight: 650;
+  color: #dc3545;
+  background: transparent;
+  border: 1px solid #dc3545;
+  border-radius: 5px;
+}
+
+.order .remove:hover {
+  color: #ffffff;
+  background: #dc3545;
+  filter: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .order .remove { color: #ea868f; border-color: #ea868f; }
+  .order .remove:hover { color: #10131a; background: #ea868f; }
+}
 
 .total-line {
   display: flex;
@@ -278,6 +313,19 @@ footer p { margin: 0 0 5px; }
   padding: 12px 15px;
   background: var(--warn-soft);
   border-left: 3px solid var(--warn);
+}
+
+.instructions pre {
+  margin: 0 0 12px;
+  padding: 11px 14px;
+  overflow-x: auto;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  font-family: ui-monospace, Consolas, Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
 }
 
 /* ===================== END INSTRUCTIONS BOX ===================== */
