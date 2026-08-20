@@ -30,15 +30,44 @@
   <h3>Action 1 &mdash; Required</h3>
   <p>
     Someone types their name and email and clicks <b>Request appointment</b>.
-    A message appears in the empty grey box under the form that
+    A message appears in the empty box under the form that
     <b>shows what they actually typed</b>. Not a fixed sentence &mdash; their name has to be in it.
   </p>
 
   <h3>Action 2 &mdash; Required</h3>
   <p>
     Someone clicks <b>Request appointment</b> with the name or email box empty.
-    The same box says something useful instead &mdash; <i>"We need a name and an email
-    address"</i> &mdash; not a blank space, and not nothing at all.
+    Two things have to happen.
+  </p>
+  <p>
+    <b>One:</b> the same box says something useful instead &mdash; <i>"We need a name and
+    an email address"</i> &mdash; not a blank space, and not nothing at all.
+  </p>
+  <p>
+    <b>Two: mark the boxes that are actually wrong.</b> A message at the bottom of a form
+    doesn't tell anybody <i>which</i> field to go fix. So put the class
+    <code>is-invalid</code> on each empty box:
+  </p>
+  <pre>document.getElementById('name').classList.add('is-invalid');</pre>
+  <p>
+    Two things happen when you do &mdash; the box turns red, and a short red line of text
+    appears under it. That text is already written and already in the HTML; it's hidden
+    until the box next to it is marked invalid, so you get it for free.
+  </p>
+  <p>
+    Only mark the ones that are empty. If they typed a name but no email, the name box
+    stays normal.
+  </p>
+  <p class="check">
+    <b>And take the class off again when they fix it.</b> This is the half everybody
+    forgets. Someone leaves the email blank, gets a red box, types their email, clicks
+    again &mdash; and the box is <i>still red</i>, because nothing ever removed the class:
+  </p>
+  <pre>document.getElementById('email').classList.remove('is-invalid');</pre>
+  <p>
+    Every time they click, every box should end up marked or unmarked based on what's in
+    it <i>right now</i> &mdash; not on what was wrong last time. This bug is in real,
+    shipped, paid-for software everywhere. Now you'll see it for the rest of your life.
   </p>
 
   <h3>Action 3 &mdash; Optional</h3>
@@ -57,6 +86,17 @@
     <tr><td>The button</td><td><code>submit-button</code></td></tr>
     <tr><td>The empty box your message goes in</td><td><code>message</code></td></tr>
   </table>
+
+  <p class="aside">
+    <b>Where <code>is-invalid</code> comes from.</b> It isn't a name we made up. It's
+    Bootstrap's &mdash; the styling library the class has been using &mdash; and it is
+    what Bootstrap forms use to mark a bad field everywhere in the world. This page
+    doesn't load Bootstrap; the red box and the red text are written into
+    <code>styles.css</code> by hand, using Bootstrap's name and Bootstrap's exact red so
+    that what you learn here is what you'll type on a real Bootstrap form later. The
+    partner class on the little red message is called <code>invalid-feedback</code>,
+    also Bootstrap's.
+  </p>
 
   <p class="warn">
     <b>Expect this one.</b> You click the button and the whole page flashes, your typing
@@ -80,11 +120,15 @@
     <div class="field">
       <label for="name">Your name</label>
       <input type="text" id="name" placeholder="Dana Whitfield">
+      <!-- Hidden until the box above is marked is-invalid. -->
+      <div class="invalid-feedback">We need a name to put on the appointment.</div>
     </div>
 
     <div class="field">
       <label for="email">Email address</label>
       <input type="text" id="email" placeholder="you@example.com">
+      <!-- Hidden until the box above is marked is-invalid. -->
+      <div class="invalid-feedback">We need an email address to answer you.</div>
     </div>
 
     <div class="field">

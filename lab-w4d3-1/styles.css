@@ -141,6 +141,56 @@ button:hover { filter: brightness(1.1); }
   color: var(--ink);
 }
 
+/* --------------------------------------------------------------
+   VALIDATION STATE
+   These two class names are Bootstrap's, and so is the red
+   (#dc3545). This page doesn't load Bootstrap — they're written
+   out by hand here so that what you learn is what you'd type on
+   a real Bootstrap form.
+
+   The JavaScript adds and removes "is-invalid" on a box. The
+   little red message under it is a plain hidden div until that
+   happens; the last rule below is what reveals it.
+   -------------------------------------------------------------- */
+
+input.is-invalid,
+select.is-invalid,
+textarea.is-invalid {
+  border-color: #dc3545;
+}
+
+input.is-invalid:focus,
+select.is-invalid:focus,
+textarea.is-invalid:focus {
+  outline-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.invalid-feedback {
+  display: none;
+  margin-top: 5px;
+  font-size: 13.5px;
+  color: #dc3545;
+}
+
+/* show the message when the box just above it is marked invalid */
+.is-invalid ~ .invalid-feedback {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  input.is-invalid,
+  select.is-invalid,
+  textarea.is-invalid,
+  input.is-invalid:focus,
+  select.is-invalid:focus,
+  textarea.is-invalid:focus { border-color: #ea868f; }
+  input.is-invalid:focus,
+  select.is-invalid:focus,
+  textarea.is-invalid:focus { outline-color: #ea868f; }
+  .invalid-feedback { color: #ea868f; }
+}
+
 /* ---------- footer ---------- */
 
 footer {
@@ -224,6 +274,27 @@ footer p { margin: 0 0 5px; }
   padding: 12px 15px;
   background: var(--warn-soft);
   border-left: 3px solid var(--warn);
+}
+
+.instructions pre {
+  margin: 0 0 12px;
+  padding: 11px 14px;
+  overflow-x: auto;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  font-family: ui-monospace, Consolas, Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.instructions .aside {
+  margin-top: 18px;
+  padding: 12px 15px;
+  font-size: 14px;
+  background: var(--paper);
+  border-left: 3px solid var(--rule);
 }
 
 /* ===================== END INSTRUCTIONS BOX ===================== */
