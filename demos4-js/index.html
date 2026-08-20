@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The Corner Store</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h1>The Corner Store</h1>
+
+  <input id="phone" placeholder="123456789">
+  <input id="email" placeholder="you@example.com">
+  <button id="add">Add to cart</button>
+  <p id="count">0 items</p>
+
+  <script src="js/index.js"></script>
+  <script src="js/email.js"></script>
+  <script src="js/numberInput.js"></script>
+  <script src="js/helpers.js"></script>
+
+  <script>
+      email.init();
+      numberInput.init();
+      console.log(helpers.stringUppercase("this string"));
+  </script>
+</body>
+</html>
