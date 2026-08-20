@@ -14,7 +14,7 @@ const numberInput = function () {
     }
 
     return {
-        init () {
+        init: function () {
             input.addEventListener("keydown", handleNumericKeydown);
         }
     }

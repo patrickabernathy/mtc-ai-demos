@@ -1,6 +1,6 @@
 const helpers = function () {
     return {
-        stringUppercase (val) {
+        stringUppercase: function (val) {
             return val.toUpperCase();
         } 
     }

@@ -10,7 +10,7 @@ const email = function () {
   }
 
   return {
-    init() {
+    init: function () {
       input.addEventListener("blur", handleEmailBlur);
     }
   }
