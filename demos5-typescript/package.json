@@ -1,0 +1,9 @@
+{
+  "name": "mtc-week5-demo",
+  "private": true,
+  "type": "module",
+  "description": "W5 D1 TypeScript demo scaffolds. Pinned TypeScript version so `npx tsc` resolves this exact compiler instead of whatever npm's `latest` tag points to on the night. `type: module` matches slide 35's `--module ES2020` compile — without it, `node store-typed.js` prints a spurious MODULE_TYPELESS_PACKAGE_JSON warning before the real output.",
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
