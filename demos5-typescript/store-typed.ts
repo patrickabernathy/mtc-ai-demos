@@ -1,11 +1,10 @@
 // The Corner Store — typed version.
-// Built live on Tuesday 25 Aug 2026.
 // Run: npx tsc --target ES2020 --module ES2020 store-typed.ts && node store-typed.js
 // (ts-node isn't set up for this class — compile with tsc, then run the
-// plain-JS output, matching the workflow taught on slide 36. The --target/
-// --module flags matter: this folder's package.json sets "type": "module" to
-// match them. Compiling without the flags emits CommonJS, which then crashes
-// at run time with "exports is not defined in ES module scope".)
+// plain-JS output. The --target/--module flags matter: this folder's
+// package.json sets "type": "module" to match them. Compiling without the
+// flags emits CommonJS, which then crashes at run time with
+// "exports is not defined in ES module scope".)
 
 // `export {}` makes this a module instead of a global script — see the
 // matching comment in broken.ts for why that matters when both files sit
