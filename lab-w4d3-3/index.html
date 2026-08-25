@@ -5,132 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Blue Door Café — Build your order</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
-
-<!-- ============================================================
-     INSTRUCTIONS — delete everything from here down to the
-     "END INSTRUCTIONS" comment when you don't want it any more.
-     (There's a matching block at the bottom of styles.css.)
-     ============================================================ -->
-<div class="instructions">
-  <h2>What to make this page do</h2>
-  <p>
-    Five things on a menu, each with an <b>Add</b> button that currently does nothing.
-    An empty order list. A total that says <code>0.00</code> and never changes.
-    Your job is to wire it up.
-  </p>
-  <p>
-    The HTML and CSS are finished. <code>script.js</code> is already connected at the
-    bottom of this page, and it is empty.
-  </p>
-
-  <p class="check">
-    <b>First, prove the connection.</b> Put <code>console.log('connected');</code> in
-    <code>script.js</code>, reload this page, and open the console
-    (right-click &rarr; Inspect &rarr; Console). If you don't see the word
-    <b>connected</b>, stop and fix that before writing anything else.
-  </p>
-
-  <h3>Action 1 &mdash; Required</h3>
-  <p>
-    Clicking <b>Add</b> next to the latte makes the word <i>Latte</i> appear in the
-    empty order box. One item, one button. Get that working before you touch the
-    other four.
-  </p>
-
-  <h3>Action 2 &mdash; Required</h3>
-  <p>
-    Clicking it again adds a <b>second</b> line &mdash; the first one stays. Two lattes
-    means two lines in the box. If your second click replaces the first line instead of
-    joining it, that's the right bug to be looking at.
-  </p>
-
-  <h3>Action 3 &mdash; Required</h3>
-  <p>
-    The total keeps up. Every time something is added, the number next to
-    <b>Total</b> goes up by the price of that item.
-  </p>
-  <p>
-    <b>Read the price off the page</b> &mdash; don't type the number into your
-    JavaScript. Every price on this menu has its own id
-    (<code>price-latte</code>, <code>price-drip</code>, and so on), and every total is
-    sitting in <code>total</code>. Take what's there, add to it, put it back.
-  </p>
-
-  <h3>Action 4 &mdash; Optional</h3>
-  <p>
-    Wire up the other four buttons, then <b>Start over</b> &mdash; it empties the order
-    box and puts the total back to <code>0.00</code>.
-  </p>
-
-  <h3>Action 5 &mdash; Optional, and expect this one to fight you</h3>
-  <p>
-    <b>Every line in the order gets its own Remove button, and it removes that line.</b>
-    Not the last one, not all of them &mdash; the one you clicked. Take its price back off
-    the total while you're at it.
-  </p>
-  <p>
-    Give the button you build <code>class="remove"</code> and the stylesheet will make it
-    look right and sit on the correct side of the row. You don't have to style anything.
-  </p>
-  <p>
-    The part that makes this hard is that the button doesn't exist yet when the page
-    loads. You are building it in JavaScript and then telling <i>that</i> button what to
-    do, which is a different shape from everything above. Roughly:
-  </p>
-  <pre>const line   = document.createElement('li');
-const button = document.createElement('button');
-button.className = 'remove';
-button.textContent = 'Remove';
-
-button.addEventListener('click', function () {
-  line.remove();        // takes this one line off the page
-  // and here: put the price back
-});
-
-line.textContent = 'Latte';
-line.appendChild(button);
-document.getElementById('order').appendChild(line);</pre>
-  <p>
-    Type it, don't paste it. Then change one thing and see what breaks &mdash; that's how
-    you find out which line was doing what.
-  </p>
-  <p class="check">
-    <b>If your older Remove buttons quietly stop working, that's the real lesson here.</b>
-    Adding a row by gluing text onto <code>innerHTML</code> throws away every line in the
-    box and builds them all again from scratch. The new rows look identical, but the
-    buttons on them are not the buttons you attached anything to &mdash; those are gone.
-    Building rows with <code>createElement</code> and <code>appendChild</code>, like
-    above, leaves the existing ones alone. Log this one; it's a bug you cannot see by
-    looking at the page.
-  </p>
-  <p>
-    And if <b>Remove</b> keeps the total honest while <b>Add</b> is still producing
-    something strange, that is a clue rather than a coincidence. Write down that the two
-    behave differently, even if you can't say why yet. You'll be able to next week.
-  </p>
-
-  <h3>The names you'll need</h3>
-  <table>
-    <tr><th>On the page</th><th>Its id</th></tr>
-    <tr><td>Add buttons</td><td><code>add-latte</code>, <code>add-drip</code>, <code>add-croissant</code>, <code>add-biscuit</code>, <code>add-juice</code></td></tr>
-    <tr><td>The prices</td><td><code>price-latte</code>, <code>price-drip</code>, <code>price-croissant</code>, <code>price-biscuit</code>, <code>price-juice</code></td></tr>
-    <tr><td>The empty order box</td><td><code>order</code></td></tr>
-    <tr><td>The total</td><td><code>total</code></td></tr>
-    <tr><td>Start over button</td><td><code>clear-order</code></td></tr>
-    <tr><td>Class to put on a Remove button you build</td><td><code>remove</code></td></tr>
-  </table>
-
-  <p class="warn">
-    <b>Expect this, and don't fix it in a hurry.</b> You add one latte and the total reads
-    <code>0.003.00</code>. It isn't a typo and your maths isn't wrong &mdash; JavaScript
-    did exactly what you asked and the answer is useless. Write this one down carefully,
-    all four columns. It is the single most useful thing you can bring back to class,
-    and next week starts with it.
-  </p>
-</div>
-<!-- ============================ END INSTRUCTIONS ============================ -->
 
 <header>
   <p class="kicker">The Blue Door Café &middot; Main St</p>
@@ -150,7 +27,7 @@ document.getElementById('order').appendChild(line);</pre>
         <span class="note">Whole, oat, or skim. Nobody judges.</span>
       </div>
       <span class="price">$<span id="price-latte">3.00</span></span>
-      <button type="button" id="add-latte">Add</button>
+      <button type="button" id="add-latte" class="addButton" data-item="Latte" data-price="3.00">Add</button>
     </li>
 
     <li class="item">
@@ -159,7 +36,7 @@ document.getElementById('order').appendChild(line);</pre>
         <span class="note">Bottomless before 8 AM.</span>
       </div>
       <span class="price">$<span id="price-drip">2.00</span></span>
-      <button type="button" id="add-drip">Add</button>
+      <button type="button" id="add-drip" class="addButton" data-item="Drip coffee" data-price="2.00">Add</button>
     </li>
 
     <li class="item">
@@ -168,7 +45,7 @@ document.getElementById('order').appendChild(line);</pre>
         <span class="note">Baked here, at four in the morning.</span>
       </div>
       <span class="price">$<span id="price-croissant">2.50</span></span>
-      <button type="button" id="add-croissant">Add</button>
+      <button type="button" id="add-croissant" class="addButton" data-item="Croissant" data-price="2.50">Add</button>
     </li>
 
     <li class="item">
@@ -177,7 +54,7 @@ document.getElementById('order').appendChild(line);</pre>
         <span class="note">Egg, cheese, and something from the griddle.</span>
       </div>
       <span class="price">$<span id="price-biscuit">4.25</span></span>
-      <button type="button" id="add-biscuit">Add</button>
+      <button type="button" id="add-biscuit" class="addButton" data-item="Breakfast biscuit" data-price="4.25">Add</button>
     </li>
 
     <li class="item">
@@ -186,7 +63,16 @@ document.getElementById('order').appendChild(line);</pre>
         <span class="note">Squeezed this morning. Pulp, unavoidably.</span>
       </div>
       <span class="price">$<span id="price-juice">3.50</span></span>
-      <button type="button" id="add-juice">Add</button>
+      <button type="button" id="add-juice" class="addButton" data-item="Orange juice" data-price="3.50">Add</button>
+    </li>
+
+      <li class="item">
+      <div class="what">
+        <span class="name">Banana</span>
+        <span class="note">Monkeys like em.</span>
+      </div>
+      <span class="price">$<span id="price-juice">0.50</span></span>
+      <button type="button" id="add-juice" class="addButton" data-item="Banana" data-price="0.50">Add</button>
     </li>
   </ul>
 
@@ -212,5 +98,9 @@ document.getElementById('order').appendChild(line);</pre>
 </footer>
 
 <script src="script.js"></script>
+
+<script>
+  cafe().init();
+</script>
 </body>
 </html>
