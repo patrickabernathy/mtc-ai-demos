@@ -9,11 +9,11 @@
 // `export {}` makes this a module instead of a global script — see the
 // matching comment in broken.ts for why that matters when both files sit
 // in the same folder.
-export {};
+
 
 // ---- step 1: name the shape ----
 
-type CartItem = {
+export type CartItem = {
   name: string;
   price: number;
   qty: number;
@@ -23,7 +23,7 @@ type CartItem = {
 
 let cart: CartItem[] = [];
 
-function addItem(name: string, price: number, qty: number): void {
+export function addItem(name: string, price: number, qty: number): void {
   cart.push({ name, price, qty });
 }
 
