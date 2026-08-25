@@ -1,0 +1,12 @@
+{
+  "name": "mtc-week5-demo",
+  "private": true,
+  "type": "module",
+  "description": "TypeScript demo files for class. The TypeScript version is pinned so `npx tsc` resolves this exact compiler instead of whatever npm's `latest` tag points to. `type: module` matches the `--module ES2020` compile flag — without it, `node store-typed.js` prints a spurious MODULE_TYPELESS_PACKAGE_JSON warning before the real output.",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
