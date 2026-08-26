@@ -1,0 +1,17 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 2rem;
+  color: #222;
+}
+
+nav a {
+  color: darkred;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  padding: 0.25rem 0.75rem 0.25rem 0;
+}
