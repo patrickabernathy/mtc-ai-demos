@@ -116,7 +116,7 @@
 </header>
 
 <main>
-  <form id="request-form" novalidate>
+  <div id="request-form" novalidate>
     <div class="field">
       <label for="name">Your name</label>
       <input type="text" id="name" placeholder="Dana Whitfield">
@@ -152,7 +152,7 @@
     </div>
 
     <button type="submit" id="submit-button">Request appointment</button>
-  </form>
+  </div>
 
   <!-- This box is empty on purpose. Putting something in it is your job. -->
   <div id="message" class="message"></div>
@@ -164,5 +164,9 @@
 </footer>
 
 <script src="script.js"></script>
+
+<script>
+  form().init();
+</script>
 </body>
 </html>
