@@ -1,0 +1,151 @@
+/* Cayce Public Library — West Branch
+   Plain CSS. No frameworks, nothing to install. */
+
+:root {
+  --paper: #f7f6f3;
+  --card: #ffffff;
+  --ink: #191d1f;
+  --ink-2: #4a5257;
+  --ink-3: #7b848a;
+  --rule: #e2e0da;
+  --accent: #3b4f8a;
+  --accent-soft: #e7ecf7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #12161a;
+    --card: #1a2026;
+    --ink: #e9ecee;
+    --ink-2: #b0b8bd;
+    --ink-3: #848d93;
+    --rule: #2a333b;
+    --accent: #8aa4e0;
+    --accent-soft: #1a2233;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0 auto;
+  padding: 0 22px 70px;
+  max-width: 860px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif;
+}
+
+/* ---------- header ---------- */
+
+header {
+  padding: 44px 0 26px;
+}
+
+.kicker {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+h1 {
+  margin: 0 0 12px;
+  font-size: 34px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  margin: 0;
+  max-width: 54ch;
+  font-size: 17px;
+  color: var(--ink-2);
+}
+
+/* ---------- nav ---------- */
+
+nav {
+  padding: 0 0 22px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 34px;
+  font-size: 15px;
+  color: var(--ink-3);
+}
+
+nav a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+nav a:hover { text-decoration: underline; }
+
+/* ---------- main ---------- */
+
+h2 {
+  margin: 0 0 18px;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ---------- the cards ---------- */
+
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 640px) {
+  .cards { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 20px 18px;
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+}
+
+.card p {
+  margin: 0 0 10px;
+  color: var(--ink-2);
+  font-size: 15px;
+}
+
+.card .detail {
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+/* ---------- footer ---------- */
+
+footer {
+  margin-top: 44px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+
+footer p { margin: 0 0 4px; }
+
+footer .small { font-size: 12px; }

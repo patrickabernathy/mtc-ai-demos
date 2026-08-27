@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W5D3-1 - From one HTML page to components</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    padding: 0 22px 80px;
+    max-width: 760px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 30px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 58ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 40px 0 12px; font-size: 22px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h3 { margin: 26px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 66ch; }
+  ul, ol { max-width: 66ch; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 "Cascadia Code", Consolas, ui-monospace, monospace; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .req { color: var(--accent); font-weight: 700; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W5D3 &middot; 1 of 3 &middot; start here</p>
+  <h1>From one HTML page to components</h1>
+  <p class="lede">You have a finished library page written in plain HTML and CSS. Tonight you build that same page in Next.js, then cut it into four components &mdash; one of which takes typed props. Nothing on this page can be clicked. It is all layout.</p>
+</header>
+
+<h2>1. Make the Next.js app</h2>
+
+<p>
+  Open a terminal <b>in this lab folder</b> (the one holding
+  <code>index.html</code>) and run:
+</p>
+
+<pre><code>npx create-next-app@latest library-app</code></pre>
+
+<p>
+  It asks a pile of questions. Answer them exactly like this &mdash; these are
+  the settings we use for every project in this class:
+</p>
+
+<table>
+  <tr><th>It asks</th><th>You answer</th></tr>
+  <tr><td>What is your project named?</td><td><code>library-app</code></td></tr>
+  <tr><td>Would you like to use the recommended defaults?</td><td><b>Customize</b> &mdash; don't take the defaults</td></tr>
+  <tr><td>Would you like to use TypeScript?</td><td><b>Yes</b></td></tr>
+  <tr><td>Which linter would you like to use?</td><td><b>None</b></td></tr>
+  <tr><td>Would you like to enable React Compiler?</td><td><b>No</b></td></tr>
+  <tr><td>Would you like to use Tailwind CSS?</td><td><b>Yes</b></td></tr>
+  <tr><td>Would you like your code inside a <code>src/</code> directory?</td><td><b>Yes</b></td></tr>
+  <tr><td>Would you like to use App Router?</td><td><b>Yes</b></td></tr>
+  <tr><td>Would you like to customize the import alias?</td><td><b>No</b></td></tr>
+  <tr><td>Would you like to create an <code>AGENTS.md</code> file?</td><td><b>No</b></td></tr>
+</table>
+
+<p>
+  The exact wording and the order of these move around between versions of
+  Next. Answer what's on your screen, not what's in the second column of a
+  table &mdash; if you get a question that isn't listed here, take the
+  recommended answer and write the question down so we can talk about it.
+</p>
+
+<p>Then start it:</p>
+
+<pre><code>cd library-app
+npm run dev</code></pre>
+
+<p>
+  Open <a href="http://localhost:3000">http://localhost:3000</a>. You should get
+  the Next.js starter page. Leave <code>npm run dev</code> running the whole
+  night &mdash; it rebuilds every time you save.
+</p>
+
+<div class="callout check">
+  <p>
+    <b>Know where you are.</b> Because you said yes to <code>src/</code>, your
+    code lives in <code>src/app/</code>, not <code>app/</code>. Every path in
+    these instructions starts from inside <code>library-app</code>.
+  </p>
+</div>
+
+<h2>2. Move the stylesheet over</h2>
+
+<p>
+  You said yes to Tailwind, so <code>src/app/globals.css</code> already has
+  Tailwind's own setup in it plus a few starter rules. We're not writing
+  Tailwind classes tonight &mdash; we're bringing our own CSS, the same CSS you
+  already have.
+</p>
+
+<ol>
+  <li>Open <code>src/app/globals.css</code>.</li>
+  <li>Keep the very first line, <code>@import "tailwindcss";</code>.</li>
+  <li>Delete <b>everything else</b> in that file.</li>
+  <li>Paste the entire contents of this lab's <code>styles.css</code> underneath it.</li>
+</ol>
+
+<p>
+  Nothing changes on screen yet, because <code>page.tsx</code> is still the
+  Next starter. That's fine.
+</p>
+
+<div class="callout warn">
+  <p>
+    <b>Expect this one.</b> Tailwind quietly resets a lot of browser defaults
+    &mdash; heading sizes, list bullets, paragraph margins. Our stylesheet sets
+    all of that back on purpose, so the page should look right. But if
+    something is mysteriously the wrong size and it isn't in
+    <code>styles.css</code>, that's who did it. Inspect the element and look at
+    what's crossed out.
+  </p>
+</div>
+
+<h3>While you're in there</h3>
+
+<p>
+  Open <code>src/app/layout.tsx</code> and change the <code>title</code> and
+  <code>description</code> in <code>metadata</code> to match this page. That
+  export <i>is</i> the <code>&lt;title&gt;</code> tag &mdash; there is no
+  <code>&lt;head&gt;</code> for you to edit, because there is no
+  <code>index.html</code> any more. The <code>&lt;html&gt;</code> and
+  <code>&lt;body&gt;</code> tags moved here, written once for the whole site.
+</p>
+
+
+<h2>3. Rebuild the page in JSX</h2>
+
+<p>
+  Open <code>index.html</code> in a browser and look at it. That is the finished
+  thing. Your job is to make the same page come out of Next instead of out of a
+  <code>.html</code> file.
+</p>
+
+<p>
+  Open <code>src/app/page.tsx</code>, delete everything in it, and start over:
+</p>
+
+<pre><code>export default function Home() {
+  return (
+    &lt;div&gt;
+      {/* the page goes here */}
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+<p>
+  Then copy the markup from <code>index.html</code> &mdash; everything between
+  <code>&lt;body&gt;</code> and <code>&lt;/body&gt;</code>, not the
+  <code>&lt;head&gt;</code> &mdash; into that <code>&lt;div&gt;</code> and fix it
+  until it compiles. It will not compile on the first try. JSX looks like HTML
+  and is not HTML.
+</p>
+
+<h3>The five things that will break</h3>
+
+<table>
+  <tr><th>In HTML</th><th>In JSX</th><th>Why</th></tr>
+  <tr>
+    <td><code>class="card"</code></td>
+    <td><code>className="card"</code></td>
+    <td><code>class</code> is a reserved word in JavaScript.</td>
+  </tr>
+  <tr>
+    <td><code>&lt;br&gt;</code>, <code>&lt;img src="..."&gt;</code></td>
+    <td><code>&lt;br /&gt;</code>, <code>&lt;img src="..." /&gt;</code></td>
+    <td>Every tag has to close. No exceptions.</td>
+  </tr>
+  <tr>
+    <td><code>&lt;!-- note --&gt;</code></td>
+    <td><code>{/* note */}</code></td>
+    <td>HTML comments aren't valid inside JSX.</td>
+  </tr>
+  <tr>
+    <td><code>for="name"</code></td>
+    <td><code>htmlFor="name"</code></td>
+    <td>Same reason as <code>class</code>. No labels on this page, but you'll hit it soon.</td>
+  </tr>
+  <tr>
+    <td>Two tags side by side</td>
+    <td>Wrap them in one parent</td>
+    <td>A component returns <b>one</b> thing. Use a <code>&lt;div&gt;</code>, or <code>&lt;&gt;...&lt;/&gt;</code>.</td>
+  </tr>
+</table>
+
+<div class="callout warn">
+  <p>
+    <b>Expect this one.</b> The nav has three links separated by
+    <code>&amp;middot;</code>. When you break those onto separate lines, JSX eats
+    the spaces around them and you get
+    <code>Catalog&middot;Events&middot;Ask</code> jammed together. The fix is
+    <code>{" "}</code> &mdash; a literal space, written as JavaScript:
+  </p>
+<pre><code>&lt;a href="#"&gt;Catalog&lt;/a&gt; &amp;middot;{" "}
+&lt;a href="#"&gt;Events&lt;/a&gt; &amp;middot;{" "}
+&lt;a href="#"&gt;Ask a librarian&lt;/a&gt;</code></pre>
+  <p>Write this one in your log. Everyone hits it, nobody guesses it.</p>
+</div>
+
+<div class="callout check">
+  <p>
+    <b>Stop here and check.</b> Before you split anything into components, the
+    page at <code>localhost:3000</code> should look <b>identical</b> to
+    <code>index.html</code> &mdash; same colors, same three cards, same footer.
+    Put the two windows side by side. If they don't match, fix it now.
+    Refactoring a page that's already wrong just gives you two problems.
+  </p>
+</div>
+
+<h2>4. Break it into components</h2>
+
+<p>
+  Right now <code>page.tsx</code> is one long wall of JSX. That is exactly what a
+  real page looks like right before somebody cleans it up, and cleaning it up is
+  the point of tonight.
+</p>
+
+<p>
+  Make a folder <code>src/components/</code> and build these four. One file each.
+</p>
+
+<table>
+  <tr><th>Component</th><th>What goes in it</th><th>Props</th></tr>
+  <tr><td><code>Header.tsx</code></td><td>The whole <code>&lt;header&gt;</code> block</td><td>none</td></tr>
+  <tr><td><code>Nav.tsx</code></td><td>The whole <code>&lt;nav&gt;</code> block</td><td>none</td></tr>
+  <tr><td><code>InfoCard.tsx</code></td><td>One <code>&lt;li class="card"&gt;</code></td><td><span class="req">three &mdash; see below</span></td></tr>
+  <tr><td><code>Footer.tsx</code></td><td>The whole <code>&lt;footer&gt;</code> block</td><td>none</td></tr>
+</table>
+
+<p>Start with <code>Header</code>, because it is the easy one:</p>
+
+<pre><code>// src/components/Header.tsx
+
+export function Header() {
+  return (
+    &lt;header&gt;
+      {/* ...the header markup, moved out of page.tsx... */}
+    &lt;/header&gt;
+  );
+}</code></pre>
+
+<p>And at the top of <code>page.tsx</code>:</p>
+
+<pre><code>import { Header } from "@/components/Header";</code></pre>
+
+<p>
+  That <code>@/</code> means "start at <code>src/</code>". It is the import alias
+  you said yes to during setup, and it saves you from counting
+  <code>../../</code> for the rest of your life.
+</p>
+
+<div class="callout check">
+  <p>
+    <b>Check.</b> After <code>Header</code> is pulled out, the page should look
+    <b>exactly the same</b>. Nothing moved on screen. Only where the markup lives
+    changed. If the page changed, you moved the wrong lines.
+  </p>
+</div>
+
+<h2>5. The one with props &mdash; <code>InfoCard</code></h2>
+
+<p>
+  The three cards are the same shape with different words in them. That is what a
+  prop is for: one component, told what to say.
+</p>
+
+<p><span class="req">Required.</span> <code>InfoCard</code> takes three props:</p>
+
+<table>
+  <tr><th>Prop</th><th>Type</th><th>What it is</th></tr>
+  <tr><td><code>title</code></td><td><code>string</code></td><td>The <code>&lt;h3&gt;</code> &mdash; "Hours"</td></tr>
+  <tr><td><code>body</code></td><td><code>string</code></td><td>The paragraph under it</td></tr>
+  <tr><td><code>detail</code></td><td><code>string</code></td><td>The small grey line at the bottom</td></tr>
+</table>
+
+<p>
+  <span class="req">Required.</span> Write the type out on its own, above the
+  component. Don't cram it inline. You want to be able to read it:
+</p>
+
+<pre><code>// src/components/InfoCard.tsx
+
+type InfoCardProps = {
+  title: string;
+  body: string;
+  detail: string;
+};
+
+export function InfoCard({ title, body, detail }: InfoCardProps) {
+  return (
+    &lt;li className="card"&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      {/* ...you finish it... */}
+    &lt;/li&gt;
+  );
+}</code></pre>
+
+<p>
+  Those curly braces in <code>{ title, body, detail }</code> are destructuring
+  &mdash; the same thing you did to plain objects in JavaScript. React hands your
+  component <i>one</i> object with all the props in it; this pulls the three you
+  want out of it by name.
+</p>
+
+<p>Then use it three times in <code>page.tsx</code>:</p>
+
+<pre><code>&lt;ul className="cards"&gt;
+  &lt;InfoCard
+    title="Hours"
+    body="Open 9 to 7 Monday through Thursday, 9 to 5 on Friday and Saturday, closed Sunday."
+    detail="The book drop out front is unlocked all night."
+  /&gt;
+  {/* ...two more... */}
+&lt;/ul&gt;</code></pre>
+
+<div class="callout check">
+  <p>
+    <b>Prove the types are real.</b> This is the part people skip, and it is the
+    only part that shows you what TypeScript is <i>for</i>.
+  </p>
+  <ol>
+    <li>Delete <code>detail="..."</code> from one of the three cards. Save.</li>
+    <li>Your editor should underline <code>&lt;InfoCard&gt;</code> in red before you run anything at all.</li>
+    <li>Run <code>npm run build</code> in a second terminal. It should <b>fail</b>, and the error should name the missing prop.</li>
+    <li>Now try <code>title={42}</code>. Read that error too. Then put everything back.</li>
+  </ol>
+  <p>
+    Nothing was running. Nobody clicked anything. The mistake got caught while
+    you were still typing. That is the whole pitch.
+  </p>
+</div>
+
+<h2>6. Optional, if you finish early</h2>
+
+<ul>
+  <li>
+    Add a fourth card &mdash; "Meeting rooms", or whatever you want. Notice you
+    write six words instead of fifteen lines, because <code>InfoCard</code>
+    already exists. That is the payoff.
+  </li>
+  <li>
+    Make <code>detail</code> optional: <code>detail?: string</code>. Then render
+    the small grey line <i>only</i> when it was passed:
+    <code>{detail &amp;&amp; &lt;p className="detail"&gt;{detail}&lt;/p&gt;}</code>.
+    Add a card with no detail and confirm the little divider line doesn't show up.
+  </li>
+  <li>
+    Move the three cards' text into an array of objects at the top of
+    <code>page.tsx</code> and render them with <code>.map()</code>. React will
+    warn you in the console about a missing <code>key</code>. That is lab 2
+    &mdash; look ahead if you want it.
+  </li>
+</ul>
+
+<h2>What "done" looks like</h2>
+
+<ul>
+  <li>The page at <code>localhost:3000</code> is indistinguishable from <code>index.html</code>.</li>
+  <li><code>src/app/page.tsx</code> is short &mdash; a header, a nav, three cards, a footer. The whole page fits on one screen.</li>
+  <li>There are four files in <code>src/components/</code>.</li>
+  <li><code>InfoCard</code> has a named props type with three <code>string</code>s.</li>
+  <li><code>npm run build</code> finishes with no errors.</li>
+</ul>
+
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 5, Day 3.</p>
+</footer>
+
+</body>
+</html>

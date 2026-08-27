@@ -1,0 +1,202 @@
+/* Riverbend Farmers Market — Saturday vendor list
+   Plain CSS. No frameworks, nothing to install. */
+
+:root {
+  --paper: #f7f6f3;
+  --card: #ffffff;
+  --ink: #191d1f;
+  --ink-2: #4a5257;
+  --ink-3: #7b848a;
+  --rule: #e2e0da;
+  --accent: #2f6b3a;
+  --accent-soft: #e4efe6;
+  --away: #8a5a1f;
+  --away-soft: #f6ece0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #12161a;
+    --card: #1a2026;
+    --ink: #e9ecee;
+    --ink-2: #b0b8bd;
+    --ink-3: #848d93;
+    --rule: #2a333b;
+    --accent: #6cbb7c;
+    --accent-soft: #16281a;
+    --away: #d6a462;
+    --away-soft: #2b2114;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0 auto;
+  padding: 0 22px 70px;
+  max-width: 760px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif;
+}
+
+/* ---------- header ---------- */
+
+header { padding: 44px 0 26px; }
+
+.kicker {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+h1 {
+  margin: 0 0 12px;
+  font-size: 34px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  margin: 0;
+  max-width: 54ch;
+  font-size: 17px;
+  color: var(--ink-2);
+}
+
+/* ---------- nav ---------- */
+
+nav {
+  padding: 0 0 22px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 34px;
+  font-size: 15px;
+  color: var(--ink-3);
+}
+
+nav a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+nav a:hover { text-decoration: underline; }
+
+/* ---------- main ---------- */
+
+h2 {
+  margin: 0 0 16px;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ---------- the vendor list ---------- */
+
+.vendors {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+.vendor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.vendor:last-child { border-bottom: none; }
+
+.what { min-width: 0; }
+
+.vendor h3 {
+  margin: 0 0 2px;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+
+.sells {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: none;
+}
+
+.stall {
+  font-size: 13px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* ---------- the status badge ---------- */
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.badge.is-here {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.badge.is-away {
+  color: var(--away);
+  background: var(--away-soft);
+  border-color: var(--away);
+}
+
+@media (max-width: 520px) {
+  .vendor {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* ---------- note ---------- */
+
+.note {
+  margin: 22px 0 0;
+  font-size: 14px;
+  color: var(--ink-3);
+  max-width: 56ch;
+}
+
+/* ---------- footer ---------- */
+
+footer {
+  margin-top: 44px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+
+footer p { margin: 0 0 4px; }
+
+footer .small { font-size: 12px; }
