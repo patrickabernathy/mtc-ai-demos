@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W5D3-2 - Props, a typed list, and .map()</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    padding: 0 22px 80px;
+    max-width: 760px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 30px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 58ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 40px 0 12px; font-size: 22px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h3 { margin: 26px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 66ch; }
+  ul, ol { max-width: 66ch; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 "Cascadia Code", Consolas, ui-monospace, monospace; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .req { color: var(--accent); font-weight: 700; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W5D3 &middot; 2 of 3 &middot; do lab 1 first</p>
+  <h1>Props, a typed list, and .map()</h1>
+  <p class="lede">Same idea as lab 1, one step harder. This page has six near-identical rows in it, so this time the words come out of the markup entirely and live in a typed data file &mdash; and one component renders the whole list. Still no clicking. Still all layout.</p>
+</header>
+
+<h2>1. Make the Next.js app</h2>
+
+<p>
+  Open a terminal <b>in this lab folder</b> (the one holding
+  <code>index.html</code>) and run:
+</p>
+
+<pre><code>npx create-next-app@latest market-app</code></pre>
+
+<p>
+  It asks a pile of questions. Answer them exactly like this &mdash; these are
+  the settings we use for every project in this class:
+</p>
+
+<table>
+  <tr><th>It asks</th><th>You answer</th></tr>
+  <tr><td>What is your project named?</td><td><code>market-app</code></td></tr>
+  <tr><td>Would you like to use the recommended defaults?</td><td><b>Customize</b> &mdash; don't take the defaults</td></tr>
+  <tr><td>Would you like to use TypeScript?</td><td><b>Yes</b></td></tr>
+  <tr><td>Which linter would you like to use?</td><td><b>None</b></td></tr>
+  <tr><td>Would you like to enable React Compiler?</td><td><b>No</b></td></tr>
+  <tr><td>Would you like to use Tailwind CSS?</td><td><b>Yes</b></td></tr>
+  <tr><td>Would you like your code inside a <code>src/</code> directory?</td><td><b>Yes</b></td></tr>
+  <tr><td>Would you like to use App Router?</td><td><b>Yes</b></td></tr>
+  <tr><td>Would you like to customize the import alias?</td><td><b>No</b></td></tr>
+  <tr><td>Would you like to create an <code>AGENTS.md</code> file?</td><td><b>No</b></td></tr>
+</table>
+
+<p>
+  The exact wording and the order of these move around between versions of
+  Next. Answer what's on your screen, not what's in the second column of a
+  table &mdash; if you get a question that isn't listed here, take the
+  recommended answer and write the question down so we can talk about it.
+</p>
+
+<p>Then start it:</p>
+
+<pre><code>cd market-app
+npm run dev</code></pre>
+
+<p>
+  Open <a href="http://localhost:3000">http://localhost:3000</a>. You should get
+  the Next.js starter page. Leave <code>npm run dev</code> running the whole
+  night &mdash; it rebuilds every time you save.
+</p>
+
+<div class="callout check">
+  <p>
+    <b>Know where you are.</b> Because you said yes to <code>src/</code>, your
+    code lives in <code>src/app/</code>, not <code>app/</code>. Every path in
+    these instructions starts from inside <code>market-app</code>.
+  </p>
+</div>
+
+<h2>2. Move the stylesheet over</h2>
+
+<p>
+  You said yes to Tailwind, so <code>src/app/globals.css</code> already has
+  Tailwind's own setup in it plus a few starter rules. We're not writing
+  Tailwind classes tonight &mdash; we're bringing our own CSS, the same CSS you
+  already have.
+</p>
+
+<ol>
+  <li>Open <code>src/app/globals.css</code>.</li>
+  <li>Keep the very first line, <code>@import "tailwindcss";</code>.</li>
+  <li>Delete <b>everything else</b> in that file.</li>
+  <li>Paste the entire contents of this lab's <code>styles.css</code> underneath it.</li>
+</ol>
+
+<p>
+  Nothing changes on screen yet, because <code>page.tsx</code> is still the
+  Next starter. That's fine.
+</p>
+
+<div class="callout warn">
+  <p>
+    <b>Expect this one.</b> Tailwind quietly resets a lot of browser defaults
+    &mdash; heading sizes, list bullets, paragraph margins. Our stylesheet sets
+    all of that back on purpose, so the page should look right. But if
+    something is mysteriously the wrong size and it isn't in
+    <code>styles.css</code>, that's who did it. Inspect the element and look at
+    what's crossed out.
+  </p>
+</div>
+
+<h3>While you're in there</h3>
+
+<p>
+  Open <code>src/app/layout.tsx</code> and change the <code>title</code> and
+  <code>description</code> in <code>metadata</code> to match this page. That
+  export <i>is</i> the <code>&lt;title&gt;</code> tag &mdash; there is no
+  <code>&lt;head&gt;</code> for you to edit, because there is no
+  <code>index.html</code> any more. The <code>&lt;html&gt;</code> and
+  <code>&lt;body&gt;</code> tags moved here, written once for the whole site.
+</p>
+
+
+<h2>3. Rebuild the page in JSX</h2>
+
+<p>
+  Open <code>index.html</code> in a browser. Six vendors in a list, each with a
+  name, what they sell, a stall number, and a little coloured pill saying whether
+  they're here this Saturday. That's the target.
+</p>
+
+<p>
+  Same first move as lab 1: empty out <code>src/app/page.tsx</code> and rebuild
+  the markup in JSX. <code>class</code> becomes <code>className</code>, every tag
+  closes, HTML comments become <code>{/* */}</code>, and the whole thing has to
+  come back from <code>return</code> wrapped in one parent element.
+</p>
+
+<div class="callout check">
+  <p>
+    <b>Stop here and check.</b> The page at <code>localhost:3000</code> should be
+    indistinguishable from <code>index.html</code> &mdash; six rows, green pills
+    on four of them, orange on two. Get that right before you refactor anything.
+  </p>
+</div>
+
+<div class="callout warn">
+  <p>
+    <b>Expect this one.</b> The page is full of curly quotes and dashes written as
+    entities &mdash; <code>&amp;rsquo;</code>, <code>&amp;mdash;</code>,
+    <code>&amp;ndash;</code>. Those work fine in JSX
+    text. What does <i>not</i> work is a bare apostrophe inside JSX in some
+    setups, and a bare <code>&gt;</code> anywhere. If the build complains about an
+    unexpected token near a quote, that's what it is &mdash; use the entity.
+  </p>
+</div>
+
+<h2>4. The data goes in its own file</h2>
+
+<p>
+  In lab 1 the words lived in the markup. That's fine for three cards that never
+  change. Six vendors that change every week is a different story &mdash; that's
+  <i>data</i>, and data belongs somewhere a person can edit without reading any
+  JSX.
+</p>
+
+<p>
+  <span class="req">Required.</span> Make <code>src/types/vendor.ts</code>. Three
+  things go in it: a type for the status, a type for a vendor, and the array.
+</p>
+
+<pre><code>// src/types/vendor.ts
+
+// A vendor is either at the market this week or they are not.
+// There is no third option, and TypeScript is going to enforce that.
+export type VendorStatus = "here" | "away";
+
+export type Vendor = {
+  name: string;
+  sells: string;
+  stall: number;
+  status: VendorStatus;
+  backOn?: string; // only means anything when status is "away"
+};</code></pre>
+
+<p>
+  <code>"here" | "away"</code> is a <b>union type</b>. It is not
+  <code>string</code>. It is a list of the only two strings allowed, and anything
+  else is a compile error. <code>backOn?</code> with the question mark is an
+  <b>optional</b> property &mdash; it can be missing entirely.
+</p>
+
+<p>Then the data. Copy this in as-is:</p>
+
+<pre><code>export const vendors: Vendor[] = [
+  { name: "Hollis Family Farm",     sells: "Tomatoes, squash, whatever came in Thursday", stall: 1,  status: "here" },
+  { name: "Two Rivers Bread",       sells: "Sourdough, biscuits, the occasional cinnamon thing", stall: 3, status: "here" },
+  { name: "Pike Creek Honey",       sells: "Wildflower and sourwood, pints and quarts", stall: 4,  status: "away", backOn: "Aug 9" },
+  { name: "Marisol&rsquo;s Salsas",      sells: "Six heats, from mild to why", stall: 7,  status: "here" },
+  { name: "Gaffney Goat Dairy",     sells: "Chevre, feta, and soap nobody expects", stall: 8,  status: "away", backOn: "Aug 16" },
+  { name: "Ledbetter Cut Flowers",  sells: "Zinnias and dahlias while they last", stall: 11, status: "here" },
+];</code></pre>
+
+<div class="callout check">
+  <p>
+    <b>Try to break it.</b> Change one vendor's status to
+    <code>"maybe"</code>. Save. You should get a red underline immediately, and
+    <code>npm run build</code> should fail, and the error should tell you the
+    only two values it will accept. Put it back. That is a union type earning its
+    keep &mdash; a typo that would have been a silently blank badge is now a
+    build failure.
+  </p>
+</div>
+
+<h2>5. Three components, smallest first</h2>
+
+<p>
+  <span class="req">Required.</span> Build these in <code>src/components/</code>.
+  Build them in this order &mdash; each one uses the one before it.
+</p>
+
+<table>
+  <tr><th>Component</th><th>Props</th><th>Renders</th></tr>
+  <tr>
+    <td><code>Badge.tsx</code></td>
+    <td><code>status: VendorStatus</code>, <code>backOn?: string</code></td>
+    <td>One <code>&lt;span className="badge ..."&gt;</code></td>
+  </tr>
+  <tr>
+    <td><code>VendorRow.tsx</code></td>
+    <td><code>vendor: Vendor</code></td>
+    <td>One <code>&lt;li className="vendor"&gt;</code>, using <code>Badge</code> inside it</td>
+  </tr>
+  <tr>
+    <td><code>VendorList.tsx</code></td>
+    <td><code>vendors: Vendor[]</code></td>
+    <td>The <code>&lt;ul className="vendors"&gt;</code>, one <code>VendorRow</code> per vendor</td>
+  </tr>
+</table>
+
+<p>
+  Pull the <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code> and
+  <code>&lt;footer&gt;</code> out into their own components too, the way you did
+  in lab 1. Those are the warm-up; the three above are the actual work.
+</p>
+
+<h3><code>Badge</code> &mdash; deciding a class name in code</h3>
+
+<p>
+  The badge is green when the vendor is here and orange when they're away. In the
+  HTML you wrote that by hand &mdash; <code>class="badge is-here"</code> on some
+  rows, <code>class="badge is-away"</code> on others. A component can't do that.
+  It gets told the status and has to work out the class itself.
+</p>
+
+<pre><code>// src/components/Badge.tsx
+
+import type { VendorStatus } from "@/types/vendor";
+
+type BadgeProps = {
+  status: VendorStatus;
+  backOn?: string;
+};
+
+export function Badge({ status, backOn }: BadgeProps) {
+  const className = status === "here" ? "badge is-here" : "badge is-away";
+  const label = status === "here" ? "Here" : `Back ${backOn}`;
+
+  return &lt;span className={className}&gt;{label}&lt;/span&gt;;
+}</code></pre>
+
+<p>
+  Two new things there. <code>className={className}</code> with curly braces
+  instead of quotes &mdash; that's how you put a <i>value</i> into an attribute
+  instead of a fixed string. And the backticks in <code>`Back ${backOn}`</code>
+  are a template literal, same as in plain JavaScript.
+</p>
+
+<p>
+  Note <code>import type</code>, not plain <code>import</code>. You're importing
+  a type, not a value &mdash; there's nothing there at runtime. TypeScript lets
+  you say so, and saying so is the habit we want.
+</p>
+
+<h3><code>VendorList</code> &mdash; the loop, and <code>key</code></h3>
+
+<p>
+  Six rows should not be six copies of anything. Hand the list component the whole
+  array and let it produce a row per item:
+</p>
+
+<pre><code>// src/components/VendorList.tsx
+
+import type { Vendor } from "@/types/vendor";
+import { VendorRow } from "@/components/VendorRow";
+
+export function VendorList({ vendors }: { vendors: Vendor[] }) {
+  return (
+    &lt;ul className="vendors"&gt;
+      {vendors.map((vendor) =&gt; (
+        &lt;VendorRow key={vendor.name} vendor={vendor} /&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</code></pre>
+
+<p>
+  It's <code>.map()</code>. The same <code>.map()</code> from the JavaScript
+  weeks. It takes an array of objects and gives back an array of JSX elements,
+  and React renders an array by rendering each thing in it.
+</p>
+
+<div class="callout warn">
+  <p>
+    <b>Expect this one.</b> Leave <code>key</code> off and the page renders
+    perfectly &mdash; and the browser console fills up with
+    <i>"Each child in a list should have a unique key prop."</i> Do that on
+    purpose once. Read it. Then put <code>key</code> back.
+  </p>
+  <p>
+    <code>key</code> is how React tells the six rows apart between renders. It
+    goes on the element <code>.map()</code> returns &mdash; not inside
+    <code>VendorRow</code>, on the <code>&lt;VendorRow&gt;</code> tag itself. And
+    it has to be genuinely unique. The array index is the tempting wrong answer;
+    the vendor's name is the right one here.
+  </p>
+</div>
+
+<h3><code>page.tsx</code>, when you're done</h3>
+
+<p>Roughly this. That's the whole page:</p>
+
+<pre><code>import { Header } from "@/components/Header";
+import { Nav } from "@/components/Nav";
+import { VendorList } from "@/components/VendorList";
+import { Footer } from "@/components/Footer";
+import { vendors } from "@/types/vendor";
+
+export default function Home() {
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;Nav /&gt;
+      &lt;main&gt;
+        &lt;h2&gt;Saturday&amp;rsquo;s vendors&lt;/h2&gt;
+        &lt;VendorList vendors={vendors} /&gt;
+        {/* ...the closing note... */}
+      &lt;/main&gt;
+      &lt;Footer /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+<div class="callout check">
+  <p>
+    <b>The real test.</b> Add a seventh vendor to the array in
+    <code>vendor.ts</code>. Save. Nothing else. A seventh row should appear,
+    correctly styled, with the right coloured badge, and you should not have
+    touched a single <code>.tsx</code> file to make it happen.
+  </p>
+  <p>
+    That is the thing worth learning tonight. Everything else is syntax.
+  </p>
+</div>
+
+<h2>6. Optional, if you finish early</h2>
+
+<ul>
+  <li>
+    Sort the list so the vendors who are here come first:
+    <code>[...vendors].sort(...)</code> before you map. Copy the array first
+    &mdash; <code>.sort()</code> changes the original in place, and mutating
+    imported data is a bug waiting to happen.
+  </li>
+  <li>
+    Show a count in the <code>&lt;h2&gt;</code>: "Saturday's vendors &mdash; 4 of
+    6 here this week". Compute it with <code>.filter()</code>, don't type the
+    number in. Then change a vendor's status and watch the heading follow.
+  </li>
+  <li>
+    <code>backOn</code> is optional, so <code>`Back ${backOn}`</code> will happily
+    print <code>Back undefined</code> if somebody forgets it. Handle that &mdash;
+    fall back to just "Away" when there's no date. Then ask yourself why
+    TypeScript didn't stop you, and look up <i>discriminated unions</i> if you
+    want the real answer.
+  </li>
+</ul>
+
+<h2>What "done" looks like</h2>
+
+<ul>
+  <li>The page at <code>localhost:3000</code> is indistinguishable from <code>index.html</code>.</li>
+  <li>No vendor's name, stall number, or status appears anywhere in a <code>.tsx</code> file. It is all in <code>src/types/vendor.ts</code>.</li>
+  <li><code>VendorStatus</code> is a union of exactly two strings, and setting a third one breaks the build.</li>
+  <li><code>VendorList</code> uses <code>.map()</code> with a <code>key</code>, and the console has no warnings in it.</li>
+  <li>Adding a vendor to the array is a one-line change.</li>
+  <li><code>npm run build</code> finishes with no errors.</li>
+</ul>
+
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 5, Day 3.</p>
+</footer>
+
+</body>
+</html>

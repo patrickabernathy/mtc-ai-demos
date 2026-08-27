@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Corner Store — Sunday order sheet</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <p class="kicker">The Corner Store &middot; Sunday, 9:40 PM</p>
+  <h1>Order sheet</h1>
+  <p class="lede">
+    What Ray looks at once a week, at the kitchen table, deciding what to buy.
+    Everything on this page is a snapshot &mdash; nothing here can be clicked.
+  </p>
+</header>
+
+<main>
+
+  <!-- ---------- the numbers across the top ---------- -->
+  <ul class="stats">
+    <li class="stat">
+      <span class="stat-label">Lines on the sheet</span>
+      <span class="stat-value">10</span>
+      <span class="stat-hint">across 3 sections</span>
+    </li>
+    <li class="stat">
+      <span class="stat-label">Below par</span>
+      <span class="stat-value">7</span>
+      <span class="stat-hint">will run out midweek</span>
+    </li>
+    <li class="stat">
+      <span class="stat-label">Spend last week</span>
+      <span class="stat-value">$1,842</span>
+    </li>
+    <li class="stat">
+      <span class="stat-label">Next delivery</span>
+      <span class="stat-value">Tue</span>
+      <span class="stat-hint">before 7 AM</span>
+    </li>
+  </ul>
+
+  <!-- ---------- section one ---------- -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Cooler</h2>
+      <p class="panel-note">Cutoff is 10 PM Sunday. Miss it and there is no Tuesday truck.</p>
+    </div>
+
+    <table class="lines">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th class="num">On hand</th>
+          <th class="num">Par</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Whole milk, gallon</td>
+          <td class="num">4</td>
+          <td class="num">12</td>
+          <td><span class="badge tone-late">Order tonight</span></td>
+        </tr>
+        <tr>
+          <td>Orange juice, half gal</td>
+          <td class="num">9</td>
+          <td class="num">10</td>
+          <td><span class="badge tone-warn">Getting low</span></td>
+        </tr>
+        <tr>
+          <td>Eggs, dozen</td>
+          <td class="num">18</td>
+          <td class="num">18</td>
+          <td><span class="badge tone-ok">Fine</span></td>
+        </tr>
+        <tr>
+          <td>Butter, 1 lb</td>
+          <td class="num">3</td>
+          <td class="num">8</td>
+          <td><span class="badge tone-late">Order tonight</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ---------- section two ---------- -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Shelf</h2>
+    </div>
+
+    <table class="lines">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th class="num">On hand</th>
+          <th class="num">Par</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Coffee, 12 oz bag</td>
+          <td class="num">7</td>
+          <td class="num">10</td>
+          <td><span class="badge tone-warn">Getting low</span></td>
+        </tr>
+        <tr>
+          <td>Peanut butter</td>
+          <td class="num">11</td>
+          <td class="num">8</td>
+          <td><span class="badge tone-ok">Fine</span></td>
+        </tr>
+        <tr>
+          <td>Bread, white</td>
+          <td class="num">2</td>
+          <td class="num">14</td>
+          <td><span class="badge tone-late">Order tonight</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ---------- section three ---------- -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Register</h2>
+      <p class="panel-note">Sam asked for these twice. Ray keeps forgetting.</p>
+    </div>
+
+    <table class="lines">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th class="num">On hand</th>
+          <th class="num">Par</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Receipt paper</td>
+          <td class="num">1</td>
+          <td class="num">6</td>
+          <td><span class="badge tone-late">Order tonight</span></td>
+        </tr>
+        <tr>
+          <td>Small paper bags</td>
+          <td class="num">400</td>
+          <td class="num">500</td>
+          <td><span class="badge tone-warn">Getting low</span></td>
+        </tr>
+        <tr>
+          <td>Pens</td>
+          <td class="num">22</td>
+          <td class="num">10</td>
+          <td><span class="badge tone-ok">Fine</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  <p>The Corner Store &middot; Main &amp; Third &middot; open 6 AM &ndash; 11 PM</p>
+  <p class="small">Practice page for the MTC AI-Enabled Full-Stack Developer program. Not a real store.</p>
+</footer>
+
+</body>
+</html>

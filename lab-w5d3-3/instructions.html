@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W5D3-3 - Composition, children, and scoped styles</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    padding: 0 22px 80px;
+    max-width: 760px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 30px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 58ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 40px 0 12px; font-size: 22px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h3 { margin: 26px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 66ch; }
+  ul, ol { max-width: 66ch; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 "Cascadia Code", Consolas, ui-monospace, monospace; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .req { color: var(--accent); font-weight: 700; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W5D3 &middot; 3 of 3 &middot; the hard one</p>
+  <h1>Composition, children, and scoped styles</h1>
+  <p class="lede">Ray&rsquo;s Sunday night order sheet. Repetition three levels deep: panels holding tables holding rows holding badges. You will build a component that holds other components, a status that is computed instead of stored, and one component whose CSS belongs to it alone. Still nothing to click.</p>
+</header>
+
+<h2>1. Make the Next.js app</h2>
+
+<p>
+  Open a terminal <b>in this lab folder</b> (the one holding
+  <code>index.html</code>) and run:
+</p>
+
+<pre><code>npx create-next-app@latest store-app</code></pre>
+
+<p>
+  It asks a pile of questions. Answer them exactly like this &mdash; these are
+  the settings we use for every project in this class:
+</p>
+
+<table>
+  <tr><th>It asks</th><th>You answer</th></tr>
+  <tr><td>What is your project named?</td><td><code>store-app</code></td></tr>
+  <tr><td>Would you like to use the recommended defaults?</td><td><b>Customize</b> &mdash; don't take the defaults</td></tr>
+  <tr><td>Would you like to use TypeScript?</td><td><b>Yes</b></td></tr>
+  <tr><td>Which linter would you like to use?</td><td><b>None</b></td></tr>
+  <tr><td>Would you like to enable React Compiler?</td><td><b>No</b></td></tr>
+  <tr><td>Would you like to use Tailwind CSS?</td><td><b>Yes</b></td></tr>
+  <tr><td>Would you like your code inside a <code>src/</code> directory?</td><td><b>Yes</b></td></tr>
+  <tr><td>Would you like to use App Router?</td><td><b>Yes</b></td></tr>
+  <tr><td>Would you like to customize the import alias?</td><td><b>No</b></td></tr>
+  <tr><td>Would you like to create an <code>AGENTS.md</code> file?</td><td><b>No</b></td></tr>
+</table>
+
+<p>
+  The exact wording and the order of these move around between versions of
+  Next. Answer what's on your screen, not what's in the second column of a
+  table &mdash; if you get a question that isn't listed here, take the
+  recommended answer and write the question down so we can talk about it.
+</p>
+
+<p>Then start it:</p>
+
+<pre><code>cd store-app
+npm run dev</code></pre>
+
+<p>
+  Open <a href="http://localhost:3000">http://localhost:3000</a>. You should get
+  the Next.js starter page. Leave <code>npm run dev</code> running the whole
+  night &mdash; it rebuilds every time you save.
+</p>
+
+<div class="callout check">
+  <p>
+    <b>Know where you are.</b> Because you said yes to <code>src/</code>, your
+    code lives in <code>src/app/</code>, not <code>app/</code>. Every path in
+    these instructions starts from inside <code>store-app</code>.
+  </p>
+</div>
+
+<h2>2. Move the stylesheet over</h2>
+
+<p>
+  You said yes to Tailwind, so <code>src/app/globals.css</code> already has
+  Tailwind's own setup in it plus a few starter rules. We're not writing
+  Tailwind classes tonight &mdash; we're bringing our own CSS, the same CSS you
+  already have.
+</p>
+
+<ol>
+  <li>Open <code>src/app/globals.css</code>.</li>
+  <li>Keep the very first line, <code>@import "tailwindcss";</code>.</li>
+  <li>Delete <b>everything else</b> in that file.</li>
+  <li>Paste the entire contents of this lab's <code>styles.css</code> underneath it.</li>
+</ol>
+
+<p>
+  Nothing changes on screen yet, because <code>page.tsx</code> is still the
+  Next starter. That's fine.
+</p>
+
+<div class="callout warn">
+  <p>
+    <b>Expect this one.</b> Tailwind quietly resets a lot of browser defaults
+    &mdash; heading sizes, list bullets, paragraph margins. Our stylesheet sets
+    all of that back on purpose, so the page should look right. But if
+    something is mysteriously the wrong size and it isn't in
+    <code>styles.css</code>, that's who did it. Inspect the element and look at
+    what's crossed out.
+  </p>
+</div>
+
+<h3>While you're in there</h3>
+
+<p>
+  Open <code>src/app/layout.tsx</code> and change the <code>title</code> and
+  <code>description</code> in <code>metadata</code> to match this page. That
+  export <i>is</i> the <code>&lt;title&gt;</code> tag &mdash; there is no
+  <code>&lt;head&gt;</code> for you to edit, because there is no
+  <code>index.html</code> any more. The <code>&lt;html&gt;</code> and
+  <code>&lt;body&gt;</code> tags moved here, written once for the whole site.
+</p>
+
+
+<h2>3. Rebuild the page in JSX</h2>
+
+<p>
+  Open <code>index.html</code>. Four numbers across the top, then three panels,
+  each with a heading, sometimes a note under the heading, and a table of stock
+  lines with a coloured status pill on each row.
+</p>
+
+<p>
+  Same first move as always: empty <code>src/app/page.tsx</code> and get the
+  markup rendering in JSX before you refactor a single thing.
+  <code>class</code> to <code>className</code>, close every tag, HTML comments
+  become <code>{/* */}</code>.
+</p>
+
+<div class="callout warn">
+  <p>
+    <b>Expect this one.</b> This page has real <code>&lt;table&gt;</code>s in it.
+    React is fussy about tables in a way the browser is not: if you write
+    <code>&lt;table&gt;&lt;tr&gt;</code> without a <code>&lt;tbody&gt;</code>
+    around the rows, the browser silently fixes it and React yells at you in the
+    console. The HTML already has <code>&lt;thead&gt;</code> and
+    <code>&lt;tbody&gt;</code> in the right places &mdash; keep them.
+  </p>
+</div>
+
+<div class="callout check">
+  <p>
+    <b>Stop here and check.</b> Page at <code>localhost:3000</code> matches
+    <code>index.html</code> exactly. Four stat cards, three panels, ten stock
+    lines, pills in three different colours. Then start cutting.
+  </p>
+</div>
+
+<h2>4. The data, and a function that decides things</h2>
+
+<p>
+  <span class="req">Required.</span> Make <code>src/types/order.ts</code>. Start
+  with the types:
+</p>
+
+<pre><code>// src/types/order.ts
+
+export type Tone = "ok" | "warn" | "late";
+
+export type OrderLine = {
+  item: string;
+  onHand: number;
+  par: number;
+};
+
+export type PanelData = {
+  title: string;
+  note?: string;      // not every panel has one
+  lines: OrderLine[]; // an array, inside an object, inside an array
+};
+
+export type StatItem = {
+  label: string;
+  value: string;      // "10", "$1,842", "Tue" &mdash; not all of these are numbers
+  hint?: string;
+};</code></pre>
+
+<p>
+  Look at <code>OrderLine</code> for a second. There's no
+  <code>status</code> on it and no <code>tone</code>. That's deliberate.
+  "Order tonight" isn't a fact about the item &mdash; it's a <i>conclusion</i>
+  you draw from <code>onHand</code> and <code>par</code>. Storing it means two
+  copies of the truth that can disagree, and eventually they will.
+</p>
+
+<p>
+  <span class="req">Required.</span> So write the rule down once, as a function,
+  in the same file:
+</p>
+
+<pre><code>export type Status = {
+  tone: Tone;
+  label: string;
+};
+
+export function statusFor(line: OrderLine): Status {
+  if (line.onHand &lt; line.par / 2) return { tone: "late", label: "Order tonight" };
+  if (line.onHand &lt; line.par)     return { tone: "warn", label: "Getting low" };
+  return { tone: "ok", label: "Fine" };
+}</code></pre>
+
+<p>
+  The return type <code>Status</code> is doing real work there. Try returning
+  <code>{ tone: "urgent", label: "..." }</code> from one branch and see what
+  TypeScript says. Then take the return type off entirely and notice that the
+  error moves somewhere much less helpful. Put it back.
+</p>
+
+<p>
+  <code>PanelData</code> and <code>StatItem</code>, not <code>Panel</code> and
+  <code>Stat</code>. You are about to write components called <code>Panel</code>
+  and <code>Stat</code>, and a file that imports both the type and the component
+  can't have two things called the same thing. Naming your way out of that
+  collision now is cheaper than renaming six files later.
+</p>
+
+<p>Then the data. Copy this in as-is:</p>
+
+<pre><code>export const stats: StatItem[] = [
+  { label: "Lines on the sheet", value: "10",     hint: "across 3 sections" },
+  { label: "Below par",          value: "7",      hint: "will run out midweek" },
+  { label: "Spend last week",    value: "$1,842" },
+  { label: "Next delivery",      value: "Tue",    hint: "before 7 AM" },
+];
+
+export const panels: PanelData[] = [
+  {
+    title: "Cooler",
+    note: "Cutoff is 10 PM Sunday. Miss it and there is no Tuesday truck.",
+    lines: [
+      { item: "Whole milk, gallon",     onHand: 4,  par: 12 },
+      { item: "Orange juice, half gal", onHand: 9,  par: 10 },
+      { item: "Eggs, dozen",            onHand: 18, par: 18 },
+      { item: "Butter, 1 lb",           onHand: 3,  par: 8  },
+    ],
+  },
+  {
+    title: "Shelf",
+    lines: [
+      { item: "Coffee, 12 oz bag", onHand: 7,  par: 10 },
+      { item: "Peanut butter",     onHand: 11, par: 8  },
+      { item: "Bread, white",      onHand: 2,  par: 14 },
+    ],
+  },
+  {
+    title: "Register",
+    note: "Sam asked for these twice. Ray keeps forgetting.",
+    lines: [
+      { item: "Receipt paper",    onHand: 1,   par: 6   },
+      { item: "Small paper bags", onHand: 400, par: 500 },
+      { item: "Pens",             onHand: 22,  par: 10  },
+    ],
+  },
+];</code></pre>
+
+<div class="callout check">
+  <p>
+    <b>Check your rule against the page.</b> Run those ten lines through
+    <code>statusFor</code> in your head and compare with
+    <code>index.html</code>. Every pill should come out the same colour with the
+    same words. If one doesn't, either your thresholds are wrong or you found a
+    line the rule doesn't describe &mdash; and finding that out is exactly why
+    you write the rule down.
+  </p>
+</div>
+
+<h2>5. Six components</h2>
+
+<p><span class="req">Required.</span> All in <code>src/components/</code>.</p>
+
+<table>
+  <tr><th>Component</th><th>Props</th><th>What it renders</th></tr>
+  <tr>
+    <td><code>Badge.tsx</code></td>
+    <td><code>tone: Tone</code>, <code>children: React.ReactNode</code></td>
+    <td>One status pill</td>
+  </tr>
+  <tr>
+    <td><code>Stat.tsx</code></td>
+    <td><code>label: string</code>, <code>value: string</code>, <code>hint?: string</code></td>
+    <td>One card from the row at the top. <b>Uses a CSS Module</b> &mdash; see below.</td>
+  </tr>
+  <tr>
+    <td><code>StatRow.tsx</code></td>
+    <td><code>stats: StatItem[]</code></td>
+    <td>The <code>&lt;ul className="stats"&gt;</code>, one <code>Stat</code> per item</td>
+  </tr>
+  <tr>
+    <td><code>LineRow.tsx</code></td>
+    <td><code>line: OrderLine</code></td>
+    <td>One <code>&lt;tr&gt;</code>, calling <code>statusFor</code> and using <code>Badge</code></td>
+  </tr>
+  <tr>
+    <td><code>LineTable.tsx</code></td>
+    <td><code>lines: OrderLine[]</code></td>
+    <td>The whole <code>&lt;table className="lines"&gt;</code> including the header row</td>
+  </tr>
+  <tr>
+    <td><code>Panel.tsx</code></td>
+    <td><code>title: string</code>, <code>note?: string</code>, <code>children: React.ReactNode</code></td>
+    <td>The <code>&lt;section className="panel"&gt;</code> and its heading &mdash; and then whatever it was handed</td>
+  </tr>
+</table>
+
+<h3><code>Badge</code> &mdash; children, and a typed lookup</h3>
+
+<p>
+  In lab 2 the badge worked out its own label. This one doesn't. It gets handed
+  the text the way an HTML tag does &mdash; between its opening and closing tags:
+</p>
+
+<pre><code>&lt;Badge tone="late"&gt;Order tonight&lt;/Badge&gt;</code></pre>
+
+<p>
+  Anything you put between the tags of a component arrives as a prop called
+  <code>children</code>. Its type is <code>React.ReactNode</code> &mdash; "any
+  renderable thing": a string, a number, an element, a list of them.
+</p>
+
+<p>
+  Three tones means three class names, and a chain of ternaries gets ugly fast at
+  three. Use a lookup object instead, and type it so it can't be incomplete:
+</p>
+
+<pre><code>// src/components/Badge.tsx
+
+import type { Tone } from "@/types/order";
+
+const toneClass: Record&lt;Tone, string&gt; = {
+  ok: "tone-ok",
+  warn: "tone-warn",
+  late: "tone-late",
+};
+
+type BadgeProps = {
+  tone: Tone;
+  children: React.ReactNode;
+};
+
+export function Badge({ tone, children }: BadgeProps) {
+  return &lt;span className={`badge ${toneClass[tone]}`}&gt;{children}&lt;/span&gt;;
+}</code></pre>
+
+<div class="callout check">
+  <p>
+    <b>Worth ten seconds.</b> Delete the <code>late:</code> line from
+    <code>toneClass</code>. <code>Record&lt;Tone, string&gt;</code> means "a key
+    for every <code>Tone</code>, no exceptions" &mdash; so TypeScript fails
+    immediately, pointing at the object, not at some blank badge you'd have found
+    on Thursday. Put it back, then add a fourth tone to the
+    <code>Tone</code> union and watch it fail from the other direction.
+  </p>
+</div>
+
+<h3><code>Panel</code> &mdash; a component that holds other components</h3>
+
+<p>
+  <code>Panel</code> is the interesting one. It draws the box, the heading, and
+  the optional note &mdash; and then it renders whatever it was given, without
+  knowing or caring what that is:
+</p>
+
+<pre><code>// src/components/Panel.tsx
+
+type PanelProps = {
+  title: string;
+  note?: string;
+  children: React.ReactNode;
+};
+
+export function Panel({ title, note, children }: PanelProps) {
+  return (
+    &lt;section className="panel"&gt;
+      &lt;div className="panel-head"&gt;
+        &lt;h2&gt;{title}&lt;/h2&gt;
+        {note &amp;&amp; &lt;p className="panel-note"&gt;{note}&lt;/p&gt;}
+      &lt;/div&gt;
+      {children}
+    &lt;/section&gt;
+  );
+}</code></pre>
+
+<p>
+  <code>{note &amp;&amp; &lt;p ...&gt;}</code> is how you render something
+  conditionally. If <code>note</code> is missing, the whole expression is
+  <code>undefined</code> and React draws nothing &mdash; no empty
+  <code>&lt;p&gt;</code>, no stray margin. The "Shelf" panel has no note; check
+  in the inspector that there is genuinely no paragraph tag there.
+</p>
+
+<div class="callout warn">
+  <p>
+    <b>Expect this one, eventually.</b> <code>{count &amp;&amp; ...}</code> with
+    a <code>number</code> that happens to be <code>0</code> renders a literal
+    <b>0</b> on the page, because <code>0</code> is falsy but still renderable.
+    It doesn't bite you tonight &mdash; <code>note</code> is a string &mdash; but
+    it will, and when a mysterious <b>0</b> shows up in your layout you'll know
+    why.
+  </p>
+</div>
+
+<h3>Then <code>page.tsx</code> is just the arrangement</h3>
+
+<pre><code>export default function Home() {
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;main&gt;
+        &lt;StatRow stats={stats} /&gt;
+        {panels.map((panel) =&gt; (
+          &lt;Panel key={panel.title} title={panel.title} note={panel.note}&gt;
+            &lt;LineTable lines={panel.lines} /&gt;
+          &lt;/Panel&gt;
+        ))}
+      &lt;/main&gt;
+      &lt;Footer /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+<p>
+  Read that and notice what isn't in it. No item names. No numbers. No class
+  names except the ones inside the components. It says <i>what the page is made
+  of</i>, and every question about how any one piece looks is answered somewhere
+  else. That's the whole idea, and it's the last time tonight anybody will say it
+  to you.
+</p>
+
+<h2>6. The styling bit &mdash; a CSS Module for <code>Stat</code></h2>
+
+<p>
+  Everything so far shares one giant <code>globals.css</code>, which means every
+  class name in the app is competing for the same handful of words. Two people
+  writing <code>.card</code> in the same project is a real Tuesday afternoon.
+</p>
+
+<p>
+  <span class="req">Required.</span> Give <code>Stat</code> its own stylesheet
+  instead. Make <code>src/components/Stat.module.css</code> &mdash; the
+  <code>.module.css</code> in the name is what turns the feature on:
+</p>
+
+<pre><code>/* src/components/Stat.module.css */
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  /* ...move the rest over from globals.css... */
+}
+
+.label { /* was .stat-label */ }
+.value { /* was .stat-value */ }
+.hint  { /* was .stat-hint  */ }</code></pre>
+
+<p>Use it like this:</p>
+
+<pre><code>// src/components/Stat.tsx
+
+import styles from "./Stat.module.css";
+
+export function Stat({ label, value, hint }: StatProps) {
+  return (
+    &lt;li className={styles.stat}&gt;
+      &lt;span className={styles.label}&gt;{label}&lt;/span&gt;
+      {/* ...you finish it... */}
+    &lt;/li&gt;
+  );
+}</code></pre>
+
+<p>Then <b>cut</b> the four <code>.stat*</code> rules out of
+  <code>globals.css</code>. Not copy &mdash; cut. If the page still looks right
+  afterwards, the module is doing the work. If it breaks, it wasn't.
+</p>
+
+<p>
+  Leave <code>.stats</code> (the grid that holds them) in
+  <code>globals.css</code> &mdash; that one belongs to <code>StatRow</code>, not
+  to <code>Stat</code>. Deciding which rule belongs to which component is the
+  actual skill here; the syntax takes four minutes.
+</p>
+
+<div class="callout check">
+  <p>
+    <b>Look at what it did.</b> With the page rendering correctly, right-click a
+    stat card and inspect it. The class isn't <code>stat</code> &mdash; it's
+    something like <code>Stat_stat__x7f2q</code>. Next rewrote it at build time so
+    it cannot possibly collide with anyone else's <code>.stat</code>. You wrote a
+    short name; the tool guaranteed a unique one.
+  </p>
+</div>
+
+<h2>7. Optional, if you finish early</h2>
+
+<ul>
+  <li>
+    The four stat values are typed in. Two of them are lies waiting to happen
+    &mdash; "Lines on the sheet: 10" and "Below par: 7" are both computable from
+    <code>panels</code>. Compute them, and delete those two entries from the
+    <code>stats</code> array. Then change an <code>onHand</code> somewhere and
+    watch the number at the top of the page move.
+  </li>
+  <li>
+    Sort each panel's lines worst-first, so the things Ray has to order tonight
+    are at the top of their table. Copy the array before you sort it.
+  </li>
+  <li>
+    Add a fourth panel &mdash; "Freezer", with whatever you like in it. Count how
+    many files you had to touch. It should be one.
+  </li>
+  <li>
+    You have Tailwind installed and haven't used it once. Rebuild
+    <code>Badge</code> with Tailwind utility classes instead of
+    <code>.badge</code> and the tone classes, and keep the rest of the page on
+    plain CSS. Then form an opinion about which one you'd rather maintain. Either
+    answer is defensible; having read both is the point.
+  </li>
+</ul>
+
+<h2>What "done" looks like</h2>
+
+<ul>
+  <li>The page at <code>localhost:3000</code> is indistinguishable from <code>index.html</code>.</li>
+  <li>No item name, number, or panel heading appears in a <code>.tsx</code> file &mdash; it's all in <code>src/types/order.ts</code>.</li>
+  <li>Nothing stores a status. <code>statusFor</code> works it out from <code>onHand</code> and <code>par</code>, in one place.</li>
+  <li><code>Panel</code> takes <code>children</code> and doesn't know a table is inside it.</li>
+  <li><code>Stat</code> is styled by <code>Stat.module.css</code>, and those rules are gone from <code>globals.css</code>.</li>
+  <li><code>src/app/page.tsx</code> fits on one screen and reads like an outline of the page.</li>
+  <li><code>npm run build</code> finishes with no errors, and the browser console is empty.</li>
+</ul>
+
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 5, Day 3.</p>
+</footer>
+
+</body>
+</html>
