@@ -12,13 +12,9 @@
 // the four planted bugs below. This line has no effect on those four bugs
 // or their error messages — it only keeps this file's names out of
 // store-typed.ts's way.
-export {};
+import { CartItem } from "./types"
 
-type CartItem = {
-  name: string;
-  price: number;
-  qty: number;
-};
+export {};
 
 function addItem(name: string, price: number, qty: number): void {
   console.log(name, price, qty);
@@ -33,15 +29,15 @@ function getTotal(items: CartItem[]): number {
 }
 
 // Bug 1: price is a string, not a number
-addItem('Coffee', '4.50', 2);
+addItem('Coffee', 4.50, 2);
 
 // Bug 2: qty is a string, not a number
-addItem('Muffin', 3.0, 'one');
+addItem('Muffin', 3.0, 1);
 
 // Bug 3: missing the required qty field
-let partialItem: CartItem = { name: 'Tea', price: 2.5 };
+let partialItem: CartItem = { name: 'Tea', price: 2.5, qty: 1 };
 
 // Bug 4: function claims to return string, actually returns number
-function discounted(price: number): string {
+function discounted(price: number): number {
   return price * 0.9;
 }
