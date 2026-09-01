@@ -1,9 +1,0 @@
-services:
-  site-examples:
-    image: nginx:alpine
-    container_name: site-examples
-    restart: unless-stopped
-    ports:
-      - "8080:80"
-    volumes:
-      - D:\Mounts\website:/usr/share/nginx/html:ro
