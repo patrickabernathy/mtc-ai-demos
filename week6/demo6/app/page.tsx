@@ -1,18 +1,58 @@
 "use client";
 
-import { useState } from "react";
-import { menu as hardcodedMenu, type CartLine, type MenuItem } from "../types/coffee";
+import { useEffect, useState } from "react";
+import type { CartLine, MenuItem } from "../types/coffee";
 import { Header } from "../components/Header";
 import { MenuList } from "../components/MenuList";
 import { CartList } from "../components/CartList";
 
+// The coffee cart's menu, served by a real server out on the internet.
+// Swap this for "/api/menu" to use the copy running on this machine instead.
+const MENU_URL = "https://n8n.aseglave.net/webhook/mtc-menu";
+
 export default function Home() {
   const [cart, setCart] = useState<CartLine[]>([]);
 
-  // The menu is sitting in a file on this machine. Nothing has to travel
-  // anywhere, so it is on screen before the page has finished painting.
-  // That is the thing that is about to change.
-  const menu = hardcodedMenu;
+  const [menu, setMenu] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Empty string means "nothing has gone wrong". Any text in here is a
+  // sentence we are willing to show a customer.
+  const [error, setError] = useState("");
+
+
+  // Pulled out of the effect so the Try again button can call the same code.
+  async function loadMenu() {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(MENU_URL);
+
+      // fetch does NOT throw on a 404 or a 500. As far as it is concerned,
+      // the round trip worked -- the server answered. We have to look at the
+      // answer ourselves and decide it was bad news.
+      if (!res.ok) {
+        throw new Error("The server said " + res.status + ".");
+      }
+
+      // res.json() hands back "anything". Saying MenuItem[] here is us
+      // writing down what we expect the server to have sent.
+      const data: MenuItem[] = await res.json();
+      setMenu(data);
+    } catch (err) {
+      console.error(err);
+      setError("We could not load the menu. That one is on us, not you.");
+    } finally {
+      // finally runs whether we succeeded or blew up, and either way we
+      // are no longer waiting.
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadMenu();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleAdd(item: MenuItem, qty: number) {
     setCart((prev) => {
@@ -34,7 +74,13 @@ export default function Home() {
     <div>
       <Header />
       <main>
-        <MenuList menu={menu} onAdd={handleAdd} />
+        <MenuList
+          menu={menu}
+          loading={loading}
+          error={error}
+          onRetry={loadMenu}
+          onAdd={handleAdd}
+        />
         <CartList cart={cart} onRemove={handleRemove} />
       </main>
     </div>

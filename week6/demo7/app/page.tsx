@@ -27,7 +27,11 @@ export default function Home() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(MENU_URL);
+      const res = await fetch(MENU_URL, {
+        headers: {
+          "x-auth": "mtc-fall-2026",
+        },
+      });
 
       // fetch does NOT throw on a 404 or a 500. As far as it is concerned,
       // the round trip worked -- the server answered. We have to look at the
@@ -36,7 +40,9 @@ export default function Home() {
         throw new Error("The server said " + res.status + ".");
       }
 
-      const data = await res.json();
+      // res.json() hands back "anything". Saying MenuItem[] here is us
+      // writing down what we expect the server to have sent.
+      const data: MenuItem[] = await res.json();
       setMenu(data);
     } catch (err) {
       console.error(err);
