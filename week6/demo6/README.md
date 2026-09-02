@@ -30,10 +30,22 @@ You can ask it for a bad day on purpose:
 | `?delay=4000` | The same five drinks, four seconds later |
 | `?state=empty` | A successful reply with an empty list in it |
 | `?state=error` | A 500 — the server admitting it broke |
+| `?status=404` | **Any status code you like** — 401, 404, 429, 503, even 418 |
 
-**If the server is having a bad night,** change `MENU_URL` in `app/page.tsx` to
-`"/api/menu"`. There is a copy of the same thing running on your own machine at
-`app/api/menu/route.ts`, and it answers all four of those the same way.
+That last one is the useful one. You cannot build a page that handles a 404
+properly by waiting for a real 404 to turn up; you have to be able to summon
+one. Each forced failure comes back with a sentence in it, so there is
+something real to display:
+
+```
+GET /webhook/mtc-menu?status=503
+{ "error": "We are closed for maintenance.", "status": 503 }
+```
+
+**If the server is unreachable** — no wifi, or it is having a bad night —
+change `MENU_URL` in `app/page.tsx` to `"/api/menu"`. There is a copy running
+on your own machine at `app/api/menu/route.ts`, and it answers every one of
+those the same way.
 
 ## The four situations
 

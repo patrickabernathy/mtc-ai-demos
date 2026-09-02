@@ -57,27 +57,31 @@ only way to know**, and reading that documentation is the actual skill here.
 
 `states/01-header-added/page.tsx` is that change, already made.
 
-## If you see a CORS error instead of a 403
+This endpoint takes the same `?delay=`, `?state=` and `?status=` options as the open one in
+demo6, so once the header is in you can still force any failure you want on top of it.
+
+## The extra round trip you can't see
 
 Sending a header the server didn't ask for by default means the browser does something extra
 first: it sends a small "may I?" request, called a **preflight**, before your real one. Only if
 that comes back approved does your actual request go out.
 
-That's normally invisible. But it means two round trips instead of one, and if the *preflight*
-times out the browser reports it as:
+You can watch it happen. Open the Network tab and you'll see *two* entries for one `fetch` —
+an `OPTIONS` request, then the `GET`. That's normal and there's nothing to fix; it's worth
+knowing only because it means a request with a custom header does twice the travelling.
+
+One thing it's genuinely useful to know: **a CORS error is not always a CORS problem.** If a
+cross-origin request fails for any reason at all — including the server simply not answering in
+time — the browser reports it as a CORS error, because it can't tell the difference between
+"didn't answer" and "refused." So if you ever see:
 
 ```
 blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present
 ```
 
-Which is misleading — nothing is misconfigured. The server just didn't answer in time, and
-the browser can't tell the difference between "didn't answer" and "refused."
-
-**If that happens, change `MENU_URL` to `"/api/menu"`.** The local copy demands the same header,
-so the lesson is identical, and a same-origin request needs no preflight at all.
-
-Worth knowing on its own: **a CORS error is not always a CORS problem.** It's what the browser
-says whenever a cross-origin request didn't complete cleanly, for any reason.
+check whether the server is actually up before you go changing your code. Switching `MENU_URL`
+to `"/api/menu"` is the fastest way to find out: the local copy demands the same header, so if
+that works, your code was never the problem.
 
 ## Read this part before you use a real API key
 

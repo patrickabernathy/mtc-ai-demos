@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
-// A local stand-in for the locked-down menu server, so this demo still works
-// when the real one is unreachable. It behaves the same way in the one respect
-// that matters: it refuses to answer without the x-auth header.
+// A local stand-in for the locked-down menu server. It behaves the same way
+// in the one respect that matters: it refuses to answer without the x-auth
+// header.
 //
 // If the real server is having a bad night, change MENU_URL in page.tsx to
 // "/api/menu" and the lesson is identical -- with the bonus that a same-origin
@@ -18,6 +18,21 @@ const menu = [
 ];
 
 const EXPECTED = "mtc-fall-2026";
+
+// A plain-English line for each status worth demonstrating, so a forced
+// failure still comes back with something a page could actually show.
+const MESSAGES: Record<number, string> = {
+  400: "That request did not make sense.",
+  401: "You are not signed in.",
+  403: "You are not allowed to see this.",
+  404: "There is no menu at that address.",
+  418: "I'm a teapot. No coffee.",
+  429: "Too many requests. Slow down.",
+  500: "The espresso machine is down.",
+  502: "The coffee cart is not answering.",
+  503: "We are closed for maintenance.",
+  504: "The kitchen took too long to reply.",
+};
 
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
@@ -35,8 +50,25 @@ export async function GET(request: Request) {
     return NextResponse.json("Authorization data is wrong!", { status: 403 });
   }
 
+  // ?status=404 forces any status code at all, so you can build the page
+  // against a specific failure instead of waiting for one to happen.
+  const forced = Number(params.get("status"));
+  if (forced >= 200 && forced <= 599) {
+    if (forced < 300) {
+      return NextResponse.json(menu, { status: forced });
+    }
+    return NextResponse.json(
+      { error: MESSAGES[forced] ?? `The server said ${forced}.`, status: forced },
+      { status: forced }
+    );
+  }
+
+  // Kept because this is what the slides use.
   if (state === "error") {
-    return NextResponse.json({ error: "The espresso machine is down." }, { status: 500 });
+    return NextResponse.json(
+      { error: MESSAGES[500], status: 500 },
+      { status: 500 }
+    );
   }
   if (state === "empty") {
     return NextResponse.json([]);
