@@ -6,7 +6,7 @@ Teaching repo for the MTC AI-Enabled Full-Stack Developer program. Everything he
 
 Code is organized by session: `week1/` through `week6/`, each containing `demo1/`, `demo2/`, ... (things built during lecture) and sometimes `lab1/`, `lab2/`, ... (things students build). Early weeks are plain HTML/CSS/JS; week4 introduces TypeScript; week5 onward is Next.js, each demo folder its own self-contained app with its own `package.json`.
 
-Later demos in a week usually refactor the earlier one — e.g. week6 goes `demo1` (no components) → `demo2` (components) → `demo3` (client state) on the same coffee cart, then `demo4` (a one-page form) → `demo5` (the same form as a three-card wizard). When changing one, check whether the sibling demos are meant to stay in sync or to deliberately differ, since the difference between them *is* the lesson.
+Later demos in a week usually refactor the earlier one — e.g. week6 goes `demo1` (no components) → `demo2` (components) → `demo3` (client state) on the same coffee cart, then `demo4` (filter a list as you type), `demo5` (a one-page form) → `demo6` (the same form as a three-card wizard), then `demo7` (the menu fetched from a server) → `demo8` (the same fetch behind an `x-auth` header). When changing one, check whether the sibling demos are meant to stay in sync or to deliberately differ, since the difference between them *is* the lesson.
 
 ## Branches
 

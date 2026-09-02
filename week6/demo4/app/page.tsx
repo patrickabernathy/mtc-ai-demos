@@ -1,46 +1,41 @@
+"use client";
+
+import { useState } from "react";
+import { drinks } from "../types/drinks";
+import { DrinkRow } from "../components/DrinkRow";
+
 export default function Home() {
+  const [query, setQuery] = useState("");
+
+  // The box works. The list ignores it. That is tonight's job.
+  console.log("query is:", query);
+
   return (
     <div>
       <header>
         <h1>The Daily Grind</h1>
-        <p className="tagline">Order in, pick up at the window.</p>
+        <p className="tagline">Full menu &mdash; find what you want.</p>
       </header>
 
       <main>
-        <form className="order-form">
-          <h2>Pickup order</h2>
+        <div className="search">
+          <label htmlFor="q">Search the menu</label>
+          <input
+            id="q"
+            className="search-input"
+            placeholder="try: latte"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
 
-          <div className="field">
-            <label htmlFor="name">Name</label>
-            <input id="name" />
-          </div>
+        <p className="count">{drinks.length} drinks</p>
 
-          <div className="field">
-            <label htmlFor="email">Email</label>
-            <input id="email" type="email" />
-          </div>
-
-          <div className="field">
-            <label htmlFor="phone">Phone</label>
-            <input id="phone" />
-          </div>
-
-          <div className="field">
-            <label htmlFor="pickup">Pickup time</label>
-            <select id="pickup">
-              <option value="">Choose a time</option>
-              <option value="7:30 am">7:30 am</option>
-              <option value="8:00 am">8:00 am</option>
-              <option value="8:30 am">8:30 am</option>
-              <option value="9:00 am">9:00 am</option>
-              <option value="9:30 am">9:30 am</option>
-            </select>
-          </div>
-
-          <button type="submit" className="submit-btn">
-            Place order
-          </button>
-        </form>
+        <ul className="drink-list">
+          {drinks.map((drink) => (
+            <DrinkRow key={drink.name} drink={drink} />
+          ))}
+        </ul>
       </main>
     </div>
   );

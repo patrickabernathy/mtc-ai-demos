@@ -18,78 +18,66 @@ header h1 {
   margin-top: 0;
 }
 
-.order-form {
+main {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.menu {
+  flex: 2;
+}
+
+.menu-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 1.25rem 1.5rem;
-  max-width: 26rem;
+  padding: 0.75rem 1rem;
 }
 
-.order-form h2 {
-  margin-top: 0;
+.menu-item-info {
+  flex: 1;
 }
 
-.field {
-  margin-bottom: 1rem;
+.menu-item-info h3 {
+  margin: 0;
 }
 
-.field label {
-  display: block;
-  margin-bottom: 0.25rem;
-  font-weight: 600;
+.price {
+  margin: 0.15rem 0 0;
+  color: #555;
 }
 
-.field input,
-.field select {
-  width: 100%;
-  padding: 0.5rem;
+.qty-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.qty-btn {
+  width: 1.75rem;
+  height: 1.75rem;
   border: 1px solid #ccc;
-  border-radius: 6px;
-  font: inherit;
   background: #fff;
-  /* Makes the border and background colour changes below fade instead of snap. */
-  transition: border-color 0.15s, background-color 0.15s;
+  border-radius: 4px;
+  font: inherit;
+  cursor: pointer;
 }
 
-/* --- The states. This is the lesson. --- */
-
-/* :hover — the mouse is over it. */
-.field input:hover,
-.field select:hover {
-  border-color: #999;
+.qty {
+  min-width: 1.25rem;
+  text-align: center;
 }
 
-/* :focus — it's the field you're typing in. Never remove the ring without
-   putting something visible back; keyboard users navigate by it. */
-.field input:focus,
-.field select:focus {
-  outline: none;
-  border-color: #5b3a29;
-  box-shadow: 0 0 0 3px #e6dcd5;
-}
-
-/* .invalid — OUR class, added by page.tsx after a failed submit. The browser
-   has a built-in :invalid, but it fires before the user has typed anything,
-   so the whole form loads red. We control the timing instead. */
-.field input.invalid,
-.field select.invalid {
-  border-color: #a12b2b;
-  background: #fdf5f5;
-}
-
-.field input.invalid:focus,
-.field select.invalid:focus {
-  box-shadow: 0 0 0 3px #f3dada;
-}
-
-.error {
-  color: #a12b2b;
-  font-size: 0.85rem;
-  margin: 0.3rem 0 0;
-}
-
-.submit-btn {
-  padding: 0.6rem 1rem;
+.add-btn {
+  padding: 0.5rem 0.85rem;
   border: none;
   border-radius: 6px;
   background: #5b3a29;
@@ -98,20 +86,133 @@ header h1 {
   cursor: pointer;
 }
 
-.submit-btn:hover {
-  background: #462c1f;
-}
-
-/* :disabled — the button is off, so it should look off AND lose the pointer. */
-.submit-btn:disabled {
-  background: #bbb;
-  cursor: not-allowed;
-}
-
-.success {
-  border: 1px solid #cfe3cf;
-  background: #f4faf4;
+.cart {
+  flex: 1;
+  border: 1px solid #ddd;
   border-radius: 8px;
   padding: 1rem 1.25rem;
-  max-width: 26rem;
+}
+
+.cart-empty {
+  color: #777;
+}
+
+.cart-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cart-item-name {
+  flex: 1;
+}
+
+.cart-item-qty {
+  color: #555;
+}
+
+.remove-btn {
+  border: none;
+  background: none;
+  color: #a12b2b;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}
+
+.cart-total {
+  font-weight: bold;
+  border-top: 1px solid #ddd;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+footer {
+  margin-top: 2rem;
+}
+
+.small {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+
+/* ---- the filter demo ---------------------------------------------------- */
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.search label {
+  font-weight: 600;
+}
+
+.search-input {
+  flex: 1 1 16rem;
+  padding: 0.5rem 0.65rem;
+  font-size: 1rem;
+  border: 1px solid #999;
+}
+
+.clear-btn {
+  padding: 0.45rem 0.8rem;
+  border: 1px solid #999;
+  background: #fff;
+  cursor: pointer;
+}
+
+.count {
+  margin: 0 0 0.75rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.drink-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid #ddd;
+}
+
+.drink-row {
+  display: grid;
+  grid-template-columns: 1fr auto 5rem;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.55rem 0.25rem;
+  border-bottom: 1px solid #eee;
+}
+
+.drink-name {
+  font-weight: 600;
+}
+
+.drink-cat {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #777;
+}
+
+.drink-price {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.no-matches {
+  padding: 1rem 0.25rem;
+  color: #555;
+  font-style: italic;
 }
