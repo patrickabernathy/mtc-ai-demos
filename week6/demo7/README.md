@@ -64,6 +64,25 @@ The bug worth remembering: 1 and 2 look identical unless you make them
 different. A store with fifty products spends its first second telling
 customers it has nothing.
 
+## What to do
+
+`app/page.tsx` still reads the menu out of `types/coffee.ts`. Replace it with
+the real thing, one situation at a time.
+
+1. Make `menu` state that starts as an empty array, and load it in a
+   `useEffect` that runs once (`[]` as the second argument) — `fetch`, then
+   `res.json()`, then `setMenu`. Delete the hard-coded import.
+2. Watch the first second closely with `?delay=4000` on the URL. The page says
+   the cart is out of coffee. Add a `loading` state so it can say it is waiting.
+3. Try `?state=empty`. "Waiting" and "we have nothing" are two different
+   sentences and the page has to be able to say both.
+4. Try `?state=error`. Nothing happens — that is the surprise below. Check
+   `res.ok` yourself, `throw` when it is false, catch it into an `error` state,
+   and show that sentence with a **Try again** button that calls the same
+   loading function.
+5. Try `?status=404`, `?status=503`, `?status=418`. Your error message should
+   change with each one without you touching the code again.
+
 ## The states folder
 
 `states/` holds the page at each point we got to in class. It is reference, not

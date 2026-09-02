@@ -10,6 +10,21 @@ npm install
 npm run dev
 ```
 
+## What to do
+
+`app/page.tsx` renders all fourteen drinks and ignores the box. Make it filter.
+
+1. Work out the search text once, above the JSX: `query.trim().toLowerCase()`.
+2. Build the list to show with `.filter()` — keep a drink if its name contains
+   that text. Do **not** put the result in `useState`.
+3. Render `results` instead of `drinks`, and make the count line honest:
+   "4 of 14 drinks".
+4. Type `latte` in lower case. It finds nothing until you lower-case both sides.
+5. Say something when nothing matches. A blank list looks broken.
+6. Search the category as well as the name, so typing `tea` finds the whole tea
+   section.
+7. Add a **Clear** button that shows only when there is something to clear.
+
 ## Why this one matters
 
 It is the payoff of the whole "one source of truth" idea. There is **one** piece

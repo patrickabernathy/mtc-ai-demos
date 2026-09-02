@@ -27,6 +27,34 @@ Do not merge `answers` into `main` — that would hand students the solution. Wh
 - Copy freely from earlier demos. Recognizing last week's pattern is a feature; inventing a new one each week is a cost students pay.
 - Small files people can read top to bottom in one pass. If a demo file needs a scroll to understand, it's doing too much.
 
+## Every demo gets a README
+
+Demos are given live, but students come back to them alone, days later, with no
+one to explain what they were looking at. Every `demoN/` and `labN/` folder gets
+a `README.md` so the folder makes sense on its own. When you create a demo, write
+its README as part of the same change; when you change what a demo does, update
+its README in the same commit.
+
+Keep it short — a page, skimmable, in the same plain voice as the code. It covers:
+
+- **What this demo is** — one or two sentences. The idea it exists to make
+  visible, and how it differs from the sibling demo it refactors.
+- **How to run it** — the literal commands (`npm install`, `npm run dev`) and the
+  URL to open. Assume they have forgotten.
+- **What to do** — the exercise, written so someone can work it on their own
+  without the lecture: what to change, in which file, and what should happen on
+  screen when it works. This is the part that is usually missing.
+- **The teaching point** — why it is done this way, the mistake it avoids, the
+  thing worth remembering. Show the two or three lines that matter.
+- **The `states/` folder**, if there is one — a table of each checkpoint and what
+  it shows, plus the note that `states/` is reference only since Next builds only
+  what is under `app/`.
+
+`week6/demo4/README.md` and `week6/demo7/README.md` are the shape to copy.
+
+Mind the branch: the README on `main` sets up the exercise and must not give away
+the solution. The one on `answers` can describe the finished version.
+
 ## Conventions
 
 - **New projects are Next.js + TypeScript** unless a lesson specifically calls for something else. Copy `next.config.ts`, `tsconfig.json`, and `.gitignore` from the most recent week's demo so the setup is identical every time.
