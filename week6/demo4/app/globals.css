@@ -1,0 +1,117 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 2rem auto;
+  max-width: 60rem;
+  color: #222;
+}
+
+header {
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  margin-bottom: 0.25rem;
+}
+
+.tagline {
+  color: #555;
+  margin-top: 0;
+}
+
+.order-form {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  max-width: 26rem;
+}
+
+.order-form h2 {
+  margin-top: 0;
+}
+
+.field {
+  margin-bottom: 1rem;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font: inherit;
+  background: #fff;
+  /* Makes the border and background colour changes below fade instead of snap. */
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+/* --- The states. This is the lesson. --- */
+
+/* :hover — the mouse is over it. */
+.field input:hover,
+.field select:hover {
+  border-color: #999;
+}
+
+/* :focus — it's the field you're typing in. Never remove the ring without
+   putting something visible back; keyboard users navigate by it. */
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: #5b3a29;
+  box-shadow: 0 0 0 3px #e6dcd5;
+}
+
+/* .invalid — OUR class, added by page.tsx after a failed submit. The browser
+   has a built-in :invalid, but it fires before the user has typed anything,
+   so the whole form loads red. We control the timing instead. */
+.field input.invalid,
+.field select.invalid {
+  border-color: #a12b2b;
+  background: #fdf5f5;
+}
+
+.field input.invalid:focus,
+.field select.invalid:focus {
+  box-shadow: 0 0 0 3px #f3dada;
+}
+
+.error {
+  color: #a12b2b;
+  font-size: 0.85rem;
+  margin: 0.3rem 0 0;
+}
+
+.submit-btn {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #5b3a29;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background: #462c1f;
+}
+
+/* :disabled — the button is off, so it should look off AND lose the pointer. */
+.submit-btn:disabled {
+  background: #bbb;
+  cursor: not-allowed;
+}
+
+.success {
+  border: 1px solid #cfe3cf;
+  background: #f4faf4;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  max-width: 26rem;
+}

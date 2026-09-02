@@ -4,9 +4,9 @@ Teaching repo for the MTC AI-Enabled Full-Stack Developer program. Everything he
 
 ## Layout
 
-Code is organized by session: `week1/` through `week6/`, each containing `demo1/`, `demo2/`, ... (things built during lecture) and sometimes `lab1/`, `lab2/`, ... (things students build). Early weeks are plain HTML/CSS/JS; week4 introduces TypeScript; week5 and week6 are Next.js apps, each demo folder its own self-contained app with its own `package.json`.
+Code is organized by session: `week1/` through `week6/`, each containing `demo1/`, `demo2/`, ... (things built during lecture) and sometimes `lab1/`, `lab2/`, ... (things students build). Early weeks are plain HTML/CSS/JS; week4 introduces TypeScript; week5 onward is Next.js, each demo folder its own self-contained app with its own `package.json`.
 
-Later demos in a week usually refactor the earlier one — e.g. week6 goes `demo1` (no components) → `demo2` (components) → `demo3` (client state) on the same coffee cart. When changing one, check whether the sibling demos are meant to stay in sync or to deliberately differ, since the difference between them *is* the lesson.
+Later demos in a week usually refactor the earlier one — e.g. week6 goes `demo1` (no components) → `demo2` (components) → `demo3` (client state) on the same coffee cart, then `demo4` (a one-page form) → `demo5` (the same form as a three-card wizard). When changing one, check whether the sibling demos are meant to stay in sync or to deliberately differ, since the difference between them *is* the lesson.
 
 ## Branches
 
@@ -16,8 +16,20 @@ Later demos in a week usually refactor the earlier one — e.g. week6 goes `demo
 
 Do not merge `answers` into `main` — that would hand students the solution. When a new exercise starts, `main` moves forward to the new starting point and `answers` is rebuilt on top of it.
 
+## Do not over-engineer
+
+**This is a beginners class.** That is the single most important constraint in this repo, and it outranks every instinct toward good production code. A demo exists to make one idea visible, and every extra layer buries it.
+
+- Write the version a student could have written, not the version you'd ship. If there's an obvious way and a clever way, the obvious way is correct here.
+- No abstraction until the lesson is *about* that abstraction. No custom hooks, no context, no reducers, no generic helpers, no config objects, no error-handling framework, no barrel files.
+- No libraries beyond what the week has taught. No form libraries, no validation libraries, no state managers, no CSS frameworks. Hand-rolled and readable beats correct-and-opaque.
+- Don't handle edge cases nobody will hit during a demo. Skip the loading states, the accessibility-beyond-labels, the defensive checks — they're real concerns in real apps and pure noise on a projector.
+- Copy freely from earlier demos. Recognizing last week's pattern is a feature; inventing a new one each week is a cost students pay.
+- Small files people can read top to bottom in one pass. If a demo file needs a scroll to understand, it's doing too much.
+
 ## Conventions
 
-- No build tooling beyond what a week's lesson has already introduced. If week3 hasn't covered npm, week3 demos don't get a `package.json`.
-- Prefer the obvious construct over the idiomatic-but-advanced one. Students have to read this cold.
+- **New projects are Next.js + TypeScript** unless a lesson specifically calls for something else. Copy `next.config.ts`, `tsconfig.json`, and `.gitignore` from the most recent week's demo so the setup is identical every time.
+- Plain `globals.css` with plain class names. No Tailwind, no CSS modules, no styled-components.
+- Props are typed inline in the function signature. Shared shapes go in a `types/` file only when more than one component needs them.
 - Comments explain *why this is the teaching point*, not what the line does.

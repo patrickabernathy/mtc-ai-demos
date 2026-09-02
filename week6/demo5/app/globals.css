@@ -1,0 +1,166 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 2rem auto;
+  max-width: 60rem;
+  color: #222;
+}
+
+header {
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  margin-bottom: 0.25rem;
+}
+
+.tagline {
+  color: #555;
+  margin-top: 0;
+}
+
+.steps {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  padding: 0;
+  margin: 0 0 1.25rem;
+  max-width: 26rem;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+}
+
+/* The one class that changes as you move through the wizard. */
+.step.active {
+  color: #5b3a29;
+  font-weight: 600;
+}
+
+.step.active .step-number {
+  background: #5b3a29;
+  border-color: #5b3a29;
+  color: #fff;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  max-width: 26rem;
+  margin-bottom: 1rem;
+}
+
+.card h2 {
+  margin-top: 0;
+}
+
+.field {
+  margin-bottom: 1rem;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font: inherit;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+
+.field input:hover,
+.field select:hover {
+  border-color: #999;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: #5b3a29;
+  box-shadow: 0 0 0 3px #e6dcd5;
+}
+
+.review {
+  margin: 0 0 1rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 1rem;
+}
+
+.review dt {
+  color: #555;
+}
+
+.review dd {
+  margin: 0;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.next-btn {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #5b3a29;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.next-btn:hover {
+  background: #462c1f;
+}
+
+/* Same :disabled idea as demo1 — the Next button stays off until the card's
+   own fields are filled in. */
+.next-btn:disabled {
+  background: #bbb;
+  cursor: not-allowed;
+}
+
+.back-btn {
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  border-color: #999;
+}
+
+.success {
+  border: 1px solid #cfe3cf;
+  background: #f4faf4;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  max-width: 26rem;
+}
