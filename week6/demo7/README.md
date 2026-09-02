@@ -57,6 +57,28 @@ only way to know**, and reading that documentation is the actual skill here.
 
 `states/01-header-added/page.tsx` is that change, already made.
 
+## If you see a CORS error instead of a 403
+
+Sending a header the server didn't ask for by default means the browser does something extra
+first: it sends a small "may I?" request, called a **preflight**, before your real one. Only if
+that comes back approved does your actual request go out.
+
+That's normally invisible. But it means two round trips instead of one, and if the *preflight*
+times out the browser reports it as:
+
+```
+blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present
+```
+
+Which is misleading — nothing is misconfigured. The server just didn't answer in time, and
+the browser can't tell the difference between "didn't answer" and "refused."
+
+**If that happens, change `MENU_URL` to `"/api/menu"`.** The local copy demands the same header,
+so the lesson is identical, and a same-origin request needs no preflight at all.
+
+Worth knowing on its own: **a CORS error is not always a CORS problem.** It's what the browser
+says whenever a cross-origin request didn't complete cleanly, for any reason.
+
 ## Read this part before you use a real API key
 
 The key above is sitting in plain text in a file that runs **in the browser**.
