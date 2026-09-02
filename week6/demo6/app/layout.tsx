@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "The Daily Grind",
-  description: "The Daily Grind — client-state coffee cart demo for class",
+  title: "The Daily Grind — Pickup Order",
+  description: "Three-card pickup wizard — passing data between components, demo for class",
 };
 
 export default function RootLayout({

@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 
-// A local stand-in for the menu server, answering exactly the same way.
+// A local stand-in for the locked-down menu server. It behaves the same way
+// in the one respect that matters: it refuses to answer without the x-auth
+// header.
 //
-// If the real server is unreachable -- no wifi, or it is having a bad night --
-// change MENU_URL in page.tsx to "/api/menu" and every demo still works.
+// If the real server is having a bad night, change MENU_URL in page.tsx to
+// "/api/menu" and the lesson is identical -- with the bonus that a same-origin
+// request needs no CORS preflight, so there is one less thing to go wrong.
 //
 // Writing endpoints like this one on purpose is Week 11.
 const menu = [
@@ -13,6 +16,8 @@ const menu = [
   { name: "Mocha", price: 4.5 },
   { name: "Cold Brew", price: 3.75 },
 ];
+
+const EXPECTED = "mtc-fall-2026";
 
 // A plain-English line for each status worth demonstrating, so a forced
 // failure still comes back with something a page could actually show.
@@ -38,6 +43,11 @@ export async function GET(request: Request) {
   // faked, so the loading state is something you can actually see.
   if (delay > 0) {
     await new Promise((resolve) => setTimeout(resolve, delay));
+  }
+
+  // The whole point of demo7. No header, no menu.
+  if (request.headers.get("x-auth") !== EXPECTED) {
+    return NextResponse.json("Authorization data is wrong!", { status: 403 });
   }
 
   // ?status=404 forces any status code at all, so you can build the page

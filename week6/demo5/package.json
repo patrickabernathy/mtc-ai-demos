@@ -1,5 +1,5 @@
 {
-  "name": "mtc-week6-pickup-wizard",
+  "name": "mtc-week6-pickup-form",
   "private": true,
   "scripts": {
     "dev": "next dev",

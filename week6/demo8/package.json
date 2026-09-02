@@ -1,5 +1,5 @@
 {
-  "name": "mtc-week6-filter-as-you-type",
+  "name": "mtc-week6-coffee-menu-auth-header",
   "private": true,
   "scripts": {
     "dev": "next dev",

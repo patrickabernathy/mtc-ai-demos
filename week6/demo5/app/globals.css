@@ -18,54 +18,14 @@ header h1 {
   margin-top: 0;
 }
 
-.steps {
-  list-style: none;
-  display: flex;
-  gap: 1.5rem;
-  padding: 0;
-  margin: 0 0 1.25rem;
-  max-width: 26rem;
-}
-
-.step {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: #888;
-  font-size: 0.9rem;
-}
-
-.step-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  border: 1px solid #ccc;
-}
-
-/* The one class that changes as you move through the wizard. */
-.step.active {
-  color: #5b3a29;
-  font-weight: 600;
-}
-
-.step.active .step-number {
-  background: #5b3a29;
-  border-color: #5b3a29;
-  color: #fff;
-}
-
-.card {
+.order-form {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 1.25rem 1.5rem;
   max-width: 26rem;
-  margin-bottom: 1rem;
 }
 
-.card h2 {
+.order-form h2 {
   margin-top: 0;
 }
 
@@ -87,14 +47,20 @@ header h1 {
   border-radius: 6px;
   font: inherit;
   background: #fff;
-  transition: border-color 0.15s;
+  /* Makes the border and background colour changes below fade instead of snap. */
+  transition: border-color 0.15s, background-color 0.15s;
 }
 
+/* --- The states. This is the lesson. --- */
+
+/* :hover — the mouse is over it. */
 .field input:hover,
 .field select:hover {
   border-color: #999;
 }
 
+/* :focus — it's the field you're typing in. Never remove the ring without
+   putting something visible back; keyboard users navigate by it. */
 .field input:focus,
 .field select:focus {
   outline: none;
@@ -102,28 +68,27 @@ header h1 {
   box-shadow: 0 0 0 3px #e6dcd5;
 }
 
-.review {
-  margin: 0 0 1rem;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.35rem 1rem;
+/* .invalid — OUR class, added by page.tsx after a failed submit. The browser
+   has a built-in :invalid, but it fires before the user has typed anything,
+   so the whole form loads red. We control the timing instead. */
+.field input.invalid,
+.field select.invalid {
+  border-color: #a12b2b;
+  background: #fdf5f5;
 }
 
-.review dt {
-  color: #555;
+.field input.invalid:focus,
+.field select.invalid:focus {
+  box-shadow: 0 0 0 3px #f3dada;
 }
 
-.review dd {
-  margin: 0;
+.error {
+  color: #a12b2b;
+  font-size: 0.85rem;
+  margin: 0.3rem 0 0;
 }
 
-.card-actions {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
-}
-
-.next-btn {
+.submit-btn {
   padding: 0.6rem 1rem;
   border: none;
   border-radius: 6px;
@@ -133,28 +98,14 @@ header h1 {
   cursor: pointer;
 }
 
-.next-btn:hover {
+.submit-btn:hover {
   background: #462c1f;
 }
 
-/* Same :disabled idea as demo1 — the Next button stays off until the card's
-   own fields are filled in. */
-.next-btn:disabled {
+/* :disabled — the button is off, so it should look off AND lose the pointer. */
+.submit-btn:disabled {
   background: #bbb;
   cursor: not-allowed;
-}
-
-.back-btn {
-  padding: 0.6rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: #fff;
-  font: inherit;
-  cursor: pointer;
-}
-
-.back-btn:hover {
-  border-color: #999;
 }
 
 .success {

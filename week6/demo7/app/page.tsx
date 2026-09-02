@@ -6,10 +6,9 @@ import { Header } from "../components/Header";
 import { MenuList } from "../components/MenuList";
 import { CartList } from "../components/CartList";
 
-// This one is behind a door. The server wants to see a header called
-// "x-auth" before it will hand anything over -- which is how almost every
-// real API on earth behaves.
-const MENU_URL = "https://n8n.aseglave.net/webhook/mtc-menu-auth";
+// The coffee cart's menu, served by a real server out on the internet.
+// Swap this for "/api/menu" to use the copy running on this machine instead.
+const MENU_URL = "https://n8n.aseglave.net/webhook/mtc-menu";
 
 export default function Home() {
   const [cart, setCart] = useState<CartLine[]>([]);
@@ -27,11 +26,7 @@ export default function Home() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(MENU_URL, {
-        headers: {
-          "x-auth": "mtc-fall-2026",
-        },
-      });
+      const res = await fetch(MENU_URL);
 
       // fetch does NOT throw on a 404 or a 500. As far as it is concerned,
       // the round trip worked -- the server answered. We have to look at the

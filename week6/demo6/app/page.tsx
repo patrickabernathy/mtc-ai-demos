@@ -1,87 +1,66 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { CartLine, MenuItem } from "../types/coffee";
+import { useState } from "react";
+import { emptyOrder, type Order } from "../types/order";
 import { Header } from "../components/Header";
-import { MenuList } from "../components/MenuList";
-import { CartList } from "../components/CartList";
-
-// The coffee cart's menu, served by a real server out on the internet.
-// Swap this for "/api/menu" to use the copy running on this machine instead.
-const MENU_URL = "https://n8n.aseglave.net/webhook/mtc-menu";
+import { Steps } from "../components/Steps";
+import { ContactCard } from "../components/ContactCard";
+import { PickupCard } from "../components/PickupCard";
+import { ReviewCard } from "../components/ReviewCard";
 
 export default function Home() {
-  const [cart, setCart] = useState<CartLine[]>([]);
+  // Both pieces of state live HERE, in the parent, because more than one card
+  // needs them. The cards remember nothing — go Back and the answers are still
+  // here, because they were never stored in the card in the first place.
+  const [step, setStep] = useState(1);
+  const [order, setOrder] = useState<Order>(emptyOrder);
+  const [placed, setPlaced] = useState(false);
 
-  const [menu, setMenu] = useState<MenuItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Empty string means "nothing has gone wrong". Any text in here is a
-  // sentence we are willing to show a customer.
-  const [error, setError] = useState("");
-
-
-  // Pulled out of the effect so the Try again button can call the same code.
-  async function loadMenu() {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch(MENU_URL);
-
-      // fetch does NOT throw on a 404 or a 500. As far as it is concerned,
-      // the round trip worked -- the server answered. We have to look at the
-      // answer ourselves and decide it was bad news.
-      if (!res.ok) {
-        throw new Error("The server said " + res.status + ".");
-      }
-
-      // res.json() hands back "anything". Saying MenuItem[] here is us
-      // writing down what we expect the server to have sent.
-      const data: MenuItem[] = await res.json();
-      setMenu(data);
-    } catch (err) {
-      console.error(err);
-      setError("We could not load the menu. That one is on us, not you.");
-    } finally {
-      // finally runs whether we succeeded or blew up, and either way we
-      // are no longer waiting.
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadMenu();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function handleAdd(item: MenuItem, qty: number) {
-    setCart((prev) => {
-      const existing = prev.find((line) => line.name === item.name);
-      if (existing) {
-        return prev.map((line) =>
-          line.name === item.name ? { ...line, qty: line.qty + qty } : line
-        );
-      }
-      return [...prev, { name: item.name, price: item.price, qty }];
-    });
-  }
-
-  function handleRemove(name: string) {
-    setCart((prev) => prev.filter((line) => line.name !== name));
+  if (placed) {
+    return (
+      <div>
+        <Header />
+        <main>
+          <p className="success">
+            Thanks, {order.name}! We'll have it ready at {order.pickup}.
+          </p>
+        </main>
+      </div>
+    );
   }
 
   return (
     <div>
       <Header />
       <main>
-        <MenuList
-          menu={menu}
-          loading={loading}
-          error={error}
-          onRetry={loadMenu}
-          onAdd={handleAdd}
-        />
-        <CartList cart={cart} onRemove={handleRemove} />
+        <Steps current={step} />
+
+        {/* order goes DOWN, and setOrder goes down too so the card can hand a
+            whole new order back UP. That's the entire trick. */}
+        {step === 1 && (
+          <ContactCard
+            order={order}
+            onChange={setOrder}
+            onNext={() => setStep(2)}
+          />
+        )}
+
+        {step === 2 && (
+          <PickupCard
+            order={order}
+            onChange={setOrder}
+            onBack={() => setStep(1)}
+            onNext={() => setStep(3)}
+          />
+        )}
+
+        {step === 3 && (
+          <ReviewCard
+            order={order}
+            onBack={() => setStep(2)}
+            onPlace={() => setPlaced(true)}
+          />
+        )}
       </main>
     </div>
   );
