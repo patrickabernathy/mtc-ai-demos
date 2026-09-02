@@ -36,20 +36,70 @@ export default function Home() {
         <div className="menu">
           <h2>Menu</h2>
           <div className="menu-list">
-            {menu.map((item) => (
-              <article className="menu-item" key={item.name}>
-                <div className="menu-item-info">
-                  <h3>{item.name}</h3>
-                  <p className="price">${item.price.toFixed(2)}</p>
-                </div>
-                <div className="qty-control">
-                  <button type="button" className="qty-btn">-</button>
-                  <span className="qty">1</span>
-                  <button type="button" className="qty-btn">+</button>
-                </div>
-                <button type="button" className="add-btn">Add to cart</button>
-              </article>
-            ))}
+            <article className="menu-item">
+              <div className="menu-item-info">
+                <h3>Espresso</h3>
+                <p className="price">$2.50</p>
+              </div>
+              <div className="qty-control">
+                <button type="button" className="qty-btn">-</button>
+                <span className="qty">1</span>
+                <button type="button" className="qty-btn">+</button>
+              </div>
+              <button type="button" className="add-btn">Add to cart</button>
+            </article>
+
+            <article className="menu-item">
+              <div className="menu-item-info">
+                <h3>Latte</h3>
+                <p className="price">$4.00</p>
+              </div>
+              <div className="qty-control">
+                <button type="button" className="qty-btn">-</button>
+                <span className="qty">1</span>
+                <button type="button" className="qty-btn">+</button>
+              </div>
+              <button type="button" className="add-btn">Add to cart</button>
+            </article>
+
+            <article className="menu-item">
+              <div className="menu-item-info">
+                <h3>Cappuccino</h3>
+                <p className="price">$4.00</p>
+              </div>
+              <div className="qty-control">
+                <button type="button" className="qty-btn">-</button>
+                <span className="qty">1</span>
+                <button type="button" className="qty-btn">+</button>
+              </div>
+              <button type="button" className="add-btn">Add to cart</button>
+            </article>
+
+            <article className="menu-item">
+              <div className="menu-item-info">
+                <h3>Mocha</h3>
+                <p className="price">$4.50</p>
+              </div>
+              <div className="qty-control">
+                <button type="button" className="qty-btn">-</button>
+                <span className="qty">1</span>
+                <button type="button" className="qty-btn">+</button>
+              </div>
+              <button type="button" className="add-btn">Add to cart</button>
+            </article>
+
+            <article className="menu-item">
+              <div className="menu-item-info">
+                <h3>Cold Brew</h3>
+                <p className="price">$3.75</p>
+              </div>
+              <div className="qty-control">
+                <button type="button" className="qty-btn">-</button>
+                <span className="qty">1</span>
+                <button type="button" className="qty-btn">+</button>
+              </div>
+              <button type="button" className="add-btn">Add to cart</button>
+            </article>
           </div>
         </div>
 
