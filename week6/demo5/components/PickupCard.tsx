@@ -7,7 +7,7 @@ export function PickupCard({
   onNext,
 }: {
   order: Order;
-  onChange: (field: keyof Order, value: string) => void;
+  onChange: (order: Order) => void;
   onBack: () => void;
   onNext: () => void;
 }) {
@@ -23,7 +23,7 @@ export function PickupCard({
         <input
           id="phone"
           value={order.phone}
-          onChange={(event) => onChange("phone", event.target.value)}
+          onChange={(event) => onChange({ ...order, phone: event.target.value })}
         />
       </div>
 
@@ -32,7 +32,7 @@ export function PickupCard({
         <select
           id="pickup"
           value={order.pickup}
-          onChange={(event) => onChange("pickup", event.target.value)}
+          onChange={(event) => onChange({ ...order, pickup: event.target.value })}
         >
           <option value="">Choose a time</option>
           {pickupTimes.map((time) => (

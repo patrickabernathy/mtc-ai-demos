@@ -4,6 +4,15 @@ import { useState } from "react";
 
 const pickupTimes = ["7:30 am", "8:00 am", "8:30 am", "9:00 am", "9:30 am"];
 
+// The four fields that can go wrong, spelled out. Every "?" means "this one
+// might not be here" — a field with no error simply isn't in the object.
+type Errors = {
+  name?: string;
+  email?: string;
+  phone?: string;
+  pickup?: string;
+};
+
 export default function Home() {
   // One piece of state per field. No components, no shared types — everything
   // this page needs lives on this page.
@@ -18,7 +27,7 @@ export default function Home() {
 
   // Errors are WORKED OUT while we render, not stored in state. Every keystroke
   // re-runs this with the current values, so the messages can never go stale.
-  const errors: { [field: string]: string } = {};
+  const errors: Errors = {};
 
   if (name.trim() === "") {
     errors.name = "We need a name for the cup.";
@@ -47,7 +56,7 @@ export default function Home() {
 
   // Adds the "invalid" class only once they've tried to submit. That class is
   // what turns the input red in globals.css.
-  function fieldClass(field: string) {
+  function fieldClass(field: keyof Errors) {
     return showErrors && errors[field] ? "invalid" : "";
   }
 

@@ -1,18 +1,18 @@
 import type { Order } from "../types/order";
 
 // Two props doing opposite jobs:
-//   order    — data coming DOWN, so the fields show what's already been typed
-//   onChange — a function coming down that sends data BACK UP when it's called
+//   order    — the order coming DOWN, so the boxes show what's already typed
+//   onChange — a function coming down that we call to send a new order BACK UP
 export function ContactCard({
   order,
   onChange,
   onNext,
 }: {
   order: Order;
-  onChange: (field: keyof Order, value: string) => void;
+  onChange: (order: Order) => void;
   onNext: () => void;
 }) {
-  // This card checks its own two fields. Nothing else in the app has to know
+  // This card checks its own two fields. Nothing else in the app needs to know
   // what makes a name or an email good enough.
   const ready = order.name.trim() !== "" && order.email.includes("@");
 
@@ -25,7 +25,9 @@ export function ContactCard({
         <input
           id="name"
           value={order.name}
-          onChange={(event) => onChange("name", event.target.value)}
+          // Copy the whole order, then overwrite one field, and hand the copy
+          // back. We never edit `order` itself — the parent owns it.
+          onChange={(event) => onChange({ ...order, name: event.target.value })}
         />
       </div>
 
@@ -35,7 +37,7 @@ export function ContactCard({
           id="email"
           type="email"
           value={order.email}
-          onChange={(event) => onChange("email", event.target.value)}
+          onChange={(event) => onChange({ ...order, email: event.target.value })}
         />
       </div>
 

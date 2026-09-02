@@ -10,17 +10,11 @@ import { ReviewCard } from "../components/ReviewCard";
 
 export default function Home() {
   // Both pieces of state live HERE, in the parent, because more than one card
-  // needs them. The cards themselves remember nothing — step back and the
-  // answers are still there.
+  // needs them. The cards remember nothing — go Back and the answers are still
+  // here, because they were never stored in the card in the first place.
   const [step, setStep] = useState(1);
   const [order, setOrder] = useState<Order>(emptyOrder);
   const [placed, setPlaced] = useState(false);
-
-  // Data coming BACK UP from a card. The card says "phone changed to 555...",
-  // and the parent is the one that actually updates the order.
-  function updateField(field: keyof Order, value: string) {
-    setOrder((prev) => ({ ...prev, [field]: value }));
-  }
 
   if (placed) {
     return (
@@ -41,10 +35,12 @@ export default function Home() {
       <main>
         <Steps current={step} />
 
+        {/* order goes DOWN, and setOrder goes down too so the card can hand a
+            whole new order back UP. That's the entire trick. */}
         {step === 1 && (
           <ContactCard
             order={order}
-            onChange={updateField}
+            onChange={setOrder}
             onNext={() => setStep(2)}
           />
         )}
@@ -52,7 +48,7 @@ export default function Home() {
         {step === 2 && (
           <PickupCard
             order={order}
-            onChange={updateField}
+            onChange={setOrder}
             onBack={() => setStep(1)}
             onNext={() => setStep(3)}
           />
