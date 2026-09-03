@@ -1,8 +1,8 @@
-# lab1 — give the bakery page state
+# lab1 — give the bakery page state (answer)
 
-Ridgeline Bakery, one file, same shape as `demo1`'s coffee cart: five pastries,
-a cart, no interactivity. Every quantity says 1 forever and every button is
-painted on.
+The finished version of the `main` branch exercise. Every quantity control
+and every cart button works, all of it wired with `useState` in one file —
+no components yet.
 
 ## How to run it
 
@@ -11,14 +11,15 @@ npm install
 npm run dev
 ```
 
-Then open http://localhost:3000.
+Then open http://localhost:3000. Change quantities, add pastries, remove
+them, watch the total.
 
-## What to do
+## What this shows
 
-Make every quantity control and every cart button actually work, using
-`useState` — without adding a single component or a second file. Full
-step-by-step guide, with checkpoints and hints, in `instructions.html`
-(open it in a browser).
+Five nearly-identical `useState` calls, one per pastry, plus a `cart` state
+array with `addToCart`/`removeFromCart` functions that always hand `setCart`
+a new array instead of mutating the old one. Compare `instructions.html` for
+the guided version of this same exercise.
 
 ## The teaching point
 

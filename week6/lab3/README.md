@@ -1,9 +1,8 @@
-# lab3 — fetch reviews from a locked door
+# lab3 — fetch reviews from a locked door (answer)
 
-The bakery's menu and cart are done for you, same as `lab2`'s finished
-version. Underneath them is a "What people are saying" section reading two
-reviews straight out of `types/review.ts`. Tonight that section starts
-asking a real, authenticated server for the real reviews.
+The finished version of the `main` branch exercise. The reviews section now
+fetches from a real, authenticated server instead of reading
+`types/review.ts`.
 
 ## How to run it
 
@@ -12,20 +11,21 @@ npm install
 npm run dev
 ```
 
-Then open http://localhost:3000.
+Then open http://localhost:3000. Reviews load after about a second. Try
+appending `?delay=4000`, `?state=empty`, `?state=error`, or `?status=404` to
+`REVIEWS_URL` in `app/page.tsx` to see the other three situations.
 
-## What to do
+## What this shows
 
-Replace the static reviews with a `useState` + `useEffect` fetch against
-`https://n8n.aseglave.net/webhook/mtc-reviews-auth`, which requires an
-`Authorization: Bearer mtc-fall-2026` header and won't answer without one.
-Handle all four situations — loading, empty, loaded, and error with a retry —
-the same shape `demo7` and `demo8` used for the menu.
+`reviews`/`loading`/`error` state lives in `page.tsx` (same place as
+`demo7`/`demo8` keep it) and gets passed down to `ReviewList` as props,
+which renders all four situations. `loadReviews` is `async`, checks
+`res.ok` itself before trusting the body, and is reused by both the initial
+`useEffect` and the Try again button. `types/review.ts` keeps
+`sampleReviews` around as a fallback/reference — nothing imports it anymore.
 
-`instructions.html` has the full walkthrough, including what `async`/`await`
-actually does and why `fetch` needs it — read that section even if you
-already have working fetch code from a demo, since it explains the *why*,
-not just the syntax.
+`instructions.html` has the full guided walkthrough, including what
+`async`/`await` actually does and why `fetch` needs it.
 
 ## The teaching point
 

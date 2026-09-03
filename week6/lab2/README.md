@@ -1,9 +1,8 @@
-# lab2 — cut the bakery into components
+# lab2 — cut the bakery into components (answer)
 
-This starter is `lab1`, already finished for you: every pastry works, the
-cart works, nothing is broken. The exercise isn't making it work — it's
-taking one working 260-line file and splitting it into five components
-without changing what's on screen.
+The finished version of the `main` branch exercise: the same working
+`lab1` page, split into five components with the cart state lifted to
+`page.tsx` and passed down as props.
 
 ## How to run it
 
@@ -12,15 +11,16 @@ npm install
 npm run dev
 ```
 
-Then open http://localhost:3000. It should look and behave exactly like a
-finished `lab1`.
+Then open http://localhost:3000. Behaves exactly like a finished `lab1` —
+nothing changed on screen, only where the code lives.
 
-## What to do
+## What this shows
 
-Build `Header`, `MenuItem`, `MenuList`, `CartItem`, and `CartList` in
-`components/`, move the menu data into `types/coffee.ts`, and lift the cart
-state up to `page.tsx` so it can be passed down as props. Full step-by-step
-guide, with a suggested build order and checkpoints, in `instructions.html`.
+`Header`, `MenuItem`, `MenuList`, `CartItem`, `CartList` in `components/`,
+the menu moved to `types/coffee.ts`, and `page.tsx` reduced to state plus
+two handler functions passed down as props. `MenuItem` keeps its own local
+quantity state; only the cart — shared by two components — moved up.
+Compare `instructions.html` for the guided version of this same exercise.
 
 ## The teaching point
 
