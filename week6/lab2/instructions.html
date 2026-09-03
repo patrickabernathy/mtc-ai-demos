@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W6-2 - Cut the bakery into components</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+    --ai-soft: #eef0fb;
+    --ai-edge: #5a5ec2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+      --ai-soft: #1b1d33;
+      --ai-edge: #8b8ff0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    padding: 0 22px 80px;
+    max-width: 760px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 30px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 58ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 40px 0 12px; font-size: 22px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h3 { margin: 26px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 66ch; }
+  ul, ol { max-width: 66ch; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 "Cascadia Code", Consolas, ui-monospace, monospace; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .ai { background: var(--ai-soft); border-color: var(--ai-edge); }
+  .ai b { color: var(--ai-edge); }
+  .req { color: var(--accent); font-weight: 700; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W6 &middot; 2 of 3 &middot; do lab 1 first</p>
+  <h1>Cut the bakery into components</h1>
+  <p class="lede">This starter is lab 1, finished for you &mdash; every pastry already works, the cart already works. Nothing on screen is broken tonight. Your job is to take one honest, working, 260-line file and turn it into pieces without breaking any of it.</p>
+</header>
+
+<h2>1. Run it, and confirm it already works</h2>
+
+<pre><code>npm install
+npm run dev</code></pre>
+
+<p>
+  Open <a href="http://localhost:3000">http://localhost:3000</a>. Change
+  quantities, add pastries, remove them, watch the total. If anything is
+  broken, that's a bug in this starter &mdash; flag it, don't work around it.
+</p>
+
+<div class="callout check">
+  <p>
+    <b>Know what you're starting from.</b> Open <code>app/page.tsx</code>. It's
+    one component, five <code>useState</code> calls for quantities, one
+    <code>useState</code> for the cart, and markup for five pastries typed out
+    by hand &mdash; recognize it, it's what lab 1 asked you to build.
+  </p>
+</div>
+
+<h2>2. Why split it up at all</h2>
+
+<p>
+  The page works. That's not the problem. The problem is that it's one file
+  doing five jobs, and finding "the part that draws a cart line" means
+  scrolling past four other things first. Splitting it up doesn't change what
+  the page does &mdash; only where the code that does it lives.
+</p>
+
+<div class="callout ai">
+  <p><b>AI hint &mdash; before you start moving code.</b> If "component" and
+    "props" are still fuzzy, ask something like:</p>
+  <p><i>"I have one big React function that renders a whole page. What's the
+    actual benefit of splitting it into smaller components, beyond 'it's
+    tidier'? What does a prop let a component do that it couldn't do
+    before?"</i></p>
+  <p>You want the conceptual answer before you start cutting, so you can tell,
+    file by file, whether what you just built matches it.</p>
+</div>
+
+<h2>3. Move the data out first</h2>
+
+<p><span class="req">Required.</span> Make <code>types/coffee.ts</code>. Two
+  types and one array &mdash; the <code>menu</code>, moved out of
+  <code>page.tsx</code> exactly as it is:</p>
+
+<pre><code>// types/coffee.ts
+
+export type MenuItem = {
+  name: string;
+  price: number;
+};
+
+export type CartLine = {
+  name: string;
+  qty: number;
+  price: number;
+};
+
+export const menu: MenuItem[] = [
+  // ...the five pastries, moved from page.tsx...
+];</code></pre>
+
+<p>
+  The cart does <b>not</b> go in this file &mdash; it's state, it changes, it
+  has to stay in a component. Only the menu, which never changes, belongs to a
+  plain data file.
+</p>
+
+<h2>4. Five components, easiest first</h2>
+
+<p><span class="req">Required.</span> Build these in
+  <code>components/</code>, in this order:</p>
+
+<table>
+  <tr><th>Component</th><th>Props</th><th>Renders</th></tr>
+  <tr><td><code>Header.tsx</code></td><td>none</td><td>The <code>&lt;header&gt;</code> block &mdash; the easy one, do it first</td></tr>
+  <tr><td><code>MenuItem.tsx</code></td><td><code>item</code>, plus a way to report "add this"</td><td>One pastry card, with its <b>own</b> quantity state</td></tr>
+  <tr><td><code>MenuList.tsx</code></td><td>a way to report "add this"</td><td>The whole menu, one <code>MenuItem</code> per pastry via <code>.map()</code></td></tr>
+  <tr><td><code>CartItem.tsx</code></td><td><code>line</code>, plus a way to report "remove this"</td><td>One cart row</td></tr>
+  <tr><td><code>CartList.tsx</code></td><td><code>cart</code>, plus a way to report "remove this"</td><td>The whole cart, including the total</td></tr>
+</table>
+
+<p>
+  Start each component by copying the matching JSX straight out of
+  <code>page.tsx</code>, unchanged. Get it rendering with no props at all
+  first &mdash; on hard-coded data if you have to &mdash; <i>then</i> add the
+  props. Two problems at once is harder than two problems in a row.
+</p>
+
+<h3>The part that isn't just moving code &mdash; props</h3>
+
+<p>
+  <code>MenuItem</code> needs to know which pastry it is:
+</p>
+
+<pre><code>// components/MenuItem.tsx
+
+export function MenuItem({ item }: { item: MenuItemType }) {
+  // ...same JSX, but item.name and item.price instead of hard-coded text...
+}</code></pre>
+
+<p>
+  And in <code>MenuList.tsx</code>, one <code>MenuItem</code> per pastry,
+  looped:
+</p>
+
+<pre><code>{menu.map((item) => (
+  &lt;MenuItem key={item.name} item={item} /&gt;
+))}</code></pre>
+
+<div class="callout check">
+  <p>
+    <b>Stop and check.</b> Five <code>MenuItem</code>s should render exactly
+    the five pastries you had before, pulled from <code>menu</code> instead of
+    typed five times. Nothing has to click yet. If the layout matches
+    <code>page.tsx</code> before you deleted it, you're on track.
+  </p>
+</div>
+
+<h2>5. Now make the cart flow through props &mdash; the actual lesson</h2>
+
+<p>
+  Two different components need the cart: <code>MenuList</code> adds to it,
+  <code>CartList</code> shows it. Neither one <i>owns</i> it. So the cart state
+  has to live in the one place that's above both of them:
+  <code>page.tsx</code>.
+</p>
+
+<p><span class="req">Required.</span> In <code>page.tsx</code>:</p>
+
+<ol>
+  <li>Keep <code>"use client"</code> and the cart <code>useState</code> there &mdash; delete everything else that used to be markup.</li>
+  <li>Write <code>handleAdd(item, qty)</code> and <code>handleRemove(name)</code> there, same logic you already wrote in lab 1.</li>
+  <li>Pass them down: <code>&lt;MenuList onAdd={handleAdd} /&gt;</code> and <code>&lt;CartList cart={cart} onRemove={handleRemove} /&gt;</code>.</li>
+  <li><code>MenuList</code> doesn't call <code>onAdd</code> itself &mdash; it just hands it further down to each <code>MenuItem</code>.</li>
+</ol>
+
+<div class="callout ai">
+  <p><b>AI hint.</b> This is the step people get stuck on, and the stuck
+    feeling is usually "which component should own this state?" &mdash; not a
+    syntax error. A useful prompt names the actual components:</p>
+  <p><i>"I have a MenuList component and a CartList component, and both need
+    access to the same cart array. Where should that state live, and how do
+    child components change state that lives in a parent?"</i></p>
+  <p>If the answer uses the phrase "lifting state up," that's the name for
+    what you're doing. Look it up by that name too &mdash; it's a standard
+    term, not something specific to this class.</p>
+</div>
+
+<h3>What stays local &mdash; <code>MenuItem</code>'s own quantity</h3>
+
+<p>
+  The quantity on one pastry card is not shared with anyone. Nobody outside
+  that card needs to know what it's currently set to until the moment
+  <b>Add to cart</b> is clicked. <span class="req">Required.</span> Give
+  <code>MenuItem</code> its own <code>useState</code> for <code>qty</code>,
+  and call <code>onAdd(item, qty)</code> when its own button is clicked.
+</p>
+
+<div class="callout warn">
+  <p>
+    <b>Expect this one.</b> If you also tried to lift <code>qty</code> up to
+    <code>page.tsx</code> "to be safe," you now have five numbers living in
+    the one component that only one card at a time actually reads. Watch for
+    the tell: a piece of state that only ever gets used by the component right
+    next to where you defined it doesn't need to travel anywhere.
+  </p>
+</div>
+
+<h2>6. Optional, if you finish early</h2>
+
+<ul>
+  <li>Add an item count to <code>Header</code> &mdash; it doesn't take props
+    yet, so you'll have to give it one and pass the number down from
+    <code>page.tsx</code>.</li>
+  <li>Add a <b>Clear cart</b> button. Work out for yourself which component it
+    has to live in, using the same reasoning as step 5.</li>
+</ul>
+
+<div class="callout ai">
+  <p><b>AI hint &mdash; going deeper.</b> Once it all works, this is worth
+    understanding by name:</p>
+  <p><i>"What's the difference between 'data flows down' and 'events flow up'
+    in React? Use my MenuItem → MenuList → page.tsx chain as the example."</i></p>
+  <p>That sentence is the entire mental model for every React app you'll build
+    after this one. It's worth being able to say it back without notes.</p>
+</div>
+
+<h2>What "done" looks like</h2>
+
+<ul>
+  <li>The page at <code>localhost:3000</code> behaves exactly like the lab 1 starter did &mdash; nothing changed on screen.</li>
+  <li>There are five files in <code>components/</code>, none of them longer than the original single file's worth for that piece.</li>
+  <li>The menu lives in <code>types/coffee.ts</code>. The cart does not &mdash; it's state, in <code>page.tsx</code>.</li>
+  <li><code>MenuItem</code> owns its own quantity. <code>page.tsx</code> owns the cart. Nothing owns both.</li>
+  <li><code>npm run build</code> finishes with no errors.</li>
+</ul>
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 6.</p>
+</footer>
+
+</body>
+</html>

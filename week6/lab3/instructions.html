@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W6-3 - Fetch reviews from a locked door</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+    --ai-soft: #eef0fb;
+    --ai-edge: #5a5ec2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+      --ai-soft: #1b1d33;
+      --ai-edge: #8b8ff0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    padding: 0 22px 80px;
+    max-width: 760px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 30px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 58ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 40px 0 12px; font-size: 22px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h3 { margin: 26px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 66ch; }
+  ul, ol { max-width: 66ch; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 "Cascadia Code", Consolas, ui-monospace, monospace; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .ai { background: var(--ai-soft); border-color: var(--ai-edge); }
+  .ai b { color: var(--ai-edge); }
+  .req { color: var(--accent); font-weight: 700; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W6 &middot; 3 of 3 &middot; the hard one</p>
+  <h1>Fetch reviews from a locked door</h1>
+  <p class="lede">The bakery page works &mdash; menu, cart, all of it, done for you. Underneath it sits a "What people are saying" section showing two reviews typed straight into a file. Tonight that section starts asking a real server for the real reviews, and the server will not answer unless you prove who's asking.</p>
+</header>
+
+<h2>1. Run it</h2>
+
+<pre><code>npm install
+npm run dev</code></pre>
+
+<p>
+  Open <a href="http://localhost:3000">http://localhost:3000</a>. The menu and
+  cart work exactly like lab 2's finished version. Scroll down &mdash; two
+  reviews, straight out of <code>types/review.ts</code>. That's today's
+  starting point.
+</p>
+
+<h2>2. Before any code: what <code>async</code>/<code>await</code> actually is</h2>
+
+<p>
+  Everything you've written so far in this class runs top to bottom, one line
+  finishing before the next one starts. Asking a server for data breaks that.
+  The request has to travel across the internet and come back, and that takes
+  real time &mdash; milliseconds, sometimes seconds. Your code can't just
+  freeze the whole browser tab while it waits.
+</p>
+
+<p>
+  <code>fetch(url)</code> doesn't hand you the data. It hands you a
+  <b>promise</b> &mdash; a placeholder that says "I don't have your answer
+  yet, but I will." <code>await</code> is what turns that placeholder back
+  into a normal value your code can use, without you having to write nested
+  callback code to wait for it:
+</p>
+
+<pre><code>// Without await — a promise, chained
+fetch(url).then((res) => res.json()).then((data) => {
+  // data is finally here, three lines deep
+});
+
+// With await — reads top to bottom, like everything else you've written
+const res = await fetch(url);
+const data = await res.json();
+// data is right here, same shape as always</code></pre>
+
+<p>
+  Two things to notice in that second block. First, <b>two</b>
+  <code>await</code>s: <code>fetch</code> resolves once the server has
+  answered <i>at all</i>, but turning that answer's body into usable
+  JavaScript (<code>res.json()</code>) is <i>also</i> asynchronous, and needs
+  its own <code>await</code>. Second: <code>await</code> only works inside a
+  function marked <code>async</code> &mdash; it's the keyword that says "this
+  function is allowed to pause partway through and pick back up later."
+</p>
+
+<div class="callout warn">
+  <p>
+    <b>What "pause" does and doesn't mean.</b> <code>await</code> pauses
+    <i>that function</i> &mdash; it does not freeze the browser. The rest of
+    the page stays clickable while your fetch is in flight. That's the whole
+    reason a <b>loading</b> state matters: for however long the real pause
+    takes, the screen has to say something, because the UI thread is still
+    alive and the user can see it just sitting there.
+  </p>
+</div>
+
+<h2>3. The endpoint</h2>
+
+<table>
+  <tr><th></th><th></th></tr>
+  <tr><td>URL</td><td><code>https://n8n.aseglave.net/webhook/mtc-reviews-auth</code></td></tr>
+  <tr><td>Requires</td><td>a header: <code>Authorization: Bearer mtc-fall-2026</code></td></tr>
+</table>
+
+<p>Open that URL directly in a browser tab first. You'll get:</p>
+
+<pre><code>403 Forbidden
+"Authorization data is wrong!"</code></pre>
+
+<p>
+  That's not broken. A plain browser visit sends no <code>Authorization</code>
+  header at all, and this server refuses to talk to anyone who doesn't send
+  one. Same shape of lock as demo8, different key format.
+</p>
+
+<p>Same forcing options as demo7 and demo8 are available on top of the auth:</p>
+
+<table>
+  <tr><th>Add this to the URL</th><th>What you get</th></tr>
+  <tr><td><i>(nothing)</i></td><td>The reviews, after about a second</td></tr>
+  <tr><td><code>?delay=4000</code></td><td>The same reviews, four seconds later</td></tr>
+  <tr><td><code>?state=empty</code></td><td>A successful reply with an empty list</td></tr>
+  <tr><td><code>?state=error</code></td><td>A 500 &mdash; the server admitting it broke</td></tr>
+  <tr><td><code>?status=404</code></td><td>Any status code you like &mdash; 401, 404, 429, 503, 418</td></tr>
+</table>
+
+<h2>4. <code>Authorization: Bearer ...</code> &mdash; what that header means</h2>
+
+<p>
+  <code>fetch</code> sends no credentials unless you add them yourself.
+  Headers go in a second argument:
+</p>
+
+<pre><code>const res = await fetch(REVIEWS_URL, {
+  headers: {
+    Authorization: "Bearer mtc-fall-2026",
+  },
+});</code></pre>
+
+<p>
+  <code>Bearer &lt;token&gt;</code> is a convention, not a law &mdash; it
+  means "whoever holds this string is authorized," the same way holding a
+  physical ticket gets you into a show without anyone checking your ID. It
+  happens to be one of the most common ways real APIs ask for credentials,
+  which is why it's worth knowing by name. Compare it with demo8's
+  <code>x-auth</code> header: same idea, different header name, because the
+  server's own documentation is the only thing that ever tells you which one a
+  given API wants.
+</p>
+
+<div class="callout ai">
+  <p><b>AI hint.</b> If the difference between these header styles is still
+    blurry, ask something concrete instead of "explain auth headers":</p>
+  <p><i>"What's the practical difference between a custom header like x-auth
+    and the Authorization: Bearer convention? Are they enforced differently by
+    browsers, or is it purely a server-side choice?"</i></p>
+</div>
+
+<h2>5. Build the fetch, one situation at a time</h2>
+
+<p>
+  <span class="req">Required.</span> This is the same four-situation shape as
+  demo7 and demo8 &mdash; you're applying a pattern you've already seen work,
+  to a new URL and a new header.
+</p>
+
+<ol>
+  <li>
+    In <code>ReviewList.tsx</code> (or wherever you decide the fetch should
+    live &mdash; see the callout below), replace the static
+    <code>sampleReviews</code> import with a <code>reviews</code> state array
+    that starts empty, loaded inside a <code>useEffect</code> that runs once.
+  </li>
+  <li>
+    Write an <code>async</code> function that does the fetch: call it, then
+    <code>await</code> it, using the header from step 4.
+  </li>
+  <li>
+    <code>fetch</code> does not throw on a 404 or a 500 &mdash; it only throws
+    if the network itself fails. Check <code>res.ok</code> yourself and
+    <code>throw</code> when it's false, exactly like demo7 did for the menu.
+  </li>
+  <li>
+    Wrap the whole thing in <code>try</code>/<code>catch</code>/<code>finally</code>:
+    catch turns a thrown error into an <code>error</code> state message,
+    finally turns off a <code>loading</code> state whether things worked or not.
+  </li>
+  <li>
+    Render all four situations: loading, empty, here's the data, and error
+    with a <b>Try again</b> button that re-runs the same function.
+  </li>
+</ol>
+
+<div class="callout ai">
+  <p><b>AI hint &mdash; deciding where the fetch logic goes.</b> Demo7 and
+    demo8 put the <code>loading</code>/<code>error</code>/<code>menu</code>
+    state in <code>page.tsx</code> and passed it down as props. You could do
+    that here, or keep it self-contained inside <code>ReviewList</code>. If
+    you're not sure which fits better, that's a genuinely good question to
+    bring to an assistant:</p>
+  <p><i>"I have a component that needs to fetch its own data with
+    useEffect. Should the loading/error state live in that component, or in
+    its parent and get passed down as props? What's the tradeoff?"</i></p>
+  <p>Either answer is defensible for a component this size. Knowing the
+    tradeoff is the point, not landing on one specific answer.</p>
+</div>
+
+<div class="callout check">
+  <p>
+    <b>Stop and check, in order.</b>
+  </p>
+  <ol>
+    <li>Plain load: reviews render, matching what <code>sampleReviews</code> used to show.</li>
+    <li><code>?delay=4000</code>: you can actually see the loading state for four seconds.</li>
+    <li><code>?state=empty</code>: a real sentence, not a blank section.</li>
+    <li><code>?state=error</code>: an error message and a working <b>Try again</b> button.</li>
+  </ol>
+</div>
+
+<div class="callout warn">
+  <p>
+    <b>Expect this one.</b> Typo the token, or leave the header off entirely,
+    and you'll get a 403 that looks identical to any other error &mdash; your
+    <code>error</code> state can't tell "the server is down" from "you sent
+    the wrong password." Open the Network tab (F12) and look at the actual
+    response status and body when something doesn't work; don't guess from
+    the UI alone.
+  </p>
+</div>
+
+<h2>6. Optional, if you finish early</h2>
+
+<ul>
+  <li>
+    Show the average star rating in the section heading &mdash; "What people
+    are saying (4.3 ★ average)" &mdash; computed from whatever the server
+    returned, not typed in.
+  </li>
+  <li>
+    Try <code>?status=429</code> and <code>?status=503</code>. Confirm your
+    error message changes with the status, without you touching the code
+    again.
+  </li>
+  <li>
+    Read demo8's README section on CORS preflight requests, then open the
+    Network tab here and find the same thing happening for your own request.
+  </li>
+</ul>
+
+<h2>What "done" looks like</h2>
+
+<ul>
+  <li>Reviews load from <code>https://n8n.aseglave.net/webhook/mtc-reviews-auth</code>, not from <code>types/review.ts</code>.</li>
+  <li>The <code>Authorization: Bearer mtc-fall-2026</code> header is set on the request.</li>
+  <li>All four situations &mdash; loading, empty, loaded, error &mdash; show a real, different sentence.</li>
+  <li><b>Try again</b> re-runs the same fetch and can recover from a forced error.</li>
+  <li>You can explain, out loud, what <code>await</code> is pausing and what it isn't.</li>
+  <li><code>npm run build</code> finishes with no errors.</li>
+</ul>
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 6.</p>
+</footer>
+
+</body>
+</html>

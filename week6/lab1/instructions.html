@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W6-1 - Give the bakery page state</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+    --ai-soft: #eef0fb;
+    --ai-edge: #5a5ec2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+      --ai-soft: #1b1d33;
+      --ai-edge: #8b8ff0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    padding: 0 22px 80px;
+    max-width: 760px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 30px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 58ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 40px 0 12px; font-size: 22px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h3 { margin: 26px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 66ch; }
+  ul, ol { max-width: 66ch; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 "Cascadia Code", Consolas, ui-monospace, monospace; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .ai { background: var(--ai-soft); border-color: var(--ai-edge); }
+  .ai b { color: var(--ai-edge); }
+  .req { color: var(--accent); font-weight: 700; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W6 &middot; 1 of 3 &middot; start here</p>
+  <h1>Give the bakery page state</h1>
+  <p class="lede">Ridgeline Bakery is on screen and it is doing nothing. Every quantity says 1 forever, every cart is the same two lines, and every button is painted on. Tonight you give it a memory &mdash; nothing leaves this one file.</p>
+</header>
+
+<h2>1. Run it</h2>
+
+<pre><code>npm install
+npm run dev</code></pre>
+
+<p>
+  Open <a href="http://localhost:3000">http://localhost:3000</a>. Five pastries,
+  a cart with two lines already in it, a total. Click anything. Nothing moves.
+  That's today's whole problem.
+</p>
+
+<h2>2. Read <code>app/page.tsx</code> before you touch it</h2>
+
+<p>
+  Everything is in one file, on purpose &mdash; a <code>menu</code> array, a
+  <code>cart</code> array, and markup for all five pastries typed out by hand.
+  Find these three things before you write anything:
+</p>
+
+<ul>
+  <li>The <code>const cart = [...]</code> near the top. That's <i>plain data</i>. Nothing watches it.</li>
+  <li>The <code>&lt;span className="qty"&gt;1&lt;/span&gt;</code> inside the Croissant card. Hard-coded.</li>
+  <li>Every button &mdash; <code>qty-btn</code>, <code>add-btn</code>, <code>remove-btn</code> &mdash; has no <code>onClick</code> at all.</li>
+</ul>
+
+<div class="callout ai">
+  <p>
+    <b>AI hint &mdash; before you write a line of code.</b> If "state" is still an
+    abstract word, ask your assistant something like:
+  </p>
+  <p><i>"I have a number shown on a web page, and a button that's supposed to change it. Why doesn't just reassigning the JavaScript variable make the page update? What is React state actually for?"</i></p>
+  <p>
+    Read the answer, close the chat, and come back. The goal tonight is that
+    <i>you</i> can explain that answer to someone else &mdash; not that the chat
+    window has it open next to your editor the whole time.
+  </p>
+</div>
+
+<h2>3. Make one pastry work, start to finish</h2>
+
+<p><span class="req">Required.</span> Pick Croissant. In order:</p>
+
+<ol>
+  <li>Put <code>"use client";</code> on the very first line of the file. A page with an
+    <code>onClick</code> has to run in the browser, not just on the server that
+    builds it.</li>
+  <li>Import <code>useState</code> from <code>react</code>.</li>
+  <li>Give Croissant its own piece of state, starting at <code>1</code>, and show
+    that state instead of the hard-coded <code>1</code>.</li>
+  <li>Wire the <code>-</code> and <code>+</code> buttons to change it. Don't let it
+    go below <code>1</code> &mdash; nobody orders zero croissants.</li>
+</ol>
+
+<div class="callout check">
+  <p>
+    <b>Stop and check.</b> Click Croissant's <code>+</code> a few times. The
+    number on screen should climb. If it doesn't, you likely changed the
+    variable but never called the <code>set...</code> function &mdash; that
+    call is the only thing that tells React to redraw.
+  </p>
+</div>
+
+<h2>4. Make Croissant's Add to cart button do something real</h2>
+
+<p>
+  Right now <code>cart</code> is a <code>const</code> array sitting above the
+  component. <span class="req">Required.</span> Turn it into state too &mdash;
+  it has to change, so it has to be state, same reasoning as step 3.
+</p>
+
+<p>
+  Then wire Croissant's <b>Add to cart</b> button to put a line into that cart
+  state, using however many croissants the quantity control currently shows.
+  Two cases to handle, and both are things a real cart does:
+</p>
+
+<ul>
+  <li>Croissant isn't in the cart yet &rarr; add a new line for it.</li>
+  <li>Croissant is already in the cart &rarr; increase that line's quantity instead of adding a second line.</li>
+</ul>
+
+<div class="callout warn">
+  <p>
+    <b>Expect this one.</b> It is tempting to write
+    <code>cart.push({ ... })</code> and move on. The array really does grow
+    &mdash; and the screen never updates. React only repaints when you hand a
+    <code>set...</code> function a <i>new</i> array or object, not when you
+    edit the old one in place. If you get stuck here, that's almost certainly
+    why.
+  </p>
+</div>
+
+<div class="callout ai">
+  <p><b>AI hint.</b> If you've read that warning and are still stuck on why your
+    cart isn't updating, a good next prompt is narrow and shows your actual
+    code, not a request for the answer:</p>
+  <p><i>"Here's my setCart call: [paste it]. The array changes when I log it,
+    but the screen doesn't update. What's wrong?"</i></p>
+  <p>Pasting your real code gets a useful answer. Asking "why isn't my cart
+    working" gets a generic essay about React you'll have to re-translate back
+    onto your file anyway.</p>
+</div>
+
+<p>
+  Now wire the <b>Remove</b> button on Croissant's cart line (if it's in the
+  cart) so it takes that line back out.
+</p>
+
+<h2>5. Do the other four pastries</h2>
+
+<p>
+  Cinnamon Roll, Sourdough Loaf, Blueberry Muffin, Baguette. Same three things
+  each: its own quantity state, its own wired <code>+</code>/<code>-</code>,
+  its own <b>Add to cart</b> calling the same cart-update logic you already
+  wrote for Croissant.
+</p>
+
+<div class="callout warn">
+  <p>
+    <b>This is supposed to feel bad.</b> By the time you finish Baguette you
+    will have five nearly identical <code>useState</code> calls and five
+    nearly identical <code>onClick</code> handlers. That repetition isn't a
+    sign you're doing it wrong &mdash; it's the whole reason lab 2 exists.
+    Feel it here first.
+  </p>
+</div>
+
+<h2>6. Optional, if you finish early</h2>
+
+<ul>
+  <li>Add a <b>Clear cart</b> button that empties the cart in one click.</li>
+  <li>Show the number of items in the cart somewhere in the header.</li>
+  <li>Cap each quantity at some maximum (say 12) and grey out the
+    <code>+</code> button when it's reached.</li>
+</ul>
+
+<div class="callout ai">
+  <p><b>AI hint &mdash; going deeper.</b> Once the lab works, it's worth asking
+    <i>why</i> the fix in step 4 mattered, not just that it did:</p>
+  <p><i>"Explain why React needs a new array reference to detect a change,
+    instead of just checking whether the array's contents are different."</i></p>
+  <p>That question is about to matter again in lab 2, where the same array
+    gets passed between three different components.</p>
+</div>
+
+<h2>What "done" looks like</h2>
+
+<ul>
+  <li>Every pastry's <code>+</code>/<code>-</code> changes its own displayed quantity, and never goes below 1.</li>
+  <li>Every <b>Add to cart</b> adds a line, or increases an existing line's quantity.</li>
+  <li>Every <b>Remove</b> takes a line out of the cart.</li>
+  <li>The total at the bottom is always correct, for every combination you can click together.</li>
+  <li>Everything still lives in <code>app/page.tsx</code>. No new files.</li>
+</ul>
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 6.</p>
+</footer>
+
+</body>
+</html>
