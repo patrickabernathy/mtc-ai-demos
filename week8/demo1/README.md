@@ -26,8 +26,16 @@ Open <http://localhost:3000>. Only one project can hold port 3000, so stop any o
 first starts running, and never changes:
 
 ```tsx
-const [startedAt] = useState(() => new Date().toLocaleTimeString());
+const [startedAt, setStartedAt] = useState("");
+
+useEffect(() => {
+  setStartedAt(new Date().toLocaleTimeString());
+}, []);
 ```
+
+The empty `[]` is what makes it *once*. It is set in an effect, not straight in `useState`, because
+the server renders this component too — a second earlier — and React objects when the server's text
+and the browser's do not match.
 
 It is a measuring instrument. **If that time ever changes, the whole application was thrown away and
 a new one started.** You cannot see that happen; you can see the clock change.
