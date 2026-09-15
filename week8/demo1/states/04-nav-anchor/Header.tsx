@@ -2,10 +2,14 @@
 // This is the version that destroys the whole application on every click.
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function Header() {
-  const [startedAt] = useState(() => new Date().toLocaleTimeString());
+  const [startedAt, setStartedAt] = useState("");
+
+  useEffect(() => {
+    setStartedAt(new Date().toLocaleTimeString());
+  }, []);
 
   return (
     <header>

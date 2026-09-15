@@ -2,11 +2,15 @@
 // capital-L Link instead of a.
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export function Header() {
-  const [startedAt] = useState(() => new Date().toLocaleTimeString());
+  const [startedAt, setStartedAt] = useState("");
+
+  useEffect(() => {
+    setStartedAt(new Date().toLocaleTimeString());
+  }, []);
 
   return (
     <header>
