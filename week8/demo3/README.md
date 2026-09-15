@@ -1,5 +1,7 @@
 # Week 8, demo 3 — Props, properly
 
+> **This is the `answers` branch — the finished version.** The callback prop is wired up, and the card is a wrapper using `children` instead of nine props. The `main` branch has the starting point the class works from.
+
 The deliberate re-teach. Two things about props that are worth breaking rather than being told, and
 then the difference between a component that takes a list of props and one that takes a box.
 

@@ -1,5 +1,7 @@
 # Week 8, demo 1 — Many pages, one app
 
+> **This is the `answers` branch — the finished version.** Every page has been made, the nav uses `<Link>`, the drink page fetches from the server and handles a bad address, and the filter lives in the query string. The `main` branch has the starting point the class works from.
+
 The coffee store from week 6, with **one page and nothing else**. Everything else gets built in
 front of you: the pages, the nav, a page per drink, and a filter that lives in the address bar.
 

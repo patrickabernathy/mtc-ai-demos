@@ -1,5 +1,7 @@
 # Week 8, demo 4 — One fetch, two requests
 
+> **This is the `answers` branch — the finished version.** The fetch is lifted to the parent, so the page makes one request and both children are handed the result. The `main` branch has the starting point the class works from.
+
 Two components on one page. Both need the menu. Both go and get it. Each one is perfectly sensible
 on its own, and together they ask the server the same question twice.
 

@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useContext } from "react";
+import { CartContext } from "../app/CartContext";
 import { menu } from "../types/coffee";
 
 export function CartList() {
-  // The other copy. Add something here and the badge above never hears
-  // about it -- it is holding a completely separate number.
-  const [items, setItems] = useState(menu.slice(0, 3));
+  const cart = useContext(CartContext);
+  if (!cart) return null;
+
+  const { items, setItems } = cart;
 
   return (
     <div className="cart">

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { CartProvider } from "./CartContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "The Daily Grind",
-  description: "The Daily Grind — two components that disagree",
+  description: "The Daily Grind — one truth, several components",
 };
 
 export default function RootLayout({
@@ -13,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {/* 3. Wrap once, here, so every page is inside it. */}
+        <CartProvider>{children}</CartProvider>
+      </body>
     </html>
   );
 }

@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useContext } from "react";
+import { CartContext } from "../app/CartContext";
 
-// This component keeps its OWN note of how many things are in the cart.
-// So does CartList. Right now they agree, which is why nothing looks wrong.
 export function CartBadge() {
-  const [count, setCount] = useState(3);
+  // No props. It reaches in and reads the one true list.
+  const cart = useContext(CartContext);
+  if (!cart) return null;
 
-  return <p className="badge">Cart: {count}</p>;
+  // Worked out, not stored -- so it cannot drift.
+  return <p className="badge">Cart: {cart.items.length}</p>;
 }

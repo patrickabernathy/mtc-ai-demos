@@ -6,7 +6,7 @@
 "use client";
 
 import { useParams, notFound } from "next/navigation";
-import { menu } from "../../types/coffee";
+import { menu } from "../../../types/coffee";
 
 export default function DrinkPage() {
   const params = useParams();

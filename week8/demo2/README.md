@@ -1,5 +1,7 @@
 # Week 8, demo 2 — One truth, several components
 
+> **This is the `answers` branch — the finished version.** The cart lives in a context provided by the layout, so the badge and the list read the same list and cannot disagree. The `main` branch has the starting point the class works from.
+
 Two components that each keep their own note of how much is in the cart. They agree until they
 don't, and when they stop agreeing nothing errors — the app just quietly lies.
 

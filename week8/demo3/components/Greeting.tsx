@@ -1,9 +1,20 @@
 "use client";
 
-// This child was handed a name and would like a different one.
-// It assigns to the prop -- which does something, but not what it looks like.
-export function Greeting({ name }: { name: string }) {
-  name = "Changed!";
-
-  return <h2>Hello {name}</h2>;
+// Handed a value, and handed a way to ASK for it to change.
+// Values go down as props. Messages come back up as functions.
+export function Greeting({
+  name,
+  onRename,
+}: {
+  name: string;
+  onRename: (next: string) => void;
+}) {
+  return (
+    <div>
+      <h2>Hello {name}</h2>
+      <button type="button" onClick={() => onRename("Changed!")}>
+        Rename
+      </button>
+    </div>
+  );
 }

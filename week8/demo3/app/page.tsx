@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Greeting } from "../components/Greeting";
+import { Card } from "../components/Card";
 
 export default function Home() {
   const [person, setPerson] = useState("Sam");
@@ -10,11 +11,18 @@ export default function Home() {
     <main>
       <h1>Props, properly</h1>
 
-      <Greeting name={person} />
+      {/* The child cannot reach up. It can only be handed a way to ask. */}
+      <Greeting name={person} onRename={setPerson} />
 
-      {/* The parent still thinks the name is whatever it was.
-          The child scribbled on its own copy. */}
-      <p>Back in the parent, person is still: {person}</p>
+      <p>Back in the parent, person is: {person}</p>
+
+      {/* Composition: put things inside it rather than describing them
+          through a long list of props. */}
+      <Card>
+        <h3>Latte</h3>
+        <p>Oat milk &middot; $4.00</p>
+        <button type="button">Add</button>
+      </Card>
     </main>
   );
 }
