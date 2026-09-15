@@ -1,62 +1,123 @@
 # Week 8, demo 1 — Many pages, one app
 
-The coffee store from week 6, with more than one screen. Where week 6 was about one page that
-worked, this is about what happens the moment there are two: links that destroy your app, addresses
-that carry a value, addresses that are wrong, and pages that draw before their data arrives.
+The coffee store from week 6, with **one page and nothing else**. Everything else gets built in
+front of you: the pages, the nav, a page per drink, and a filter that lives in the address bar.
 
-It refactors `week6/demo3` — same menu, same cart, same components. Two things are new: every drink
-now has an `id`, and the header has a clock in it.
+This is deliberately the "before" state. If you clone it and run it, you get a store with a working
+cart and no second screen — which is exactly where class starts.
 
 ## How to run it
 
 ```
-cd week8/demo1
+git clone https://github.com/patrickabernathy/mtc-ai-demos
+cd mtc-ai-demos/week8/demo1
 npm install
 npm run dev
 ```
 
-Open <http://localhost:3000>. Only one demo can hold port 3000, so stop any other `npm run dev`
-first.
+Open <http://localhost:3000>. Only one project can hold port 3000, so stop any other
+`npm run dev` first.
 
 ## The clock in the header
 
-`components/Header.tsx` shows **App started at 6:34:12**. That time is stamped once, when the
-application first starts running, and never changes:
+`components/Header.tsx` shows **App started at 6:34:12**. That time is stamped once, when the app
+first starts running, and never changes:
 
 ```tsx
 const [startedAt] = useState(() => new Date().toLocaleTimeString());
 ```
 
-It is there as a measuring instrument. **If that time ever changes, the whole application was
-thrown away and a new one was started.** You cannot see that happen; you can see the clock change.
-
-The header lives in `app/layout.tsx`, not on a page, which is why it stays put while pages swap
-underneath it.
+It is a measuring instrument. **If that time ever changes, the whole application was thrown away and
+a new one started.** You cannot see that happen; you can see the clock change.
 
 ## What to do
 
-Work these in order. Each one is a thing that breaks, then the fix.
+### 1. Make a page
 
-**1. The link that destroys everything.** Put three drinks in the cart. The header links are plain
-`<a href="/cart">`. Click Cart, then click Back. Two things to notice: the cart is empty, and the
-clock has changed. The clock is the important one — a plain `<a>` tells the browser to throw the
-entire running application away and start over, so your cart never had a chance.
+There is no list of routes anywhere in this project. **The `app/` folder is the routing table.** A
+folder with a file called `page.tsx` in it is a page, and the folder's name is the address.
 
-Now swap both header links to `<Link>`:
+Make `app/about/page.tsx`:
+
+```tsx
+export default function AboutPage() {
+  return (
+    <main>
+      <h2>About us</h2>
+      <p>We have been grinding beans since Tuesday.</p>
+    </main>
+  );
+}
+```
+
+Save it and visit `/about`. It exists. You did not register it, import it, or tell anything about
+it.
+
+`export default` matters — the framework looks for exactly that in a `page.tsx`.
+
+### 2. Nest them
+
+Folders nest and the address nests with them. `app/drinks/hot/page.tsx` answers `/drinks/hot`. Two
+folders deep, two segments in the URL, still one `page.tsx` doing the work.
+
+### 3. Wrap a section
+
+`layout.tsx` wraps every page at or below its own folder. `app/drinks/layout.tsx` wraps `/drinks`
+and `/drinks/hot`, and leaves the home page alone. The root `app/layout.tsx` wraps everything —
+which is where the header lives, and why it does not flicker.
+
+```tsx
+export default function DrinksLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="section">
+      <p className="crumb">Menu / Drinks</p>
+      {children}
+    </div>
+  );
+}
+```
+
+`children` is whatever page is being shown underneath.
+
+**The special filenames**, all of which live next to each other in a folder:
+
+| File | What it is |
+|---|---|
+| `page.tsx` | The page at this address |
+| `layout.tsx` | Wraps this folder and everything below it |
+| `not-found.tsx` | Shown when `notFound()` is called |
+| `loading.tsx` | Shown while the page is loading |
+| `error.tsx` | Shown if the page throws |
+
+### 4. Move between pages without destroying everything
+
+Add a nav to the header using plain `<a href="/about">`. Put three drinks in the cart, click About,
+click Back. The cart is empty **and the clock has changed** — the whole application was torn down
+and rebuilt.
+
+Swap to `<Link>`:
 
 ```tsx
 import Link from "next/link";
 
-<Link href="/cart">Cart</Link>
+<Link href="/about">About</Link>
 ```
 
-Do the same trip again. **The clock holds still — and the cart is still empty.** That pair is the
-whole point of this demo. `<Link>` saved the *application*. It cannot save the *cart*, because the
-cart lives in state on the menu page and you left the menu page. Where the cart should live instead
-is the next demo's problem.
+Same trip again. **The clock holds still — and the cart is still empty.** Two different losses, and
+being able to tell them apart is the point:
 
-**2. A page per drink.** Make `app/drinks/[id]/page.tsx`. Square brackets round a folder name mean
-"anything can go here, and I want to know what it was" — one file that serves every drink.
+- A plain `<a>` destroys **the whole application**. Every variable, all state, all of it. The
+  browser requests a fresh document and runs your code from zero.
+- `<Link>` cancels that — the same move as `e.preventDefault()` on the form in week 6 — then fetches
+  just the new page, swaps that part of the screen, and rewrites the address bar so Back still
+  works. But it still **swaps the page**, so anything held on the page you left goes with it.
+
+The cart lives on the menu page. Where it should live instead is the next session.
+
+### 5. A page per drink
+
+`app/drinks/[id]/page.tsx`. Square brackets mean "anything can go here, and I want to know what it
+was" — one file for every drink.
 
 ```tsx
 "use client";
@@ -66,9 +127,8 @@ const params = useParams();
 const id = params.id;   // the bit that was in the brackets
 ```
 
-Show the drink's name. Then visit `/drinks/9999` and watch it crash.
-
-**3. Say so properly.** Add the guard:
+Then visit `/drinks/9999` and watch it crash, because nothing considered the address being wrong.
+Add the guard:
 
 ```tsx
 import { notFound } from "next/navigation";
@@ -77,27 +137,20 @@ const drink = menu.find((d) => d.id === id);
 if (!drink) notFound();
 ```
 
-Prove it by typing a garbage number in the address bar. Optionally add your own `not-found.tsx`
-next to the page.
+### 6. Find the bug you now have
 
-**4. Find the bug you now have.** Your page probably does not work even for real drinks. Add
-`console.log(typeof params.id)` and read what it prints. Everything arriving from the address bar
-is **text**, so `"3" === 3` is `false`, `find` finds nothing, and your brand-new not-found page
-shows for a drink that exists — with no error anywhere. Convert once, where the value comes in:
+Your page probably fails for real drinks too. `console.log(typeof params.id)` — everything from the
+address bar is **text**, so `"3" === 3` is `false`, `find` finds nothing, and your new not-found
+page shows for a drink that exists, with no error anywhere. Convert once, where it comes in:
 
 ```tsx
 const id = Number(params.id);
 ```
 
-**5. Fetch the drink instead.** There is a pretend server at `/api/drinks/[id]`, deliberately slow
-by about 600ms so the waiting is visible. Swap the local list for a `fetch` inside `useEffect`,
-leave the guard off, and watch it crash — the page draws before the answer arrives, every time.
-Then handle it with the same states you built for the menu in week 6: loading, error, not-found,
-then the drink.
+### 7. A filter you can send someone
 
-**6. A filter you can send someone.** Add a filter box to the menu using `useState`. Filter to
-"oat", copy the address out of the bar, and open it in another window. You get the whole menu — the
-filter only ever existed in one browser's memory. Move it into the address instead:
+Filter the menu with `useState`, then copy the address and open it elsewhere — you get the whole
+menu, because the filter only ever existed in one browser's memory. Move it into the address:
 
 ```tsx
 import { useSearchParams } from "next/navigation";
@@ -106,46 +159,42 @@ const searchParams = useSearchParams();
 const q = searchParams.get("q") ?? "";
 ```
 
-Now `/menu?q=oat` arrives filtered, survives a refresh, and can be sent to someone.
+Now `/menu?q=oat` arrives filtered, survives a refresh, and can be sent.
 
 ## The teaching point
 
-Three of the four things here are the same idea wearing different clothes: **what you were handed
-is not necessarily what you assumed.** The address might be wrong. The value might be text when you
-expected a number. The data might not have arrived yet. None of those three announce themselves —
-there is no error message for a silently-wrong comparison or an unshareable filter.
-
-The fourth is about scope: a plain `<a>` destroys the whole application, and navigating at all
-destroys whatever was being held on the page you left. Those are two different losses and it is
-worth being able to say which is which.
+**The `app/` folder is the routing table, and the address bar is an input.** Those two ideas carry
+the whole session. Everything else follows: a wrong address is possible so it has to be handled; a
+value from the address is text so it has to be converted; and state that lives on a page leaves with
+the page.
 
 ## The `states/` folder
 
-Each checkpoint, frozen. **Reference only** — Next builds only what is under `app/`, so nothing in
-here runs where it sits. Copy a file over your own to catch up or to compare against a working
-version.
+Each step, frozen. **Reference only** — Next builds only what is under `app/`, so nothing in here
+runs where it sits. Copy a file over your own to catch up or compare.
 
 | State | What it shows |
 |---|---|
-| `01-link` | The header after the `<Link>` fix |
-| `02-detail-crash` | The drink page with no guard — crashes on a bad id |
-| `03-not-found` | The same page with `notFound()`, plus a custom `not-found.tsx` |
-| `04-type-bug` | The silent one: `"3" === 3` is false, so a real drink shows as missing |
-| `05-number-fix` | Converting once, at the doorway |
-| `06-fetch-crash` | Fetching the drink with no loading guard |
-| `07-detail-states` | The same fetch with loading, error and not-found handled |
-| `08-filter-state` | A filter that works and cannot be shared |
-| `09-filter-query` | The same filter, living in the address |
+| `01-first-page` | The simplest possible page |
+| `02-nested-route` | Nested folders, nested address |
+| `03-section-layout` | A layout wrapping one section only |
+| `04-nav-anchor` | The nav with plain `<a>` — destroys the app |
+| `05-nav-link` | The same nav with `<Link>` |
+| `06-detail-crash` | `[id]` with no guard — crashes on a bad address |
+| `07-not-found` | `notFound()` plus a custom `not-found.tsx` |
+| `08-type-bug` | The silent one: `"3" === 3` is false |
+| `09-number-fix` | Converting once, at the doorway |
+| `10-filter-state` | A filter that works and cannot be shared |
+| `11-filter-query` | The same filter, living in the address |
 
-`states/` is excluded from type-checking in `tsconfig.json`, because several of these are
-deliberately broken and are supposed to stay that way.
+`states/` is excluded from type-checking in `tsconfig.json`, because several are deliberately broken
+and are supposed to stay that way.
 
 ## One thing that will bite you later
 
-`useSearchParams` works perfectly under `npm run dev` and **fails `npm run build`** with a message
-about needing a Suspense boundary. The query string is not known until somebody actually visits, so
-the framework needs you to mark the part of the page that has to wait. The fix is to move the
-component that reads it into its own file and wrap it:
+`useSearchParams` works under `npm run dev` and **fails `npm run build`** with a message about a
+Suspense boundary. The query string is not known until somebody visits, so the framework needs you to
+mark the part of the page that waits:
 
 ```tsx
 import { Suspense } from "react";
@@ -155,4 +204,4 @@ import { Suspense } from "react";
 </Suspense>
 ```
 
-Not part of this week's lesson — noted here so it costs you two minutes rather than an evening.
+Not part of this week's lesson — noted so it costs you two minutes rather than an evening.
