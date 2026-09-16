@@ -1,4 +1,4 @@
-import type { MenuItem } from "../../types/coffee";
+import type { MenuItem } from "../types/coffee";
 
 // No fetch, no effect, no state. It shows what it is handed.
 export function MenuList({ menu }: { menu: MenuItem[] }) {

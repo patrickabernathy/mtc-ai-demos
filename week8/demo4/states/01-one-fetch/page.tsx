@@ -3,9 +3,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { MenuItem } from "../../types/coffee";
-import { MenuList } from "../../components/MenuList";
-import { PriceSummary } from "../../components/PriceSummary";
+import type { MenuItem } from "../types/coffee";
+import { MenuList } from "../components/MenuList";
+import { PriceSummary } from "../components/PriceSummary";
 
 export default function Home() {
   const [menu, setMenu] = useState<MenuItem[]>([]);

@@ -2,7 +2,7 @@
 "use client";
 
 import { useContext } from "react";
-import { CartContext } from "../../app/CartContext";
+import { CartContext } from "../app/CartContext";
 
 export function CartBadge() {
   const cart = useContext(CartContext);

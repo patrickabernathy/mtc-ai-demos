@@ -3,9 +3,9 @@
 "use client";
 
 import { useState } from "react";
-import { menu } from "../../types/coffee";
-import { CartBadge } from "../../components/CartBadge";
-import { CartList } from "../../components/CartList";
+import { menu } from "../types/coffee";
+import { CartBadge } from "../components/CartBadge";
+import { CartList } from "../components/CartList";
 
 export default function Home() {
   const [items, setItems] = useState(menu.slice(0, 3));

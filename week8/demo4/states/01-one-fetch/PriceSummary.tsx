@@ -1,4 +1,4 @@
-import type { MenuItem } from "../../types/coffee";
+import type { MenuItem } from "../types/coffee";
 
 export function PriceSummary({ menu }: { menu: MenuItem[] }) {
   if (menu.length === 0) return <p>Working out prices...</p>;
