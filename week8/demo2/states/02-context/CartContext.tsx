@@ -3,7 +3,7 @@
 "use client";
 
 import { createContext, useState } from "react";
-import type { MenuItem } from "../../types/coffee";
+import type { MenuItem } from "../types/coffee";
 
 type CartValue = {
   items: MenuItem[];

@@ -1,4 +1,4 @@
-import type { MenuItem } from "../../types/coffee";
+import type { MenuItem } from "../types/coffee";
 
 export function CartList({
   items,

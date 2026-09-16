@@ -3,7 +3,7 @@
 "use client";
 
 import { useState } from "react";
-import { Greeting } from "../../components/Greeting";
+import { Greeting } from "../components/Greeting";
 
 export default function Home() {
   const [person, setPerson] = useState("Sam");

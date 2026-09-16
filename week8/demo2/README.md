@@ -72,3 +72,6 @@ over your own to catch up.
 |---|---|
 | `01-lifted` | One owner in `page.tsx`, both children handed what they need |
 | `02-context` | The cart in a context, provided by the layout, readable from any page |
+
+Each file's import paths are written for where it lands, not for where it sits. `page.tsx` and
+`layout.tsx` go in `app/`; everything else goes in `components/`.
