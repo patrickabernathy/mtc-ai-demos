@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W8-2 - Give a record its own page</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+    --ai-soft: #eef0fb;
+    --ai-edge: #5a5ec2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+      --ai-soft: #1b1d33;
+      --ai-edge: #8b8ff0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    padding: 0 22px 80px;
+    max-width: 760px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 30px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 58ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 40px 0 12px; font-size: 22px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h3 { margin: 26px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 66ch; }
+  ul, ol { max-width: 66ch; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 "Cascadia Code", Consolas, ui-monospace, monospace; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .ai { background: var(--ai-soft); border-color: var(--ai-edge); }
+  .ai b { color: var(--ai-edge); }
+  .req { color: var(--accent); font-weight: 700; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W8 &middot; 2 of 3 &middot; builds on lab 1</p>
+  <h1>Give a record its own page</h1>
+  <p class="lede">Backspin Records now has a catalog, an About page, and a Help Center &mdash; lab 1,
+    finished. Every record title is already a link. Click one. You'll land on Next's default 404,
+    because there is nowhere for it to go yet.</p>
+</header>
+
+<h2>1. Run it, and see the crash</h2>
+
+<pre><code>npm install
+npm run dev</code></pre>
+
+<p>
+  Open <a href="http://localhost:3000">http://localhost:3000</a>, click any record title. That 404 is
+  today's whole assignment: build the page those links are already pointing at.
+</p>
+
+<h2>2. Make one dynamic page instead of six</h2>
+
+<p><span class="req">Required.</span> Make <code>app/records/[id]/page.tsx</code>. Square brackets mean
+  "anything can go here, and I want to know what it was" &mdash; one file answers every
+  <code>/records/1</code> through <code>/records/6</code>, and anything else besides.</p>
+
+<pre><code>"use client";
+import { useParams } from "next/navigation";
+import { catalog } from "../../catalog";
+
+export default function RecordPage() {
+  const params = useParams();
+  const id = params.id;
+  // ...
+}</code></pre>
+
+<div class="callout warn">
+  <p><b>Expect this one.</b> <code>catalog.find((a) =&gt; a.id === id)</code> will fail for every
+    record, even real ones. <code>console.log(typeof id)</code> and look closely &mdash; everything
+    that arrives from the address bar is <b>text</b>, so <code>"3" === 3</code> is <code>false</code>.
+    Convert once, where it comes in:</p>
+</div>
+
+<pre><code>const numericId = Number(params.id);
+const album = catalog.find((a) =&gt; a.id === numericId);</code></pre>
+
+<h2>3. Guard the address that doesn't exist</h2>
+
+<p><span class="req">Required.</span> Visit <code>/records/9999</code>. It crashes, because nothing
+  considered the address being wrong. Add the guard:</p>
+
+<pre><code>import { notFound } from "next/navigation";
+
+if (!album) notFound();</code></pre>
+
+<p>Show the album's title, artist, genre, year, price, and description. Mark it
+  <code>Out of stock</code> somehow when <code>inStock</code> is false.</p>
+
+<div class="callout check">
+  <p><b>Stop and check.</b> Click through all six records from the catalog. Then type
+    <code>/records/burrito</code> in the address bar by hand. Both the missing-number case and the
+    not-a-number case should show your not-found page, not a crash.</p>
+</div>
+
+<h2>4. Bonus &mdash; ask a real server instead of the local array</h2>
+
+<p>
+  There's a live class API behind a bearer token, same shape as the ones from week 6 and week 7:
+</p>
+
+<pre><code>GET https://n8n.aseglave.net/webhook/mtc-records?id=3
+Authorization: Bearer mtc-fall-2026</code></pre>
+
+<p>Swap the <code>catalog.find(...)</code> lookup for a <code>useState</code> + <code>useEffect</code>
+  fetch against that URL, using <code>numericId</code> in the query string. Handle all three
+  situations the same shape <code>demo7</code>/<code>demo8</code> and week 6's <code>lab3</code> used:
+  loading, loaded, and a real error (this server answers a genuine <code>404</code> for an id it
+  doesn't have &mdash; check <code>res.ok</code> yourself, <code>fetch</code> won't throw for you).</p>
+
+<div class="callout ai">
+  <p><b>AI hint.</b> If the fetch works from a REST client but not from the browser, a useful,
+    specific prompt is:</p>
+  <p><i>"My fetch to an external API with an Authorization header works in curl but the browser
+    console shows a CORS error. What's actually happening, and is this something the client can fix or
+    does it have to be the server?"</i></p>
+</div>
+
+<h2>5. Extra bonus &mdash; put the search in the address bar</h2>
+
+<p>
+  Add a search box on the catalog page (<code>app/page.tsx</code>). Typing in it should filter the
+  list <i>and</i> land in the URL as <code>?q=miles</code>, using <code>useSearchParams</code> the
+  same way <code>demo1</code>'s menu filter did — so a search can be copied and sent to someone else,
+  and survives a refresh.
+</p>
+
+<pre><code>import { useSearchParams } from "next/navigation";
+
+const searchParams = useSearchParams();
+const q = searchParams.get("q") ?? "";</code></pre>
+
+<p>
+  For the extra credit on top of that: instead of filtering the local <code>catalog</code> array,
+  send <code>q</code> to the live API's own search:
+</p>
+
+<pre><code>GET https://n8n.aseglave.net/webhook/mtc-records?q=miles
+Authorization: Bearer mtc-fall-2026</code></pre>
+
+<div class="callout warn">
+  <p><b>You will hit this at <code>npm run build</code>, not <code>npm run dev</code>.</b>
+    <code>useSearchParams</code> needs a <code>&lt;Suspense&gt;</code> boundary around the part of the
+    page that reads it, or the production build fails with a message about exactly that:</p>
+</div>
+
+<pre><code>import { Suspense } from "react";
+
+&lt;Suspense fallback={&lt;p&gt;Loading&hellip;&lt;/p&gt;}&gt;
+  &lt;SearchableCatalog /&gt;
+&lt;/Suspense&gt;</code></pre>
+
+<h2>What "done" looks like</h2>
+
+<ul>
+  <li>Every record link from the catalog opens a real page with that record's details.</li>
+  <li>A bad id (<code>/records/9999</code>) or a non-numeric one (<code>/records/burrito</code>) shows
+    a not-found page instead of crashing.</li>
+  <li><i>Bonus:</i> the record page's data comes from the live API, with a real loading state and a
+    real error state.</li>
+  <li><i>Extra bonus:</i> a search box filters the catalog, lives in the URL, and (extra-extra) asks
+    the live API's <code>?q=</code> search instead of filtering locally.</li>
+</ul>
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 8.</p>
+</footer>
+
+</body>
+</html>
