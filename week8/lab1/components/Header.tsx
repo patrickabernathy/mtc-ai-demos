@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export function Header() {
   // Stamped once, when the app first starts running in the browser, and never
@@ -16,7 +17,11 @@ export function Header() {
     <header>
       <h1>Backspin Records</h1>
       <p className="tagline">Used vinyl, bought and sold.</p>
-      {/* No nav yet. We add it once there is somewhere to go. */}
+      <nav>
+        <Link href="/">Catalog</Link>
+        <Link href="/about">About</Link>
+        <Link href="/help/shipping">Help</Link>
+      </nav>
       <p className="session">App started at {startedAt}</p>
     </header>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useUser } from "../app/UserContext";
 
 export function Header() {
   // Stamped once, when the app first starts running in the browser, and never
@@ -9,6 +10,7 @@ export function Header() {
   // and a new one started in its place — including whatever a refresh does to
   // whoever was logged in.
   const [startedAt, setStartedAt] = useState("");
+  const { user } = useUser();
 
   useEffect(() => {
     setStartedAt(new Date().toLocaleTimeString());
@@ -22,7 +24,11 @@ export function Header() {
         <Link href="/">Catalog</Link>
         <Link href="/about">About</Link>
         <Link href="/help/shipping">Help</Link>
-        {/* No login link yet. Add one once there's somewhere for it to point. */}
+        {user ? (
+          <Link href="/account">{user.name}</Link>
+        ) : (
+          <Link href="/login">Log in</Link>
+        )}
       </nav>
       <p className="session">App started at {startedAt}</p>
     </header>
