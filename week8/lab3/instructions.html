@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W8-3 - A login that survives the trip to the next page</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+    --ai-soft: #eef0fb;
+    --ai-edge: #5a5ec2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+      --ai-soft: #1b1d33;
+      --ai-edge: #8b8ff0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    padding: 0 22px 80px;
+    max-width: 760px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 30px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 58ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 40px 0 12px; font-size: 22px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h3 { margin: 26px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 66ch; }
+  ul, ol { max-width: 66ch; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 "Cascadia Code", Consolas, ui-monospace, monospace; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .ai { background: var(--ai-soft); border-color: var(--ai-edge); }
+  .ai b { color: var(--ai-edge); }
+  .req { color: var(--accent); font-weight: 700; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W8 &middot; 3 of 3 &middot; builds on lab 2</p>
+  <h1>A login that survives the trip to the next page</h1>
+  <p class="lede">Backspin Records now has a catalog, About, Help, and a page per record — lab 2,
+    finished. There is no login anywhere. Tonight you add one, and make its answer to "who is this"
+    available on every page, not just the one where they typed it in.</p>
+</header>
+
+<h2>1. Run it</h2>
+
+<pre><code>npm install
+npm run dev</code></pre>
+
+<p>
+  Open <a href="http://localhost:3000">http://localhost:3000</a>. Everything from lab 2 still works.
+  Nothing knows who you are, because nothing has anywhere to keep that information.
+</p>
+
+<h2>2. Why a prop won't do this time</h2>
+
+<p>
+  A component can hand a value to its own children as a prop. But <code>app/login/page.tsx</code> and
+  <code>app/account/page.tsx</code> aren't parent and child &mdash; they're two different pages, and
+  the only thing that contains both of them is <code>layout.tsx</code>, which can't hand custom props
+  to <code>{"{children}"}</code>; it never even knows which page it's wrapping. That's exactly the wall
+  <code>demo2</code> hit with the cart. The fix is the same one: <b>context</b> — a value a whole
+  section of the app can read without being handed it at every step.
+</p>
+
+<h2>3. Build the context</h2>
+
+<p><span class="req">Required.</span> Make <code>app/UserContext.tsx</code> with three pieces, the
+  same shape as <code>CartContext</code>: a type for what's stored, the <code>Context</code> itself,
+  and a <code>UserProvider</code> that owns the actual <code>useState</code>.</p>
+
+<pre><code>"use client";
+import { createContext, useContext, useState } from "react";
+
+type Shopper = { name: string; email: string };
+
+type UserContextValue = {
+  user: Shopper | null;
+  login: (shopper: Shopper) =&gt; void;
+  logout: () =&gt; void;
+};
+
+const UserContext = createContext&lt;UserContextValue | null&gt;(null);
+
+export function UserProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState&lt;Shopper | null&gt;(null);
+
+  function login(shopper: Shopper) {
+    setUser(shopper);
+  }
+
+  function logout() {
+    setUser(null);
+  }
+
+  return (
+    &lt;UserContext.Provider value={{ user, login, logout }}&gt;
+      {children}
+    &lt;/UserContext.Provider&gt;
+  );
+}
+
+export function useUser() {
+  const value = useContext(UserContext);
+  if (!value) throw new Error("useUser must be used inside a UserProvider");
+  return value;
+}</code></pre>
+
+<p>Wrap the app with it in <code>app/layout.tsx</code>, around both <code>Header</code> and
+  <code>{"{children}"}</code> — <code>Header</code> needs to read it too, in step 5.</p>
+
+<div class="callout check">
+  <p><b>Stop and check.</b> The app should still run exactly as before. A provider that nobody reads
+    from yet changes nothing on screen — that's expected, not a sign you did it wrong.</p>
+</div>
+
+<h2>4. Build the login page</h2>
+
+<p><span class="req">Required.</span> Make <code>app/login/page.tsx</code>: a name field, an email
+  field, a submit button. No password, no validation beyond "don't submit empty fields" — this is a
+  mock login, not a real one. On submit, call <code>login()</code> from your context with what was
+  typed, then send them to <code>/account</code>:</p>
+
+<pre><code>"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "../UserContext";
+
+export default function LoginPage() {
+  const { login } = useUser();
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    login({ name, email });
+    router.push("/account");
+  }
+
+  // ...
+}</code></pre>
+
+<h2>5. Build the account page, and show who's logged in everywhere</h2>
+
+<p><span class="req">Required.</span> Make <code>app/account/page.tsx</code>. If <code>user</code> is
+  <code>null</code>, show a message and a link to <code>/login</code>. Otherwise, show
+  <b>Welcome back, {"{"}user.name{"}"}</b> and a <b>Log out</b> button that calls <code>logout()</code>.</p>
+
+<p>Then update <code>components/Header.tsx</code> to read the same context (it's already
+  <code>"use client"</code> for the clock) and swap the nav's placeholder comment for a real link:
+  <b>Log in</b> when <code>user</code> is <code>null</code>, the shopper's name linking to
+  <code>/account</code> otherwise.</p>
+
+<div class="callout ai">
+  <p><b>AI hint.</b> If the account page and the header don't agree about who's logged in, a sharp
+    question is:</p>
+  <p><i>"I have two components both reading the same React context. One shows the logged-in user and
+    the other doesn't. What would cause that, given they're both inside the same provider?"</i></p>
+  <p>Nine times out of ten the answer is that one of them isn't actually inside the provider — check
+    where in the tree each one sits.</p>
+</div>
+
+<h2>6. Watch it survive a page — and not survive a refresh</h2>
+
+<p>Log in. Click to the catalog, to About, back to Account. The name should hold the whole way — that's
+  context doing its job. Now hit a hard refresh.</p>
+
+<div class="callout warn">
+  <p><b>You are logged out again, and that's correct.</b> A refresh is the same event as the plain
+    <code>&lt;a&gt;</code> from lab 1 — the whole app, clock included, gets thrown away and rebuilt
+    from nothing. Context lives in memory, in the running app; it has nowhere to survive to.</p>
+</div>
+
+<h2>7. Bonus &mdash; make it survive the refresh too</h2>
+
+<p>
+  A cookie lives in the browser, not in the app's memory, so it survives the app being torn down.
+  In <code>login()</code>, write the shopper to one:
+</p>
+
+<pre><code>document.cookie = `mtc_user=${encodeURIComponent(JSON.stringify(shopper))}; path=/; max-age=604800`;</code></pre>
+
+<p>And in <code>logout()</code>, clear it the same way <code>max-age=0</code> does. Then, in
+  <code>UserProvider</code>, read it back once when the app starts:</p>
+
+<pre><code>useEffect(() =&gt; {
+  const match = document.cookie.match(/(?:^|; )mtc_user=([^;]*)/);
+  if (match) setUser(JSON.parse(decodeURIComponent(match[1])));
+}, []);</code></pre>
+
+<div class="callout warn">
+  <p><b>Same reason as the clock.</b> This has to be an effect, not straight in
+    <code>useState(...)</code> — <code>document</code> doesn't exist while the server is rendering
+    this component, only once it's running in the browser.</p>
+</div>
+
+<p>Refresh again. The name should hold this time — the cookie is doing what context alone couldn't.</p>
+
+<h2>What "done" looks like</h2>
+
+<ul>
+  <li>Logging in on <code>/login</code> shows the shopper's name on <code>/account</code> and in the
+    header, on every page.</li>
+  <li>A hard refresh logs them out again (or, with the bonus, doesn't).</li>
+  <li>Logging out clears the name from both the header and the account page.</li>
+</ul>
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 8.</p>
+</footer>
+
+</body>
+</html>
