@@ -1,8 +1,10 @@
-# Week 9, demo 1 — the stylesheet that lies
+# Week 9, demo 1 — the stylesheet that lies, then Tailwind start to finish
 
 The Corner Store from week 8, still styled the Week 3 way: a class name on the
 element, a matching rule in `app/globals.css`. The first thing we do is rename
-one of those and watch the look disappear with no error.
+one of those and watch the look disappear with no error. By the end of the
+night the look lives on the element, the header is a row, the product list has
+a breakpoint, and it all survives a 375-pixel phone.
 
 This is the **start** state. Clone this folder, not `copy-b`.
 
@@ -59,6 +61,12 @@ Add this as the **first line** of `app/globals.css`:
 If you skip the import, `text-xl` on a heading does nothing — same silence as
 the renamed class. Installed is not the same as turned on.
 
+When you do add it, **the page gets plainer, not fancier.** The import brings a
+reset that wipes the browser's own styles: headings drop to the size and weight
+of normal text, and the default spacing disappears. The main heading with
+`text-xl` actually gets *smaller* (32px bold down to 20px). That's expected —
+from here on, everything big or bold is big or bold because you said so.
+
 There is no `tailwind.config.js`. The current version of Tailwind does not
 create one. Older tutorials you Google will still ask for it.
 
@@ -72,7 +80,40 @@ type (`text-xl` is `font-size`, `p-4` is `padding`, `text-gray-500` is
 If nothing happens, suspect the class name first. `text-red` is not a class.
 `text-red-500` is.
 
-### 4. Extract a Button
+### 4. A real class that still loses
+
+In `components/Header.tsx`, add `text-red-500` to the tagline **without**
+removing its old `tagline` class. It stays grey.
+
+The class is real — it's the old `.tagline` rule in `globals.css` that wins.
+Tailwind files its classes in CSS *layers*, and plain CSS that isn't in any
+layer beats everything that is. Right-click the tagline → **Inspect**: in the
+Styles pane, `.text-red-500`'s colour is crossed out. Take `tagline` off the
+element and it goes red.
+
+So when a class does nothing, there are two suspects: the name isn't real, or
+an old class is beating it.
+
+### 5. Make the header a row
+
+Add `flex` to the `<header>` — the parent, not one of the four things inside it.
+Then `gap-4` (they're touching), then `items-center` (the Order now button is
+stretched to the height of the nav), then `justify-between` (button to the right
+edge).
+
+### 6. The phone test, and one breakpoint
+
+Open DevTools, turn on the device toolbar (`Ctrl+Shift+M`, `Cmd+Shift+M` on a
+Mac), and set the width to **375**. The header row is crushed.
+
+In `components/MenuList.tsx`, replace `menu-list` with a grid. Try it the way
+the sentence sounds first — `grid grid-cols-3 md:grid-cols-1 gap-4` — and look at
+375: three skinny columns. The class with **no prefix** applies on every screen,
+phones included; `md:` is the upgrade from 768px up. Swap them so the phone
+gets the unprefixed class. Then do the same for the header with
+`flex-col md:flex-row`.
+
+### 7. Extract a Button
 
 The same `className="bg-green-600 text-white px-4 py-2 rounded"` will end up on
 the card, the header, the cart page, and checkout. Put it in one
@@ -82,6 +123,16 @@ in that one file and all four move.
 In this system, duplication becomes a component, not a CSS class. A `.btn` rule
 puts the two-file problem back.
 
+### 8. If there's time: one Button, two colours
+
+Give `Button` a `colour` prop and build the class from it:
+`` className={`bg-${colour}-600 ...`} ``. Use `colour="green"` on Add to cart and
+`colour="red"` on the cart's Remove button (add a drink first so the cart shows
+it). Green works. Red has no background at all.
+
+Work out why before you look. (Hint: Tailwind never runs your code.) The
+finished version is on the `answers` branch.
+
 ## The teaching point
 
 A misspelled function blows up. A misspelled (or renamed) CSS class does not.
@@ -89,10 +140,16 @@ Tailwind inherits that exact behaviour: an invalid utility class is silently
 ignored. The look now lives on the element so there is no second file to drift
 — and when you need the same look four times, you extract a component.
 
+Layout goes on the parent: `flex`, `grid`, `gap`, `items-`, `justify-` all
+style the box that holds the children. And the phone comes first: write the
+small screen with no prefix, then upgrade with `md:`.
+
 ## The `states/` folder
 
-Each step, frozen. **Reference only** — Next builds only what is under `app/`,
-so nothing in here runs where it sits. Copy a file over your own to catch up.
+Each step, frozen, in the order the night runs. **Reference only** — Next builds only what is under `app/`,
+so nothing in here runs where it sits. Copy a file over your own to catch up
+(`cart-page.tsx` goes to `app/cart/page.tsx`, `checkout-page.tsx` to
+`app/checkout/page.tsx`, everything else to `components/`).
 
 | State | What it shows |
 |---|---|
@@ -100,8 +157,13 @@ so nothing in here runs where it sits. Copy a file over your own to catch up.
 | `02-class-rename-break` | Component says `product-card`; CSS still says `.card`. Look is gone |
 | `03-tailwind-installed` | Packages + PostCSS config. The `@import` is still missing. `text-xl` does nothing |
 | `04-restyled` | Import added. The card rewritten in utilities. The `.card` rule deleted |
-| `05-button-duplicated` | The same button string pasted on the card, header, cart page, and checkout |
-| `06-button-extracted` | `Button.tsx`, four call sites, one colour change hits all four |
+| `05-old-class-wins` | `tagline text-red-500` on the header — a real class, still grey |
+| `06-header-flex` | The header as a row: `flex gap-4 items-center justify-between`. Hover on the card |
+| `07-grid-backwards` | `grid-cols-3 md:grid-cols-1` — three columns on a phone, one on a laptop |
+| `08-responsive` | Phone first: `grid-cols-1 md:grid-cols-3`, and the header `flex-col md:flex-row` |
+| `09-button-duplicated` | The same button string pasted on the card, header, cart page, and checkout |
+| `10-button-extracted` | `Button.tsx`, four call sites, one colour change hits all four |
+| `11-colour-prop-broken` | A `colour` prop that builds the class from pieces. Green works; red doesn't |
 
 `copy-b/` next door is a full runnable copy of `03-tailwind-installed` — use it
 if `npm install` cannot run. Skip the download, still skip the import, still
