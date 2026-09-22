@@ -6,13 +6,15 @@ Teaching repo for the MTC AI-Enabled Full-Stack Developer program. Everything he
 
 ## Layout
 
-Code is organized by session: `week1/` through `week8/`, each containing `demo1/`, `demo2/`, ... (things built during lecture) and sometimes `lab1/`, `lab2/`, ... (things students build). Early weeks are plain HTML/CSS/JS; week4 introduces TypeScript; week5 onward is Next.js, each demo folder its own self-contained app with its own `package.json`.
+Code is organized by session: `week1/` through `week9/`, each containing `demo1/`, `demo2/`, ... (things built during lecture) and sometimes `lab1/`, `lab2/`, ... (things students build). Early weeks are plain HTML/CSS/JS; week4 introduces TypeScript; week5 onward is Next.js, each demo folder its own self-contained app with its own `package.json`.
 
 Later demos in a week usually refactor the earlier one — e.g. week6 goes `demo1` (no components) → `demo2` (components) → `demo3` (client state) on the same coffee cart, then `demo4` (filter a list as you type), `demo5` (a one-page form) → `demo6` (the same form as a three-card wizard), then `demo7` (the menu fetched from a server) → `demo8` (the same fetch behind an `x-auth` header). When changing one, check whether the sibling demos are meant to stay in sync or to deliberately differ, since the difference between them *is* the lesson.
 
 `week7/demo1` is different in kind: an untouched `create-next-app` scaffold whose lesson is the AI workflow itself, not the app. Its `docs/requirements.md`, `docs/design.md`, and `docs/plans/` are deliberately empty — they get filled in live — and it carries its own demo-local `.claude/commands/`.
 
-Two folder conventions recur. A `states/` folder (`week5/demo1`, `week6/demo4`, `week6/demo7`, `week6/demo8`, and all of `week8`) holds the page at each checkpoint reached in class; Next builds only what is under `app/`, so `states/` is reference material students copy over their own file, never live code. The week5 and week6 labs carry an `instructions.html` next to the code — that is the student handout for that lab.
+Two folder conventions recur. A `states/` folder (`week5/demo1`, `week6/demo4`, `week6/demo7`, `week6/demo8`, all of `week8`, and `week9/demo1`) holds the page at each checkpoint reached in class; Next builds only what is under `app/`, so `states/` is reference material students copy over their own file, never live code. The week5 and week6 labs carry an `instructions.html` next to the code — that is the student handout for that lab.
+
+`week9/demo1` is the Corner Store still on plain CSS (`className="card"` plus a `.card` rule). `week9/copy-b` is the same app with Tailwind v4 packages and `postcss.config.mjs` already present and the `@import "tailwindcss"` line left out on purpose — so a class like `text-xl` does nothing until the import is added. There is no `tailwind.config.js`; v4 does not create one. Restart `npm run dev` after the PostCSS config appears.
 
 ## Commands
 
@@ -82,7 +84,7 @@ the solution. The one on `answers` can describe the finished version.
 ## Conventions
 
 - **New projects are Next.js + TypeScript** unless a lesson specifically calls for something else. Copy `next.config.ts`, `tsconfig.json`, and `.gitignore` from the nearest demo in the same lineage (see below) so the setup is identical every time.
-- Plain `globals.css` with plain class names. No Tailwind, no CSS modules, no styled-components.
+- Plain `globals.css` with plain class names. No Tailwind, no CSS modules, no styled-components — **except `week9/`**, where Tailwind v4 *is* the lesson (`@import "tailwindcss"` plus `postcss.config.mjs`, not a JS config file).
 - Props are typed inline in the function signature. Shared shapes go in a `types/` file only when more than one component needs them.
 - Comments explain *why this is the teaching point*, not what the line does.
 - **Two scaffold lineages live side by side, on purpose.** The hand-built demos (`week5/demo1` and all of `week6`) pin exact versions of Next 15.5.24 / React 19.2.8, keep `app/` at the demo root, and use plain CSS. `week5/demo2` and `week7/demo1` are untouched `create-next-app` output — Next 16.3.x on caret ranges, `src/app/`, Tailwind v4 — and exist precisely to show what the generator hands you. Don't reconcile one lineage into the other, and don't strip Tailwind out of a scaffold demo; that Tailwind is the generator's, not a convention being adopted.
