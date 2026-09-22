@@ -12,8 +12,13 @@ of `app/globals.css`:
 @import "tailwindcss";
 ```
 
-Save. The heading jumps. Restart `npm run dev` after the PostCSS config
-appears, or the running server never sees it.
+Save. The heading changes — but it gets *smaller* and loses its bold, and so
+does every other heading on the page. The import brings a reset that wipes the
+browser's own heading sizes and spacing; `text-xl` (20px) is smaller than the
+browser's default main heading (32px). That's expected, not broken.
+
+Restart `npm run dev` after the PostCSS config appears, or the running server
+never sees it.
 
 There is no `tailwind.config.js`. The current Tailwind does not create one.
 
