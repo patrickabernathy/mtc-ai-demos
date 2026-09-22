@@ -1,13 +1,12 @@
 import Link from "next/link";
+import { Button } from "../../components/Button";
 
 export default function CheckoutPage() {
   return (
     <main>
       <h2>Checkout</h2>
       <p>A one-line stub so the store has a fourth screen.</p>
-      <button type="button" className="add-btn">
-        Place order
-      </button>
+      <Button>Place order</Button>
       <p>
         <Link href="/">Back to the menu</Link>
       </p>

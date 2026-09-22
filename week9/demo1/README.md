@@ -6,7 +6,38 @@ one of those and watch the look disappear with no error. By the end of the
 night the look lives on the element, the header is a row, the product list has
 a breakpoint, and it all survives a 375-pixel phone.
 
-This is the **start** state. Clone this folder, not `copy-b`.
+**This is the `answers` branch.** `app/` and `components/` here are the
+**finished** store — where the night ends, not where it starts:
+
+- Tailwind installed and turned on (`package.json`, `postcss.config.mjs`,
+  `@import "tailwindcss"` on line 1 of `globals.css`).
+- The card in utilities, with `hover:bg-gray-100`; the old `.card`, `.tagline`
+  and `.add-btn` rules deleted, because nothing uses them any more.
+- The header a stack on a phone and a row from `md` up
+  (`flex flex-col md:flex-row gap-4 md:items-center md:justify-between`).
+- The product list one column on a phone, three from `md` up
+  (`grid grid-cols-1 md:grid-cols-3 gap-4`).
+- One `components/Button.tsx` used on the card, the header, the cart page, and
+  checkout.
+
+Run it the same way and check it at 375 pixels in the device toolbar. On `main`,
+this folder is the plain-CSS starting point.
+
+The overflow colour-prop demo's fix is `states/12-colour-prop-fixed`: a lookup
+object of whole class names, because Tailwind reads your files as text and only
+makes classes it finds written out in full:
+
+```tsx
+const colours = {
+  green: "bg-green-600 hover:bg-green-700",
+  red: "bg-red-600 hover:bg-red-700",
+};
+// colour: "green" | "red"
+className={`${colours[colour]} text-white px-4 py-2 rounded`}
+```
+
+It isn't on `main` on purpose: with those whole names anywhere in the project,
+the red button would work before the fix and the demo would have nothing to show.
 
 ## How to run it
 
@@ -164,6 +195,7 @@ so nothing in here runs where it sits. Copy a file over your own to catch up
 | `09-button-duplicated` | The same button string pasted on the card, header, cart page, and checkout |
 | `10-button-extracted` | `Button.tsx`, four call sites, one colour change hits all four |
 | `11-colour-prop-broken` | A `colour` prop that builds the class from pieces. Green works; red doesn't |
+| `12-colour-prop-fixed` | **`answers` only.** Whole class names in a lookup object; both colours work |
 
 `copy-b/` next door is a full runnable copy of `03-tailwind-installed` — use it
 if `npm install` cannot run. Skip the download, still skip the import, still

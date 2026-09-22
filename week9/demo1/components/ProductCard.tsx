@@ -1,4 +1,5 @@
 import type { MenuItem } from "../types/coffee";
+import { Button } from "./Button";
 
 export function ProductCard({
   drink,
@@ -8,12 +9,10 @@ export function ProductCard({
   onAdd: (drink: MenuItem) => void;
 }) {
   return (
-    <article className="card">
-      <h2>{drink.name}</h2>
-      <p className="price">${drink.price.toFixed(2)}</p>
-      <button type="button" className="add-btn" onClick={() => onAdd(drink)}>
-        Add to cart
-      </button>
+    <article className="border border-gray-300 p-4 hover:bg-gray-100">
+      <h2 className="text-xl">{drink.name}</h2>
+      <p className="text-gray-500 mb-3">${drink.price.toFixed(2)}</p>
+      <Button onClick={() => onAdd(drink)}>Add to cart</Button>
     </article>
   );
 }
