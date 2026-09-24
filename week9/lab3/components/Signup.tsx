@@ -1,9 +1,10 @@
 export function Signup() {
   return (
-    <section className="px-8 py-12 text-center">
+    <section className="px-4 md:px-8 py-12 text-center">
       <h2 className="text-3xl font-bold mb-4">Free drink on your birthday</h2>
       <p className="text-gray-600 mb-6">Join the list. One email a month, tops.</p>
-      <form className="flex gap-2 w-96 mx-auto">
+      {/* w-96 is 384px, wider than a 375px phone, so the fixed width is laptop-only. */}
+      <form className="flex flex-col md:flex-row gap-2 w-full md:w-96 mx-auto">
         <input
           type="email"
           placeholder="you@example.com"

@@ -6,7 +6,7 @@ const hours = [
 
 export function VisitUs() {
   return (
-    <section className="grid grid-cols-2 gap-12 px-8 py-12 bg-amber-50">
+    <section className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 px-4 md:px-8 py-12 bg-amber-50">
       <div>
         <h2 className="text-3xl font-bold mb-4">Hours</h2>
         <ul className="text-lg">
