@@ -25,9 +25,13 @@ export default function Home() {
   }
 
   return (
-    <main>
-      <MenuList onAdd={handleAdd} />
-      <CartList cart={cart} onRemove={handleRemove} />
+    <main className="flex flex-col md:flex-row gap-8 items-start">
+      <div className="md:flex-1">
+        <MenuList onAdd={handleAdd} />
+      </div>
+      <div className="md:w-80 md:sticky md:top-4">
+        <CartList cart={cart} onRemove={handleRemove} />
+      </div>
     </main>
   );
 }

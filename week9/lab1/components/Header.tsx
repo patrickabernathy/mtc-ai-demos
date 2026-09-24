@@ -11,7 +11,7 @@ export function Header() {
         <Link href="/cart">Cart</Link>
         <Link href="/checkout">Checkout</Link>
       </nav>
-      <button type="button" className="add-btn">
+      <button type="button" className="bg-amber-900 text-white px-4 py-2 rounded hover:bg-amber-800">
         Order now
       </button>
     </header>

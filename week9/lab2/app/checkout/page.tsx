@@ -6,7 +6,7 @@ export default function CheckoutPage() {
     <main>
       <h2>Checkout</h2>
       <p>A one-line stub so the store has a fourth screen.</p>
-      <Button>Place order</Button>
+      <Button size="lg">Place order</Button>
       <p>
         <Link href="/">Back to the menu</Link>
       </p>

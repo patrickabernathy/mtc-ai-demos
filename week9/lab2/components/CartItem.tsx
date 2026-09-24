@@ -13,9 +13,9 @@ export function CartItem({
       <span>
         {line.name} x{line.qty} — ${(line.price * line.qty).toFixed(2)}
       </span>
-      {/* Same Button as "Add to cart" and "Order now" — a destructive action
-          that looks identical to every other action on the page. */}
-      <Button onClick={() => onRemove(line.name)}>Remove</Button>
+      <Button colour="red" size="sm" onClick={() => onRemove(line.name)}>
+        Remove
+      </Button>
     </li>
   );
 }
