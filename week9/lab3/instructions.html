@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W9-3 - Give the site a phone view</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+    --ai-soft: #eef0fb;
+    --ai-edge: #5a5ec2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+      --ai-soft: #1b1d33;
+      --ai-edge: #8b8ff0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    padding: 0 22px 80px;
+    max-width: 760px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 30px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 58ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 40px 0 12px; font-size: 22px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h3 { margin: 26px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 66ch; }
+  ul, ol { max-width: 66ch; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 "Cascadia Code", Consolas, ui-monospace, monospace; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .ai { background: var(--ai-soft); border-color: var(--ai-edge); }
+  .ai b { color: var(--ai-edge); }
+  .req { color: var(--accent); font-weight: 700; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W9 &middot; 3 of 3 &middot; start here</p>
+  <h1>Give the site a phone view</h1>
+  <p class="lede">The Daily Grind has a one-page site, and it was designed on a laptop &mdash; only on a laptop. Every class in it describes the wide screen. Nobody ever decided what a phone should get. Tonight you design and build the phone view, one section at a time, without losing the laptop view you already have.</p>
+</header>
+
+<h2>1. Run it, laptop first</h2>
+
+<pre><code>npm install
+npm run dev</code></pre>
+
+<p>Open <a href="http://localhost:3000">http://localhost:3000</a> in a normal, wide browser window. That's the design: a header with a row of links, a hero with the text beside a photo, three feature cards across, hours next to the location, a signup form, and a footer. Keep this look in your head &mdash; by the end of the night it should still look exactly like this on a laptop.</p>
+
+<p>Now open DevTools, turn on the device toolbar (<code>Ctrl+Shift+M</code>, <code>Cmd+Shift+M</code> on a Mac), and set the width to <b>375</b>. That's what a phone gets today: the laptop layout, squeezed. Three cards side by side in a space meant for one. Nothing is wrong with the code &mdash; the phone version was simply never written.</p>
+
+<h2>2. The one rule, and the one move</h2>
+
+<p>Same rule as class: <b>a class with no prefix applies on every screen, phones included. <code>md:</code> means "from 768px up."</b> So the phone version is the default, and the laptop version is the upgrade.</p>
+
+<p>That turns tonight into one move, repeated. Find a class that only makes sense on a wide screen, put <code>md:</code> in front of it, and write what the phone gets with no prefix:</p>
+
+<pre><code>grid-cols-3     &rarr;  grid-cols-1 md:grid-cols-3
+flex (a row)    &rarr;  flex flex-col md:flex-row
+w-1/2           &rarr;  w-full md:w-1/2
+text-6xl        &rarr;  text-4xl md:text-6xl</code></pre>
+
+<p>Here's the phone design, decided for you, so tonight is about building it:</p>
+
+<table>
+  <tr><th>Section</th><th>Laptop (already built)</th><th>Phone (you add this)</th></tr>
+  <tr><td>Features</td><td>Three cards across</td><td>One card per row</td></tr>
+  <tr><td>Hours / Find the cart</td><td>Side by side</td><td>Hours on top, location under it</td></tr>
+  <tr><td>Hero</td><td>Text beside the photo, huge heading</td><td>Text above the photo, smaller heading</td></tr>
+  <tr><td>Signup</td><td>A 384px-wide form, input beside the button</td><td>Full width, input above the button</td></tr>
+  <tr><td>Footer</td><td>Three items across</td><td>Stacked</td></tr>
+  <tr><td>Header</td><td>Logo and a row of links</td><td>Logo and a <b>Menu</b> button; the links drop down when you tap it</td></tr>
+</table>
+
+<div class="callout ai">
+  <p><b>AI hint &mdash; before you start.</b> If "phone first" still feels backwards, ask:</p>
+  <p><i>"In Tailwind, why does a class with no prefix apply on a phone, and why is md: a minimum width instead of a maximum? What would go wrong if I wrote the laptop version with no prefix and tried to fix the phone with a prefix?"</i></p>
+</div>
+
+<h2>3. Features: one card per row</h2>
+
+<p><span class="req">Required.</span> The warm-up, and the exact move from class. In <code>components/Features.tsx</code>:</p>
+
+<pre><code>grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8</code></pre>
+
+<p>A 32px gap between cards stacked on a phone is a lot of empty screen, so the gap gets a phone version too.</p>
+
+<div class="callout check">
+  <p><b>Stop and check &mdash; do this after every section.</b> Look at <b>375</b> (one card per row), then drag the width up past <b>768</b> (three across again), then a full laptop width. If the laptop view changed, a class lost its <code>md:</code> somewhere.</p>
+</div>
+
+<h2>4. Hours and location: stacked</h2>
+
+<p><span class="req">Required.</span> In <code>components/VisitUs.tsx</code>, the <code>&lt;section&gt;</code> is a two-column grid. Give the phone one column and keep two from <code>md</code> up. Shrink the <code>gap-12</code> on the phone while you're there.</p>
+
+<h2>5. Hero: text above the photo</h2>
+
+<p><span class="req">Required.</span> <code>components/Hero.tsx</code> has the most to change. Work through it one class at a time:</p>
+
+<ul>
+  <li>The <code>&lt;section&gt;</code> is a flex row. On a phone it should be a column: <code>flex flex-col md:flex-row</code>. <code>items-center</code> only makes sense for a row, so it becomes <code>md:items-center</code>.</li>
+  <li>Both halves say <code>w-1/2</code>. Half of a phone is too narrow to read. <code>w-full md:w-1/2</code> on both.</li>
+  <li><code>text-6xl</code> puts one word per line on a phone, and "neighbourhood" doesn't fit at all. Pick a phone size &mdash; <code>text-4xl</code> is a good start &mdash; and keep <code>md:text-6xl</code>.</li>
+  <li>The photo box is <code>h-80</code> (320px). Stacked under the text on a phone, that's most of a screen of yellow. Give the phone something shorter, like <code>h-48</code>.</li>
+</ul>
+
+<div class="callout warn">
+  <p><b>Every section has <code>px-8</code>.</b> Thirty-two pixels of padding on each side is fine on a laptop and eats a sixth of a phone screen. As you go through each section, make it <code>px-4 md:px-8</code>. Same move, smallest possible version of it.</p>
+</div>
+
+<h2>6. Signup: full width</h2>
+
+<p><span class="req">Required.</span> In <code>components/Signup.tsx</code>, the form is <code>w-96</code> &mdash; exactly 384 pixels, on purpose, because a sign-up form stretched across a whole laptop looks silly. But 384 pixels is wider than a 375-pixel phone, so on a phone the page can be dragged sideways.</p>
+
+<p>On a phone the form should fill the width, with the input above the button:</p>
+
+<pre><code>flex flex-col md:flex-row gap-2 w-full md:w-96 mx-auto</code></pre>
+
+<div class="callout check">
+  <p><b>Stop and check.</b> At 375, try to drag the page sideways, or look for a horizontal scrollbar at the bottom. The signup form shouldn't cause one anymore. (The header still does &mdash; that's step 8.)</p>
+</div>
+
+<h2>7. Footer: stacked</h2>
+
+<p><span class="req">Required.</span> <code>components/Footer.tsx</code> is a flex row with <code>items-center</code> and <code>justify-between</code>. On a phone, stack the three lines (<code>flex-col</code> plus a small <code>gap-2</code>), and move the row, the centring, and the <code>justify-between</code> behind <code>md:</code>.</p>
+
+<h2>8. Header: a Menu button</h2>
+
+<p><span class="req">Required.</span> The biggest change, because on a phone the header isn't just rearranged &mdash; part of it is swapped for something else. Four links and an Order button don't fit next to the logo on a phone, so the phone gets a <b>Menu</b> button instead, and the links drop down underneath when you tap it.</p>
+
+<p>Open or closed is state, so <code>components/SiteHeader.tsx</code> needs <code>"use client";</code> at the top and a <code>useState</code>, same as the cart back in week 6. Here's the shape; fill in the classes and the links:</p>
+
+<pre><code>"use client";
+
+import { useState } from "react";
+
+const links = ["Our coffee", "Locations", "Catering", "About"];
+
+export function SiteHeader() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    &lt;header className="border-b border-gray-200"&gt;
+      &lt;div className="flex items-center justify-between ..."&gt;
+        &lt;p className="..."&gt;The Daily Grind&lt;/p&gt;
+
+        {/* The laptop nav: hidden on a phone, a row from md up. */}
+        &lt;nav className="hidden md:flex ..."&gt;...&lt;/nav&gt;
+
+        {/* The Menu button: only on a phone. */}
+        &lt;button type="button" className="md:hidden ..." onClick={() =&gt; setOpen(!open)}&gt;
+          {open ? "Close" : "Menu"}
+        &lt;/button&gt;
+      &lt;/div&gt;
+
+      {/* The phone nav: a column, only when open, never from md up. */}
+      {open &amp;&amp; &lt;nav className="flex flex-col ... md:hidden"&gt;...&lt;/nav&gt;}
+    &lt;/header&gt;
+  );
+}</code></pre>
+
+<p>Two new utilities, and they're a pair. <code>hidden</code> is <code>display: none</code>, so <code>hidden md:flex</code> reads "not there on a phone, a flex row from 768px up." <code>md:hidden</code> is the opposite: "there on a phone, gone from 768px up." Between them, each screen size gets exactly one nav.</p>
+
+<div class="callout warn">
+  <p><b>Expect this one.</b> Open the menu at 375, then widen the window past 768 without closing it. If you left <code>md:hidden</code> off the phone nav, both navs show at once on a laptop. <code>open</code> is still <code>true</code> &mdash; the class is what keeps the phone nav off the big screen, whatever the state says.</p>
+</div>
+
+<h2>9. The full check</h2>
+
+<p>Walk the whole page at <b>375</b>, <b>768</b>, and a full laptop width:</p>
+
+<ul>
+  <li>At 375: nothing side by side that doesn't fit, no word hanging out of its box, and the page can't be dragged sideways.</li>
+  <li>At exactly 768: the laptop layout switches on. This is the width where a missing or extra prefix shows up.</li>
+  <li>At laptop width: the page looks exactly like it did in step 1.</li>
+</ul>
+
+<h2>10. If there's time</h2>
+
+<ul>
+  <li>Three feature cards across is tight on a tablet. Add a third tier: one on a phone, two from <code>md</code>, three from <code>lg</code> (1024px): <code>grid-cols-1 md:grid-cols-2 lg:grid-cols-3</code>.</li>
+  <li>Close the phone menu when a link in it is tapped &mdash; each link gets <code>onClick={() =&gt; setOpen(false)}</code>.</li>
+  <li>Make the header <code>sticky top-0 bg-white</code> so the Menu button is always within reach while scrolling on a phone.</li>
+  <li>Try it on your actual phone: run <code>npm run dev</code>, find your laptop's local IP address, and open <code>http://that-address:3000</code> on the phone (same Wi-Fi).</li>
+</ul>
+
+<div class="callout ai">
+  <p><b>AI hint &mdash; going deeper.</b> Once it all works, ask:</p>
+  <p><i>"My Next.js page looks right in the browser's device toolbar at 375px. What's the viewport meta tag, why would a phone ignore my breakpoints without it, and does Next.js add it for me?"</i></p>
+</div>
+
+<h2>What "done" looks like</h2>
+
+<ul>
+  <li>At 375: features one per row, hours above location, hero text above a shorter photo, a full-width signup with the input above the button, a stacked footer, and a Menu button that opens and closes the links.</li>
+  <li>The page never scrolls sideways at 375.</li>
+  <li>At laptop width, nothing changed from where you started.</li>
+</ul>
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 9.</p>
+</footer>
+
+</body>
+</html>

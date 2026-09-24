@@ -3,7 +3,7 @@
 The Daily Grind from week 8, still styled with a CSS file. This week the look
 moves onto the element itself.
 
-Four folders:
+Five folders:
 
 | Folder | What it is |
 |---|---|
@@ -11,6 +11,7 @@ Four folders:
 | **`copy-b/`** | Same store, Tailwind already installed, **not turned on**. The `@import` line is missing on purpose. |
 | **`lab1/`** | Lab. Picks up where `demo1` leaves off in class — finish converting the leftover CSS, then use `flex` and `position` to lay the menu and cart out side by side and pin a badge to a card. |
 | **`lab2/`** | Lab. One `Button` component, one look, used in four places including a Remove button that shouldn't look like the rest. Give it `colour` and `size` variants without breaking Tailwind's build-time scan. |
+| **`lab3/`** | Lab. A one-page site designed only for a laptop. Add the phone view section by section — phone classes with no prefix, the laptop layout behind `md:` — ending with a Menu button that replaces the nav on a phone. |
 
 ## How to run the starting point
 
