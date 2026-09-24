@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W9-1 - Finish the Tailwind pass, then play with flex and positioning</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+    --ai-soft: #eef0fb;
+    --ai-edge: #5a5ec2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+      --ai-soft: #1b1d33;
+      --ai-edge: #8b8ff0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    padding: 0 22px 80px;
+    max-width: 760px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 30px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 58ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 40px 0 12px; font-size: 22px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h3 { margin: 26px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 66ch; }
+  ul, ol { max-width: 66ch; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 "Cascadia Code", Consolas, ui-monospace, monospace; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .ai { background: var(--ai-soft); border-color: var(--ai-edge); }
+  .ai b { color: var(--ai-edge); }
+  .req { color: var(--accent); font-weight: 700; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W9 &middot; 1 of 2 &middot; start here</p>
+  <h1>Finish the Tailwind pass, then play with flex and positioning</h1>
+  <p class="lede">The Daily Grind, mid-conversion. The header, the menu grid, and the product cards already
+    got the Tailwind treatment in class. Every button and the whole cart section are still the old
+    <code>globals.css</code> classes. Tonight you finish the job, then use <code>flex</code> and
+    <code>position</code> for two things Tailwind's utility classes are especially good at: laying boxes out
+    next to each other, and pinning one small thing on top of another.</p>
+</header>
+
+<h2>1. Run it, and spot the seam</h2>
+
+<pre><code>npm install
+npm run dev</code></pre>
+
+<p>
+  Open <a href="http://localhost:3000">http://localhost:3000</a>. Look closely at the page: the header is a
+  row, the cards have a border and a hover, the menu is a responsive grid. Then look at every button
+  (<b>Order now</b>, <b>Add to cart</b>, <b>Checkout</b>, <b>Place order</b>) and the cart box at the bottom
+  &mdash; different font, a plain grey border, no hover. That's the seam between what got converted in class
+  and what didn't.
+</p>
+
+<p>
+  Open <code>app/globals.css</code>. Everything below the comment <code>/* Everything below here is not yet
+  converted &mdash; today's job. */</code> is a plain CSS class with a matching <code>className</code>
+  somewhere in <code>components/</code> or <code>app/</code>. Same two-file problem as week 3.
+</p>
+
+<h2>2. Convert every button</h2>
+
+<p><span class="req">Required.</span> Four places use <code>className="add-btn"</code>:
+  <code>components/Header.tsx</code>, <code>components/ProductCard.tsx</code>,
+  <code>app/cart/page.tsx</code>, and <code>app/checkout/page.tsx</code>. Replace <code>add-btn</code> on all
+  four with utility classes:</p>
+
+<pre><code>className="bg-amber-900 text-white px-4 py-2 rounded hover:bg-amber-800"</code></pre>
+
+<p>
+  One more: <code>components/CartItem.tsx</code> has a <code>remove-btn</code>. It was never meant to look
+  like the other buttons &mdash; it's plain text with a colour, no background. Give it:
+</p>
+
+<pre><code>className="text-red-600 hover:underline"</code></pre>
+
+<div class="callout check">
+  <p><b>Stop and check.</b> Every button on the page should now look the same (dark brown, white text)
+    except Remove, which should look like a plain red link. If a button still looks unstyled, the class
+    name is probably still <code>add-btn</code> or <code>remove-btn</code> somewhere.</p>
+</div>
+
+<h2>3. Convert the cart box</h2>
+
+<p><span class="req">Required.</span> In <code>components/CartList.tsx</code> and
+  <code>components/CartItem.tsx</code>, replace the remaining classes one at a time:</p>
+
+<table>
+  <tr><th>Old class</th><th>Replace with</th></tr>
+  <tr><td><code>cart</code></td><td><code>border border-gray-300 rounded-lg p-4 mt-8</code></td></tr>
+  <tr><td><code>cart-empty</code></td><td><code>text-gray-500</code></td></tr>
+  <tr><td><code>cart-list</code></td><td><code>list-none p-0 m-0</code></td></tr>
+  <tr><td><code>cart-total</code></td><td><code>font-bold border-t border-gray-300 mt-3 pt-3</code></td></tr>
+</table>
+
+<p>
+  Leave <code>cart-item</code> alone for a moment &mdash; that one's next, and it's the interesting one.
+</p>
+
+<h2>4. Flex a row of things that aren't a header</h2>
+
+<p><span class="req">Required.</span> Add an item or two to the cart (click <b>Add to cart</b> on the menu)
+  and look at a cart line: the name, the quantity, the price, and Remove are all stacked with no relationship
+  to each other. In class, <code>flex</code> on the <code>&lt;header&gt;</code> turned four stacked things
+  into a row with space between them. Same move, different element. On the <code>&lt;li
+  className="cart-item"&gt;</code> in <code>components/CartItem.tsx</code>:</p>
+
+<pre><code>className="flex items-center justify-between gap-2 py-1"</code></pre>
+
+<p>
+  Name and quantity settle to the left, Remove to the right, everything lined up on one axis. That's the
+  same three utilities from the header &mdash; <code>flex</code>, <code>items-center</code>,
+  <code>justify-between</code> &mdash; doing the identical job at a completely different scale.
+</p>
+
+<h2>5. Delete the CSS you just replaced</h2>
+
+<p><span class="req">Required.</span> Once every button and the whole cart section look right, delete the
+  rules you replaced from <code>app/globals.css</code>: <code>add-btn</code>, <code>cart</code>,
+  <code>cart-empty</code>, <code>cart-list</code>, <code>cart-item</code>, <code>remove-btn</code>,
+  <code>cart-total</code>. Reload. Nothing should change on screen &mdash; if something does, a
+  <code>className</code> somewhere is still pointing at a rule you just deleted.</p>
+
+<div class="callout ai">
+  <p><b>AI hint &mdash; before the next section.</b> If you're not sure why deleting unused CSS is worth
+    doing instead of just leaving it there, ask:</p>
+  <p><i>"In a codebase using Tailwind, what goes wrong over time if old, unused CSS classes are left in the
+    stylesheet instead of deleted once a component stops using them?"</i></p>
+</div>
+
+<h2>6. Put the menu and the cart side by side</h2>
+
+<p><span class="req">Required.</span> Right now <code>app/page.tsx</code> just stacks <code>&lt;MenuList
+  /&gt;</code> on top of <code>&lt;CartList /&gt;</code> inside a plain <code>&lt;main&gt;</code>. On a wide
+  screen there's room for both at once. Wrap them in a flex row that only kicks in from <code>md</code> up
+  &mdash; phone first, same rule as class:</p>
+
+<pre><code>&lt;main className="flex flex-col md:flex-row gap-8 items-start"&gt;
+  &lt;div className="md:flex-1"&gt;
+    &lt;MenuList onAdd={handleAdd} /&gt;
+  &lt;/div&gt;
+  &lt;div className="md:w-80 md:sticky md:top-4"&gt;
+    &lt;CartList cart={cart} onRemove={handleRemove} /&gt;
+  &lt;/div&gt;
+&lt;/main&gt;</code></pre>
+
+<p>
+  <code>md:flex-1</code> lets the menu column take up whatever space is left. <code>md:w-80</code> gives the
+  cart a fixed width instead of stretching. <code>md:sticky md:top-4</code> is the new one: it pins the cart
+  4 units from the top of the viewport <i>once you scroll far enough that it would otherwise scroll out of
+  view</i> &mdash; but only within its own parent, and only from <code>md</code> up. Resize the window below
+  768px and watch the cart drop back under the menu and stop being sticky; a sticky element with nothing
+  above it to scroll past just sits where it is.
+</p>
+
+<div class="callout warn">
+  <p><b>Expect this one.</b> <code>sticky</code> does nothing if the element's parent is exactly as tall as
+    the element itself &mdash; there has to be something to scroll <i>past</i>. If it doesn't seem to stick,
+    add a couple more drinks to <code>types/coffee.ts</code> so the menu column is taller than the cart, or
+    shrink the browser window's height.</p>
+</div>
+
+<h2>7. Pin a badge to a card</h2>
+
+<p><span class="req">Required.</span> <code>types/coffee.ts</code> already marks the seasonal drink with
+  <code>isNew: true</code>. In <code>components/ProductCard.tsx</code>, show a small "New" badge in the
+  corner of that one card. Two moves, and they always come as a pair:</p>
+
+<ol>
+  <li>Add <code>relative</code> to the <code>&lt;article&gt;</code>'s className &mdash; it doesn't move
+    anything, it just tells the browser "this box is the one any absolutely positioned thing inside it
+    should measure itself against."</li>
+  <li>Render the badge only when <code>drink.isNew</code>, positioned against that box:</li>
+</ol>
+
+<pre><code>{drink.isNew && (
+  &lt;span className="absolute top-2 right-2 bg-amber-900 text-white text-xs px-2 py-1 rounded"&gt;
+    New
+  &lt;/span&gt;
+)}</code></pre>
+
+<p>
+  The seasonal drink's name is long enough to run under the badge. Give the <code>&lt;h2&gt;</code> some
+  breathing room on that side: <code>text-xl pr-14</code>.
+</p>
+
+<div class="callout check">
+  <p><b>Stop and check.</b> The badge should sit in the top-right corner of <i>that card</i>, not the top-right
+    corner of the page, and the drink name shouldn't run underneath it. Remove <code>relative</code> from the
+    article as a test &mdash; the badge jumps to the corner of the nearest ancestor that <i>does</i> have it
+    (or the page, if nothing does). Put <code>relative</code> back before moving on.</p>
+</div>
+
+<h2>8. If there's time: more variations</h2>
+
+<p>Tailwind is mostly muscle memory at this point &mdash; pick a few and see what happens:</p>
+
+<ul>
+  <li>Add <code>shadow-md hover:shadow-lg transition-shadow</code> to the product cards, on top of the
+    existing border and hover background.</li>
+  <li>Round the corners of the cards and the cart box further with <code>rounded-xl</code>, or drop them to
+    <code>rounded-none</code> and see how much of the "card" feeling that border alone was carrying.</li>
+  <li>Make the header itself sticky: <code>sticky top-0 bg-white z-10</code> (it needs a background, or the
+    menu will show through it while scrolling).</li>
+  <li>Give the "New" badge a second colour variant for an "Out of stock" state on a different drink, using
+    the same <code>relative</code>/<code>absolute</code> pair.</li>
+</ul>
+
+<div class="callout ai">
+  <p><b>AI hint &mdash; going deeper.</b> Once the sticky cart and the badge both work, ask:</p>
+  <p><i>"What CSS property besides `position: sticky` and `position: absolute` also takes an element out of
+    the normal document flow, and why does that matter for layout?"</i></p>
+  <p>That's a bigger question than tonight's lab needs, but it's the next thing worth knowing.</p>
+</div>
+
+<h2>What "done" looks like</h2>
+
+<ul>
+  <li>No button on the page still says <code>add-btn</code> or <code>remove-btn</code> in the source, and
+    <code>app/globals.css</code> no longer has rules for classes nothing uses.</li>
+  <li>A cart line lays its four pieces out in a row with Remove pushed to the right.</li>
+  <li>On a wide window, the menu and the cart sit side by side and the cart stays in view while the menu
+    scrolls. On a narrow window, they stack.</li>
+  <li>The seasonal drink's card shows a "New" badge pinned to its own top-right corner.</li>
+</ul>
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 9.</p>
+</footer>
+
+</body>
+</html>
