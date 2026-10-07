@@ -6,7 +6,7 @@ Teaching repo for the MTC AI-Enabled Full-Stack Developer program. Everything he
 
 ## Layout
 
-Code is organized by session: `week1/` through `week9/`, each containing `demo1/`, `demo2/`, ... (things built during lecture) and sometimes `lab1/`, `lab2/`, ... (things students build). Early weeks are plain HTML/CSS/JS; week4 introduces TypeScript; week5 onward is Next.js, each demo folder its own self-contained app with its own `package.json`.
+Code is organized by session: `week1/` through `week11/`, each containing `demo1/`, `demo2/`, ... (things built during lecture) and sometimes `lab1/`, `lab2/`, ... (things students build). Early weeks are plain HTML/CSS/JS; week4 introduces TypeScript; week5 onward is Next.js, each demo folder its own self-contained app with its own `package.json`.
 
 Later demos in a week usually refactor the earlier one — e.g. week6 goes `demo1` (no components) → `demo2` (components) → `demo3` (client state) on the same coffee cart, then `demo4` (filter a list as you type), `demo5` (a one-page form) → `demo6` (the same form as a three-card wizard), then `demo7` (the menu fetched from a server) → `demo8` (the same fetch behind an `x-auth` header). When changing one, check whether the sibling demos are meant to stay in sync or to deliberately differ, since the difference between them *is* the lesson.
 
@@ -88,3 +88,4 @@ the solution. The one on `answers` can describe the finished version.
 - Props are typed inline in the function signature. Shared shapes go in a `types/` file only when more than one component needs them.
 - Comments explain *why this is the teaching point*, not what the line does.
 - **Two scaffold lineages live side by side, on purpose.** The hand-built demos (`week5/demo1` and all of `week6`) pin exact versions of Next 15.5.24 / React 19.2.8, keep `app/` at the demo root, and use plain CSS. `week5/demo2` and `week7/demo1` are untouched `create-next-app` output — Next 16.3.x on caret ranges, `src/app/`, Tailwind v4 — and exist precisely to show what the generator hands you. Don't reconcile one lineage into the other, and don't strip Tailwind out of a scaffold demo; that Tailwind is the generator's, not a convention being adopted.
+- **`week11/demo2` is hand-built but pinned to Next 16.4.0**, unlike `week11/demo1` (the Corner Store, Next 15.5.24). It's an API-only app — `app/api/` and no pages — and its lesson is `proxy.ts`, the Next 16 name for what Next 15 called `middleware.ts`. Write `proxy.ts`, never `middleware.ts`, in it. The back end is Next route handlers; there is no Express anywhere in this repo, on purpose.

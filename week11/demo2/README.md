@@ -1,88 +1,88 @@
-# Week 11, demo 2 — The same endpoints in Express
+# Week 11, demo 2 — A Next app that's only an API
 
-Two of demo 1's endpoints — the list and one drink — rebuilt in **Express**, outside Next, from an empty folder. Express is the small server program most job postings mean by "a Node back end." The point isn't to switch to it. It's to see what Next was doing for you, by doing it by hand.
+A second Next.js app with **no pages at all**. There's no `page.tsx` and no `layout.tsx`, just two route files under `app/api/`. Next is a perfectly good server on its own: the same API could sit behind a phone app, another company's website, or your store.
 
-**On the `answers` branch this is the finished version:** `package.json`, `package-lock.json` and the final `server.js` (logger first, `express.json()` second, then the routes). Run `npm install` then `node server.js` — skip the `npm init` steps below.
+It has demo 1's two endpoints, the list and one drink, already written. The new thing is **`proxy.ts`**: one file whose function runs *before* every request reaches a route.
+
+This app is on **Next 16**, a newer version than the Corner Store (Next 15). `proxy.ts` is the Next 16 name. If you ever see `middleware.ts` in an older project or tutorial, it's the same idea under its old name.
+
+**This is the `answers` branch.** `proxy.ts` is finished and sits in the top folder, next to `package.json`: it logs every request with `proxy saw:` and turns away anything without the right `x-auth` header. Make `.env.local` (step 3 below) before you run it, or every request gets a 401.
 
 ## How to run it
 
 ```
 cd mtc-ai-demos/week11/demo2
-npm init -y
-npm install express
+npm install
+npm run dev
 ```
 
-Make `server.js` (see below), then:
+It runs on <http://localhost:3000>, so stop the Corner Store's `npm run dev` first. Send requests with the **Postman desktop app**, and keep the terminal running `npm run dev` where you can see it. Everything in this demo shows up there.
 
-```
-node server.js
-```
-
-It listens on <http://localhost:4000>, so it can run next to a Next app on 3000. Send requests from the Postman desktop app. **Express doesn't reload when you save** — stop it with `Ctrl`+`C` and run `node server.js` again after every change.
-
-If you see `EADDRINUSE`, something else is already using port 4000. Change the number in `server.js` and in your requests.
+The first `npm run dev` writes a file called `AGENTS.md`. It's notes from Next for AI coding tools, telling them this is Next 16. Leave it.
 
 ## What `npm install` just did
 
-Three things appear:
-
 | | What it is | Commit it? |
 |---|---|---|
-| `package.json` | The project's description. `npm install` added `express` to its `dependencies`. | Yes |
-| `node_modules/` | Express plus the 60-odd packages it depends on. | No — `npm install` rebuilds it |
+| `package.json` | The project's description, including its `dependencies`: `next`, `react`, `react-dom`. | Yes |
+| `node_modules/` | Those three plus every package *they* depend on. Hundreds of folders. | No — `npm install` rebuilds it |
 | `package-lock.json` | The exact version of every one of those packages, so everyone gets the identical set. | Yes |
 
 ## What to do
 
-### 1. Two endpoints
+### 1. The two endpoints, and no pages
 
-In `server.js`:
+Send `GET http://localhost:3000/api/menu` and `GET http://localhost:3000/api/menu/2` from Postman. Then open <http://localhost:3000> in a browser. What comes back, and why is that fine?
 
-```js
-const express = require("express");
-const app = express();
-const menu = [{ id: 1, name: "Espresso", price: 2.5 }, { id: 2, name: "Latte", price: 4 }];
+### 2. Log every request
+
+Next already prints a line for each request. Write your own one: a function that prints `proxy saw:` plus the verb and the address, before the route runs.
+
+```ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function proxy(request: NextRequest) {
+  console.log("proxy saw:", request.method, request.nextUrl.pathname);
+  return NextResponse.next();
+}
 ```
 
-Then add `app.get("/api/menu", ...)` that sends the menu with `res.json(menu)`, and `app.get("/api/menu/:id", ...)` that finds one drink by `req.params.id` and answers `res.status(404).json({ error: "..." })` if it's missing. Finish with `app.listen(4000, ...)`.
+Save it as `proxy.ts` **inside `app/`**, next to `api/`. Send `GET /api/menu` and read the terminal. Is there a `proxy saw:` line? Is there any error? Then work out where the file has to go for Next to call it.
 
-### 2. A logger, in the wrong place
+Once it's logging, send a `DELETE /api/menu` (nobody answers DELETE, so it's a 405) and a `GET /api/nope` (a 404). Does the proxy see those too?
 
-Add this **below** your two routes, above `app.listen`:
+### 3. A gate in front of every route
 
-```js
-app.use((req, res, next) => {
-  console.log(req.method, req.url);
-  next();
-});
+Make `.env.local` in this folder:
+
+```
+MENU_KEY=mtc-fall-2026
 ```
 
-Restart, send `GET /api/menu`, and watch the terminal. Then send `DELETE /api/menu`. Which one gets logged, and why? Move the logger so that every request is logged.
-
-### 3. A POST
-
-Add `app.post("/api/menu", ...)` that reads `req.body.name`. Send it a JSON body. What happens, and what's missing from the line-up at the top of the file?
+Change the proxy so that a request whose `x-auth` header doesn't match `process.env.MENU_KEY` gets a **401** with `{"error": "..."}`, and every other request carries on. Then try it from Postman with no header, the right key, and a wrong key.
 
 ## The teaching point
 
-Express runs your `app.use` and `app.get` lines **in the order they appear in the file**, and a route that answers doesn't pass the request on. So a logger below the routes only ever sees the requests nobody answered, and a body reader below a route is too late for it. "Middleware order" is the name for this, and it's a bug a Next route file can't have.
+`proxy.ts` runs before the route, for every request, so it's the place for things *every* route needs: writing down what came in, checking who's asking. Two things to remember:
 
-| | Next route handler | Express |
-|---|---|---|
-| The address | the folder path | a string: `"/api/menu/:id"` |
-| The verb | the function's name: `GET` | the method: `app.get` |
-| Starting it | `npm run dev` | `app.listen(4000)` + `node server.js` |
-| Wrong verb | 405 | 404, "Cannot DELETE" |
-| Reading the body | `await request.json()` in the route | `app.use(express.json())`, before the routes |
+- **It only works in one place**: the project's top folder, next to `package.json` and `app/`. Anywhere else it's an ordinary file that nothing calls, and Next doesn't warn you.
+- **What it returns decides what happens next.** `NextResponse.next()` means "carry on to the route." Returning a response of its own means "stop here," and the route never runs.
 
 ## The `states/` folder
 
-Each step of `server.js`, frozen. Copy one over your `server.js` to catch up.
+Each step, frozen. **Reference only** — Next builds only what is under `app/` and the top-level `proxy.ts`, so nothing in here runs where it sits. The first line of each file says where it goes.
 
 | State | What it shows |
 |---|---|
-| `01-two-endpoints` | The list and one drink, listening on 4000 |
-| `02-logger-below` | The logger below the routes: GET prints nothing |
-| `03-logger-above` | Moved up: every request is logged |
-| `04-post-no-parser` | POST crashes — `req.body` is undefined |
-| `05-with-json` | `express.json()` in the line-up, before the routes |
+| `01-proxy-in-app` | The logger in `app/proxy.ts`: no `proxy saw:` line, no error |
+| `02-proxy-at-root` | The same file in the top folder: every request logged |
+| `03-proxy-gate` | A 401 for a missing or wrong `x-auth`; needs `.env.local` |
+
+`states/` is excluded from type-checking in `tsconfig.json`.
+
+## Things that will bite you
+
+- **Next prints its own line for every request** (`GET /api/menu 200 in 6ms`). That isn't your proxy. Look for `proxy saw:`. Once the proxy is running, Next's line also gets a `proxy.ts:` timing in it.
+- **Port 3000 taken?** Next picks 3001 and says so in the terminal. Use whatever it says.
+- **`.env.local` changes are picked up without a restart.** The terminal prints `Reload env: .env.local`.
