@@ -4,7 +4,7 @@ A second Next.js app with **no pages at all**. There's no `page.tsx` and no `lay
 
 It has demo 1's two endpoints, the list and one drink, already written. The new thing is **`proxy.ts`**: one file whose function runs *before* every request reaches a route.
 
-This app is on **Next 16**, a newer version than the Corner Store (Next 15). `proxy.ts` is the Next 16 name. If you ever see `middleware.ts` in an older project or tutorial, it's the same idea under its old name.
+This app is on **Next 16**, the same as the Corner Store in demo 1. `proxy.ts` is the Next 16 name. If you ever see `middleware.ts` in an older project or tutorial, it's the same idea under its old name.
 
 ## How to run it
 
