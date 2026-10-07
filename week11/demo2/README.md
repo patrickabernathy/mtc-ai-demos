@@ -2,7 +2,7 @@
 
 Two of demo 1's endpoints — the list and one drink — rebuilt in **Express**, outside Next, from an empty folder. Express is the small server program most job postings mean by "a Node back end." The point isn't to switch to it. It's to see what Next was doing for you, by doing it by hand.
 
-This folder starts empty on purpose: the demo builds it from nothing, so the install is part of the lesson.
+**On the `answers` branch this is the finished version:** `package.json`, `package-lock.json` and the final `server.js` (logger first, `express.json()` second, then the routes). Run `npm install` then `node server.js` — skip the `npm init` steps below.
 
 ## How to run it
 

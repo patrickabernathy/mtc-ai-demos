@@ -2,7 +2,7 @@
 
 The Corner Store from week 9 (plain CSS), with **no `app/api/` folder yet**. Tonight it stops only *asking* other servers for data and starts *answering* requests itself: a list, one drink, adding a drink that gets checked first, and a secret that stays on the server.
 
-This is the "before" state. Clone it, run it, and you get the store exactly as class starts.
+**On the `answers` branch this is the finished version.** `app/api/menu/route.ts` has the list (with an optional `?maxPrice=` filter) and the checked POST; `app/api/menu/[id]/route.ts` has GET, PATCH and DELETE for one drink; `app/api/locked-menu/route.ts` reads the key from `.env.local`, which you still have to create yourself (`MENU_KEY=mtc-fall-2026`) because `.env` files are never committed. The POST gives new drinks the biggest id in use plus one, not `menu.length + 1`, which hands out a duplicate id after a delete.
 
 ## How to run it
 
