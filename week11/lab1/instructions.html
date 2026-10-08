@@ -86,10 +86,15 @@
 
   @page { size: Letter; margin: 15mm 14mm; }
   @media print {
-    body { max-width: none; padding: 0; font-size: 10.5pt; background: #fff; }
+    body { max-width: none; padding: 0; font-size: 10pt; line-height: 1.45; background: #fff; }
+    /* Appendix code is long; let it flow across pages instead of leaving orphans. */
+    h2#code ~ pre { break-inside: auto; }
+    p { margin-bottom: 9px; }
     header.top { padding-top: 0; }
-    pre { white-space: pre-wrap; break-inside: avoid; font-size: 8.8pt; }
-    .callout, table, .file { break-inside: avoid; }
+    pre { white-space: pre-wrap; break-inside: avoid; font-size: 8.4pt; }
+    /* Big test-table boxes may split between rows; keeping them whole left half-empty pages. */
+    tr, .callout p, .callout h4, .file { break-inside: avoid; }
+    .callout h4 { break-after: avoid; }
     h2, h3, .file { break-after: avoid; }
     h2 { margin-top: 30px; }
     .appendix-start { break-before: page; }
@@ -100,7 +105,7 @@
 <body>
 
 <header class="top">
-  <p class="kicker">Lab W11 &middot; one lab, ten steps, each one builds on the last</p>
+  <p class="kicker">Lab W11 &middot; one lab, eleven steps, each one builds on the last</p>
   <h1>Happy Tails: a shelter API with a front door</h1>
   <p class="lede">The Happy Tails animal shelter needs an API. Anyone should be able to browse the animals. Only shelter staff, holding a token, should be able to add or change one. And only the manager, with a username and password, should see the numbers. Tonight you build all of that in one Next.js app, one step at a time, testing each step in Postman before you move on.</p>
 </header>
@@ -119,7 +124,8 @@
   <li><a href="#step7">Move the token check into the proxy</a></li>
   <li><a href="#step8">Let the public routes back in</a></li>
   <li><a href="#step9">Logging that helps</a></li>
-  <li><a href="#step10">The manager's door: Basic auth</a></li>
+  <li><a href="#step10">Errors that help</a></li>
+  <li><a href="#step11">The manager's door: Basic auth</a></li>
 </ol>
 <p><a href="#done">What "done" looks like</a> &middot; <a href="#further">Going further</a> &middot; <a href="#bite">Things that will bite you</a> &middot; <a href="#code">Code reference</a></p>
 
@@ -581,11 +587,102 @@ updated pet 3 (Pepper)
 </div>
 
 <!-- ============================================================ STEP 10 -->
-<h2 id="step10"><span class="step">10</span>The manager's door: Basic auth</h2>
+<h2 id="step10"><span class="step">10</span>Errors that help</h2>
+
+<p>Every error your API sends should tell the caller two things: <b>whose fault it was</b> (the status code) and <b>what to do about it</b> (the message). You already do that for the problems you thought of. This step is about the ones you didn't.</p>
+
+<h3>10a. Break it</h3>
+<p>Send a <code>POST /api/pets</code> with your Bearer token, Body set to raw JSON, and this as the whole body:</p>
+<pre><code>null</code></pre>
+<p><code>null</code> is perfectly valid JSON, so <code>request.json()</code> doesn't throw, and your <code>try</code>/<code>catch</code> from Step 3 lets it through. Then <code>body.name</code> asks for a property of nothing, and the whole function crashes.</p>
+
+<div class="callout check">
+  <h4>What you should see</h4>
+  <p>Postman: <b>500</b> with an <b>empty body</b>. Whoever called your API now knows only "something broke," not what or why. The terminal knows exactly (your line numbers may differ):</p>
+<pre class="term"><code>⨯ TypeError: Cannot read properties of null (reading 'name')
+    at POST (app\api\pets\route.ts:19:19)
+&gt; 19 |   if (typeof body.name !== "string" || body.name === "") {</code></pre>
+  <p>Try the same on <code>PUT /api/pets/2</code>. Same crash.</p>
+</div>
+
+<h3>10b. Two kinds of error</h3>
+<table>
+  <tr><th></th><th>The client's fault</th><th>Our fault</th></tr>
+  <tr><td><b>Examples</b></td><td>Bad JSON, a missing field, a wrong token, a pet that doesn't exist</td><td>A bug in our code, something we never expected</td></tr>
+  <tr><td><b>Status</b></td><td>4xx: 400, 401, 404</td><td>500</td></tr>
+  <tr><td><b>Message</b></td><td>Exactly what's wrong and how to fix it: <code>"age must be a number, 0 or more"</code></td><td>Short and plain: <code>"Something went wrong on our side"</code></td></tr>
+  <tr><td><b>Log</b></td><td><code>console.warn</code>, saying which check failed</td><td><code>console.error</code> with the <b>whole</b> error, so you can find the line</td></tr>
+</table>
+<p>The <code>null</code> body is the client's mistake, but your API answered "500, our fault" and said nothing useful. Two fixes, in this order.</p>
+
+<h3>10c. Fix 1: a safety net</h3>
+<p>Wrap <b>everything</b> inside <code>POST</code> in one more <code>try</code>/<code>catch</code>. The inner one you already have still catches the failure you planned for (a body that isn't JSON). The new outer one catches every failure you didn't:</p>
+<pre><code>export async function POST(request: Request) {
+  try {
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return Response.json({ error: "The body must be JSON" }, { status: 400 });
+    }
+
+    // ...all your checks, the push and the 201, unchanged...
+  } catch (error) {
+    console.error("POST /api/pets crashed:", error);
+    return Response.json({ error: "Something went wrong on our side" }, { status: 500 });
+  }
+}</code></pre>
+<p>Send <code>null</code> again. Now Postman gets a <b>500</b> with <code>{"error": "Something went wrong on our side"}</code>, the same shape as every other error. The terminal has your line with the full details:</p>
+<pre class="term"><code>POST /api/pets crashed: TypeError: Cannot read properties of null (reading 'name')
+    at POST (app\api\pets\route.ts:22:21)</code></pre>
+
+<div class="callout warn">
+  <h4>The details go in the log, never in the response</h4>
+  <p>It's tempting to send <code>error.message</code> back so the caller "knows what happened." Don't. Error messages and stack traces show your file names, your code, and sometimes data that's none of the caller's business. The caller gets a plain sentence. You get the details, in your own terminal. Same rule as Step 9: the log is for you.</p>
+</div>
+
+<h3>10d. Fix 2: turn the 500 into a 400</h3>
+<p>Read that log line. It says <code>body</code> was <code>null</code>. That's not a bug in your code, it's bad input, and bad input is a 400 that tells the caller what to send. Add a check right after reading the body, before the <code>name</code> check:</p>
+<pre><code>// null is valid JSON, but body.name would crash on it.
+if (body === null || typeof body !== "object") {
+  return Response.json(
+    { error: "The body must be a JSON object with name, species and age" },
+    { status: 400 }
+  );
+}</code></pre>
+<p>That's the habit: <b>whenever the safety net catches something that was really the client's mistake, add a check so it never gets that far again.</b> The safety net stays for whatever you haven't thought of yet.</p>
+<p>Now do both fixes in <code>PUT</code>. Its message should list all four fields: <code>"The body must be a JSON object with name, species, age and adopted"</code>.</p>
+<p>The <code>GET</code> routes don't need any of this. Nothing a caller sends can make <code>find()</code> or <code>Response.json(pets)</code> throw. Put <code>try</code>/<code>catch</code> where things can really fail: reading a body, decoding something (Step 11), and next week, talking to a database.</p>
+
+<div class="callout check">
+  <h4>Test in Postman</h4>
+  <table>
+    <tr><th>Send</th><th>Auth / body</th><th>Expect</th><th>Body</th></tr>
+    <tr><td><code>POST /api/pets</code></td><td>Bearer token, raw JSON <code>null</code></td><td class="status">400</td><td><code>{"error": "The body must be a JSON object with name, species and age"}</code></td></tr>
+    <tr><td><code>POST /api/pets</code></td><td>Bearer token, raw JSON <code>[]</code></td><td class="status">400</td><td><code>{"error": "name is required"}</code></td></tr>
+    <tr><td><code>POST /api/pets</code></td><td>Bearer token, Text <code>banana</code></td><td class="status">400</td><td><code>{"error": "The body must be JSON"}</code></td></tr>
+    <tr><td><code>POST /api/pets</code></td><td>Bearer token, Nugget body</td><td class="status">201</td><td>Nugget. The happy path still works.</td></tr>
+    <tr><td><code>PUT /api/pets/2</code></td><td>Bearer token, raw JSON <code>null</code></td><td class="status">400</td><td><code>{"error": "The body must be a JSON object with name, species, age and adopted"}</code></td></tr>
+    <tr><td><code>PUT /api/pets/99</code></td><td>Bearer token, raw JSON <code>null</code></td><td class="status">404</td><td><code>{"error": "No pet with id 99"}</code>. The pet check comes first.</td></tr>
+  </table>
+  <p><b>Prove the safety net works.</b> Add <code>throw new Error("testing the safety net");</code> as the first line inside the outer <code>try</code> of <code>POST</code> and send any POST. You should get the 500 JSON in Postman and <code>POST /api/pets crashed: Error: testing the safety net</code> in the terminal. Then <b>delete that line</b>.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c12">Code C12: POST with both fixes</a> &middot; <a href="#c13">C13: PUT with both fixes</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"Here's my POST with a try/catch inside another try/catch: [paste it]. Without changing it, walk me through which catch runs, and what the client gets back, if the body is the word banana, if it's null, and if my own code has a typo that throws."</p>
+  <p class="prompt">"Why shouldn't an API send <code>error.message</code> or the stack trace back to the client in a 500? What could leak?"</p>
+  <p class="prompt">"For each of these, should my API answer 400, 401, 404 or 500, and why: a body of null, a missing token, a pet id that doesn't exist, a bug in my own code."</p>
+</div>
+
+<!-- ============================================================ STEP 11 -->
+<h2 id="step11"><span class="step">11</span>The manager's door: Basic auth</h2>
 
 <p>The manager wants a summary, but a staff token shouldn't be enough to see it. Managers log in with a <b>username and password</b>. The oldest, simplest way to send those over HTTP is <b>Basic auth</b>, and you're going to check it by hand.</p>
 
-<h3>10a. The summary route</h3>
+<h3>11a. The summary route</h3>
 <p>Make <code>app/api/admin/summary/route.ts</code> with a <code>GET</code> that works its answer out from the live list:</p>
 <ul>
   <li><code>total</code>: how many pets</li>
@@ -594,12 +691,12 @@ updated pet 3 (Pepper)
 </ul>
 <p>Restart the server first (<code>Ctrl</code>+<code>C</code>, <code>npm run dev</code>) so the list is fresh and your numbers match these. Then test it with your Bearer token: <b>200</b>, <code>{"total":6,"adopted":1,"waiting":5}</code>. Without a token: 401. Right now it's just another locked route.</p>
 
-<h3>10b. Add the manager's login to <code>.env.local</code></h3>
+<h3>11b. Add the manager's login to <code>.env.local</code></h3>
 <pre><code>API_TOKEN=shelter-staff-2026
 ADMIN_USER=admin
 ADMIN_PASS=adopt-dont-shop</code></pre>
 
-<h3>10c. What Basic auth actually sends</h3>
+<h3>11c. What Basic auth actually sends</h3>
 <p>The client glues the username and password together with a colon, then <b>base64-encodes</b> the result, and sends that after the word <code>Basic</code>:</p>
 <pre class="term"><code>admin:adopt-dont-shop                       glued together with a colon
 YWRtaW46YWRvcHQtZG9udC1zaG9w                base64-encoded
@@ -611,21 +708,36 @@ Authorization: Basic YWRtaW46YWRvcHQtZG9udC1zaG9w</code></pre>
   <p>You just decoded a password with one function and no key. Base64 only turns any text into safe, plain letters for a header. Anyone who sees the header has the password. That's why Basic auth is only ever OK over <b>HTTPS</b>, where the whole request is encrypted on the way. <code>localhost</code> is fine for learning.</p>
 </div>
 
-<h3>10d. Check it in the proxy</h3>
+<h3>11d. Check it in the proxy</h3>
 <p>The server does the client's steps backwards. Add a new block to <code>proxy</code> for any address that starts with <code>/api/admin</code>. Put it <b>after</b> the public check and <b>before</b> the token check. (Think about why the order matters: what would the token check do to a request carrying <code>Basic ...</code>?)</p>
 <ol>
   <li><b>Accept the header</b>: <code>const auth = request.headers.get("authorization") ?? "";</code>. The <code>?? ""</code> turns "no header" into an empty string, so the next line can't crash.</li>
   <li>If it doesn't start with <code>"Basic "</code>, answer 401.</li>
-  <li><b>Base64-decode</b> the part after <code>"Basic "</code>: <code>atob(auth.slice("Basic ".length))</code> gives you <code>"admin:adopt-dont-shop"</code>.</li>
+  <li><b>Base64-decode</b> the part after <code>"Basic "</code>: <code>atob(auth.slice("Basic ".length))</code> gives you <code>"admin:adopt-dont-shop"</code>. But <code>atob</code> <b>throws</b> if that text isn't real base64, so this is a Step 10 moment: wrap it in <code>try</code>/<code>catch</code>. Junk in the header is the client's mistake, so the <code>catch</code> answers <b>401</b> with a message that says what was expected, not a 500. (See the snippet below.)</li>
   <li><b>Split</b> on the colon: <code>const [user, pass] = decoded.split(":");</code></li>
   <li><b>Compare</b> both to <code>process.env.ADMIN_USER</code> and <code>process.env.ADMIN_PASS</code>. Either one wrong: 401.</li>
   <li>Both right: log it and <code>return NextResponse.next()</code>.</li>
 </ol>
 
-<p>Every admin 401 should also send one extra header, which tells a browser to pop up its login box:</p>
-<pre><code>return Response.json(
+<p>The decode, with its <code>try</code>/<code>catch</code>. <code>decoded</code> is declared outside the <code>try</code> so the lines after it can use it:</p>
+<pre><code>let decoded;
+try {
+  decoded = atob(auth.slice("Basic ".length));
+} catch {
+  return Response.json(
+    { error: "Basic auth must be base64 of username:password" },
+    { status: 401, headers: askForLogin }
+  );
+}
+
+const [user, pass] = decoded.split(":");</code></pre>
+
+<p>Every admin 401 sends one extra header, which tells a browser to pop up its login box. Make it once at the top of the admin block and reuse it on every 401:</p>
+<pre><code>const askForLogin = { "WWW-Authenticate": 'Basic realm="admin"' };
+
+return Response.json(
   { error: "Wrong username or password" },
-  { status: 401, headers: { "WWW-Authenticate": 'Basic realm="admin"' } }
+  { status: 401, headers: askForLogin }
 );</code></pre>
 
 <p>Log the decision like every other path (<code>-&gt; 401 wrong admin login (user "admin")</code>, <code>-&gt; allowed (admin "admin")</code>). The username is OK to log. <b>The password never is.</b></p>
@@ -638,6 +750,7 @@ Authorization: Basic YWRtaW46YWRvcHQtZG9udC1zaG9w</code></pre>
     <tr><td><code>GET /api/admin/summary</code></td><td>No Auth</td><td class="status">401</td><td><code>{"error": "Admin login required"}</code></td></tr>
     <tr><td><code>GET /api/admin/summary</code></td><td>Bearer <code>shelter-staff-2026</code></td><td class="status">401</td><td><code>{"error": "Admin login required"}</code>. A staff token doesn't open the manager's door.</td></tr>
     <tr><td><code>GET /api/admin/summary</code></td><td>Basic <code>admin</code> / <code>wrong</code></td><td class="status">401</td><td><code>{"error": "Wrong username or password"}</code></td></tr>
+    <tr><td><code>GET /api/admin/summary</code></td><td>No Auth, plus a hand-typed header on the Headers tab: <code>Authorization</code> = <code>Basic hello!</code></td><td class="status">401</td><td><code>{"error": "Basic auth must be base64 of username:password"}</code>. Without the <code>try</code>/<code>catch</code> this is a 500.</td></tr>
     <tr><td><code>GET /api/admin/summary</code></td><td>Basic <code>admin</code> / <code>adopt-dont-shop</code></td><td class="status">200</td><td><code>{"total": 6, "adopted": 1, "waiting": 5}</code></td></tr>
     <tr><td><code>POST /api/pets</code></td><td>Bearer token, Nugget body</td><td class="status">201</td><td>Nugget</td></tr>
     <tr><td><code>PUT /api/pets/3</code></td><td>Bearer token, Pepper with <code>"adopted":true</code></td><td class="status">200</td><td>Pepper, adopted</td></tr>
@@ -647,7 +760,7 @@ Authorization: Basic YWRtaW46YWRvcHQtZG9udC1zaG9w</code></pre>
   <p>Then try it in a <b>browser</b>: open <a href="http://localhost:3000/api/admin/summary">http://localhost:3000/api/admin/summary</a>. The <code>WWW-Authenticate</code> header makes the browser pop up its own login box. Type the username and password and you get the JSON. The browser then remembers them until you close it.</p>
 </div>
 
-<p class="stuck">Stuck? <a href="#c12">Code C12: the summary route</a> &middot; <a href="#c13">C13: the finished proxy</a></p>
+<p class="stuck">Stuck? <a href="#c14">Code C14: the summary route</a> &middot; <a href="#c15">C15: the finished proxy</a></p>
 
 <div class="callout ai">
   <h4>Ask your Claude</h4>
@@ -665,6 +778,7 @@ Authorization: Basic YWRtaW46YWRvcHQtZG9udC1zaG9w</code></pre>
   <li>Every secret lives in <code>.env.local</code>, and <code>git status</code> doesn't list that file.</li>
   <li>There is <b>one</b> auth check, in <code>proxy.ts</code>. No route checks a token itself.</li>
   <li>The terminal shows one timestamped line per request with the decision, a line for every create and update, and never a token or password.</li>
+  <li>Nothing you can send from Postman gets a 500 or an empty body. Bad input (<code>null</code>, <code>banana</code>, <code>Basic hello!</code>) is a 4xx with a message saying what to send instead. If your own code ever throws, POST and PUT answer <code>{"error": "Something went wrong on our side"}</code>, and the real error is in the terminal via <code>console.error</code>.</li>
   <li><code>npm run build</code> finishes with no errors.</li>
 </ul>
 
@@ -673,7 +787,6 @@ Authorization: Basic YWRtaW46YWRvcHQtZG9udC1zaG9w</code></pre>
 <p>Finished early? Each of these is a real hole or a real feature. Try to explain what's going on <b>before</b> you fix it.</p>
 <ol>
   <li><b>The undefined token.</b> Comment out <code>API_TOKEN</code> in <code>.env.local</code> (put a <code>#</code> in front of it) and restart the server. In Postman, set Authorization to <b>No Auth</b> and add a header by hand on the Headers tab: <code>Authorization</code> = <code>Bearer undefined</code>. Send a POST. What happens, and why? (Hint: what does <code>`Bearer ${process.env.API_TOKEN}`</code> become when the variable is missing?) Make the proxy refuse everything if the token isn't set. Does the same hole exist for the admin login?</li>
-  <li><b>Garbage after "Basic".</b> Send <code>Authorization: Basic hello!</code> by hand to <code>/api/admin/summary</code>. You get a 500 and a page of HTML. Read the terminal. Which line threw? Make it a clean 401 instead. (Hint: <code>try</code>/<code>catch</code>, like reading a body.)</li>
   <li><b>A colon in the password.</b> Change <code>ADMIN_PASS</code> to <code>adopt:dont-shop</code> and try to log in with it. What does <code>"admin:adopt:dont-shop".split(":")</code> give you? Fix it so only the <b>first</b> colon splits. (Hint: <code>indexOf</code> and <code>slice</code>.)</li>
   <li><b>DELETE, and the id bug.</b> Add <code>DELETE</code> to <code>app/api/pets/[id]/route.ts</code> (staff only, answers 204 with no body; lecture's demo has one). Delete pet 2, then POST a new pet. What id does it get? Is that id already taken? Fix how ids are made.</li>
   <li><b>Filter the list.</b> Make <code>GET /api/pets?species=cat</code> return only cats. In a route, <code>new URL(request.url).searchParams.get("species")</code> reads it. Does the proxy still treat it as public? Why?</li>
@@ -687,6 +800,7 @@ Authorization: Basic YWRtaW46YWRvcHQtZG9udC1zaG9w</code></pre>
   <li><b>Saving a file can reset the list.</b> While <code>npm run dev</code> runs, saving reloads the code, and the array goes back to what <code>types/pet.ts</code> says. That isn't your POST being broken. Re-run it.</li>
   <li><b><code>proxy.ts</code> in the wrong folder does nothing, silently.</b> Top folder, next to <code>package.json</code>.</li>
   <li><b><code>.env.local</code> in the wrong folder</b> means <code>process.env.API_TOKEN</code> is <code>undefined</code>, and every token is wrong. Same folder as <code>package.json</code>. The terminal lists <code>Environments: .env.local</code> at startup when it's found.</li>
+  <li><b>A 500 with an empty body means something threw.</b> Postman won't tell you what. The terminal will, down to the line. Read it before you change anything.</li>
   <li><b>Body type set to Text instead of JSON</b> in Postman makes every POST a 400 "The body must be JSON".</li>
   <li><b><code>"age": "2"</code> is text.</b> <code>"age": 2</code> is a number. Same for <code>"adopted": "true"</code> vs <code>"adopted": true</code>.</li>
   <li><b>The Authorization tab and a hand-typed Authorization header fight.</b> If you type the header yourself on the Headers tab, set the Authorization tab to <b>No Auth</b>.</li>
@@ -929,7 +1043,7 @@ export function proxy(request: NextRequest) {
 
 <h3 id="c10">C10 &middot; POST with log lines</h3>
 <p class="back"><a href="#step9">&uarr; back to Step 9</a></p>
-<p class="file">app/api/pets/route.ts (finished)</p>
+<p class="file">app/api/pets/route.ts</p>
 <pre><code>import { pets, allowedSpecies } from "../../../types/pet";
 import type { Pet } from "../../../types/pet";
 
@@ -975,7 +1089,7 @@ export async function POST(request: Request) {
 
 <h3 id="c11">C11 &middot; PUT with log lines</h3>
 <p class="back"><a href="#step9">&uarr; back to Step 9</a></p>
-<p class="file">app/api/pets/[id]/route.ts (finished)</p>
+<p class="file">app/api/pets/[id]/route.ts</p>
 <pre><code>import { pets, allowedSpecies } from "../../../../types/pet";
 
 // Public: anyone can look up one pet.
@@ -1036,8 +1150,148 @@ export async function PUT(
   return Response.json(pet);
 }</code></pre>
 
-<h3 id="c12">C12 &middot; The summary route</h3>
+<h3 id="c12">C12 &middot; POST with both fixes</h3>
 <p class="back"><a href="#step10">&uarr; back to Step 10</a></p>
+<p class="file">app/api/pets/route.ts (finished)</p>
+<pre><code>import { pets, allowedSpecies } from "../../../types/pet";
+import type { Pet } from "../../../types/pet";
+
+// Public: anyone can see the list.
+export async function GET() {
+  return Response.json(pets);
+}
+
+// Private: needs the staff token (the proxy checks it before we get here).
+export async function POST(request: Request) {
+  // The outer try is the safety net: anything we didn't plan for becomes a clean 500.
+  try {
+    // The inner try catches the one failure we did plan for: a body that isn't JSON.
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      console.warn("POST /api/pets: body was not JSON");
+      return Response.json({ error: "The body must be JSON" }, { status: 400 });
+    }
+
+    // null is valid JSON, but body.name would crash on it.
+    if (body === null || typeof body !== "object") {
+      console.warn("POST /api/pets: body was not an object", body);
+      return Response.json(
+        { error: "The body must be a JSON object with name, species and age" },
+        { status: 400 }
+      );
+    }
+    if (typeof body.name !== "string" || body.name === "") {
+      console.warn("POST /api/pets: no name");
+      return Response.json({ error: "name is required" }, { status: 400 });
+    }
+    if (!allowedSpecies.includes(body.species)) {
+      console.warn("POST /api/pets: bad species", body.species);
+      return Response.json({ error: "species must be dog, cat or rabbit" }, { status: 400 });
+    }
+    if (typeof body.age !== "number" || body.age &lt; 0) {
+      console.warn("POST /api/pets: bad age", body.age);
+      return Response.json({ error: "age must be a number, 0 or more" }, { status: 400 });
+    }
+
+    const pet: Pet = {
+      id: pets.length + 1,
+      name: body.name,
+      species: body.species,
+      age: body.age,
+      adopted: false,
+    };
+    pets.push(pet);
+    console.log(`created pet ${pet.id} (${pet.name})`);
+    return Response.json(pet, { status: 201 });
+  } catch (error) {
+    // Our fault, not the client's. The details go in OUR log, never in the response.
+    console.error("POST /api/pets crashed:", error);
+    return Response.json({ error: "Something went wrong on our side" }, { status: 500 });
+  }
+}</code></pre>
+
+<h3 id="c13">C13 &middot; PUT with both fixes</h3>
+<p class="back"><a href="#step10">&uarr; back to Step 10</a></p>
+<p class="file">app/api/pets/[id]/route.ts (finished)</p>
+<pre><code>import { pets, allowedSpecies } from "../../../../types/pet";
+
+// Public: anyone can look up one pet.
+export async function GET(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+  const pet = pets.find((p) =&gt; p.id === Number(id));
+  if (!pet) {
+    return Response.json({ error: `No pet with id ${id}` }, { status: 404 });
+  }
+  return Response.json(pet);
+}
+
+// Private: PUT replaces the WHOLE pet, so every field is required.
+// (PATCH would change only the fields you sent.)
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+
+  // The outer try is the safety net: anything we didn't plan for becomes a clean 500.
+  try {
+    const pet = pets.find((p) =&gt; p.id === Number(id));
+    if (!pet) {
+      return Response.json({ error: `No pet with id ${id}` }, { status: 404 });
+    }
+
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      console.warn(`PUT /api/pets/${id}: body was not JSON`);
+      return Response.json({ error: "The body must be JSON" }, { status: 400 });
+    }
+
+    if (body === null || typeof body !== "object") {
+      console.warn(`PUT /api/pets/${id}: body was not an object`, body);
+      return Response.json(
+        { error: "The body must be a JSON object with name, species, age and adopted" },
+        { status: 400 }
+      );
+    }
+    if (typeof body.name !== "string" || body.name === "") {
+      console.warn(`PUT /api/pets/${id}: no name`);
+      return Response.json({ error: "name is required" }, { status: 400 });
+    }
+    if (!allowedSpecies.includes(body.species)) {
+      console.warn(`PUT /api/pets/${id}: bad species`, body.species);
+      return Response.json({ error: "species must be dog, cat or rabbit" }, { status: 400 });
+    }
+    if (typeof body.age !== "number" || body.age &lt; 0) {
+      console.warn(`PUT /api/pets/${id}: bad age`, body.age);
+      return Response.json({ error: "age must be a number, 0 or more" }, { status: 400 });
+    }
+    if (typeof body.adopted !== "boolean") {
+      console.warn(`PUT /api/pets/${id}: bad adopted`, body.adopted);
+      return Response.json({ error: "adopted must be true or false" }, { status: 400 });
+    }
+
+    pet.name = body.name;
+    pet.species = body.species;
+    pet.age = body.age;
+    pet.adopted = body.adopted;
+    console.log(`updated pet ${pet.id} (${pet.name})`);
+    return Response.json(pet);
+  } catch (error) {
+    // Our fault, not the client's. The details go in OUR log, never in the response.
+    console.error(`PUT /api/pets/${id} crashed:`, error);
+    return Response.json({ error: "Something went wrong on our side" }, { status: 500 });
+  }
+}</code></pre>
+
+<h3 id="c14">C14 &middot; The summary route</h3>
+<p class="back"><a href="#step11">&uarr; back to Step 11</a></p>
 <p class="file">app/api/admin/summary/route.ts</p>
 <pre><code>import { pets } from "../../../../types/pet";
 
@@ -1053,8 +1307,8 @@ export async function GET() {
   });
 }</code></pre>
 
-<h3 id="c13">C13 &middot; The finished proxy</h3>
-<p class="back"><a href="#step10">&uarr; back to Step 10</a></p>
+<h3 id="c15">C15 &middot; The finished proxy</h3>
+<p class="back"><a href="#step11">&uarr; back to Step 11</a></p>
 <p class="file">.env.local</p>
 <pre><code>API_TOKEN=shelter-staff-2026
 ADMIN_USER=admin
@@ -1100,7 +1354,19 @@ export function proxy(request: NextRequest) {
       );
     }
 
-    const decoded = atob(auth.slice("Basic ".length)); // "YWRtaW46..." -&gt; "admin:password"
+    // atob throws if the text isn't real base64.
+    // That's the client's mistake, so it's a 401, not a 500.
+    let decoded;
+    try {
+      decoded = atob(auth.slice("Basic ".length)); // "YWRtaW46..." -&gt; "admin:password"
+    } catch {
+      console.warn(line, "-&gt; 401 admin login was not base64");
+      return Response.json(
+        { error: "Basic auth must be base64 of username:password" },
+        { status: 401, headers: askForLogin }
+      );
+    }
+
     const [user, pass] = decoded.split(":");
 
     if (user !== process.env.ADMIN_USER || pass !== process.env.ADMIN_PASS) {

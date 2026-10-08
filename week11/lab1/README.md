@@ -28,7 +28,7 @@ Check it's alive: `GET http://localhost:3000/api/health` should answer **200** w
 
 **The full step-by-step guide is `instructions.pdf`** (also `instructions.html`, the same thing for a browser). Every step says what to build, when to test in Postman and exactly what you should see, what to ask your Claude if you're stuck, and links to that step's full code at the back.
 
-The ten steps, each one building on the last:
+The eleven steps, each one building on the last:
 
 | Step | You build | The idea |
 |---|---|---|
@@ -41,7 +41,8 @@ The ten steps, each one building on the last:
 | 7 | The token check moved into the proxy | One place decides who gets in, and then everything is locked |
 | 8 | A list of public routes in the proxy | Deny by default: list what's open, lock the rest |
 | 9 | Proper log lines | Timestamp, verb, address, decision, and never a secret |
-| 10 | `GET /api/admin/summary` behind Basic auth | Decode the header, split it, compare it to `.env.local` |
+| 10 | A `try`/`catch` safety net in POST and PUT | Client's fault is a 4xx that says what to fix; our fault is a plain 500, with the details in the log only |
+| 11 | `GET /api/admin/summary` behind Basic auth | Decode the header (inside a `try`), split it, compare it to `.env.local` |
 
 ## The finished version
 
@@ -75,6 +76,7 @@ Secrets (the staff token, the manager's password) live in `.env.local`, are read
 
 - **`proxy.ts` only works in the top folder**, next to `package.json`. Anywhere else, nothing calls it and Next doesn't warn you.
 - **`.env.local` goes in this folder too**, next to `package.json`. It isn't in the repo, on purpose. You make it in Step 5.
+- **A 500 with an empty body means something threw.** Postman can't tell you what; the terminal can, down to the line.
 - **Saving a file can reset the list.** It lives in memory, so restarting or reloading puts it back to what `types/pet.ts` says.
 - **Claude may say `middleware.ts`.** That's the Next 15 name. This is Next 16: `proxy.ts`, exporting a function called `proxy`.
 - **The first `npm run dev` writes `AGENTS.md`.** It's notes from Next for AI coding tools. Leave it.
