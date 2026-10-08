@@ -1,0 +1,1133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W11 - Happy Tails shelter API</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+    --ai-soft: #eef0fb;
+    --ai-edge: #5a5ec2;
+    --bad: #b3412f;
+  }
+  @media screen and (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+      --ai-soft: #1b1d33;
+      --ai-edge: #8b8ff0;
+      --bad: #e0806f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0 auto; padding: 0 22px 80px; max-width: 800px; background: var(--paper); color: var(--ink); font: 16px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif; }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 26px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 62ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 44px 0 12px; font-size: 23px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h2 .step { display: inline-block; min-width: 2.2em; color: var(--accent); }
+  h3 { margin: 24px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 70ch; }
+  ul, ol { max-width: 70ch; padding-left: 22px; }
+  li { margin-bottom: 5px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 12px 14px; overflow-x: auto; font: 13px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; margin: 0 0 14px; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  /* Cascadia Code turns !== and -> into single symbols; students need to see the real characters. */
+  code, pre { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+  pre.term { border-left-color: var(--ink-3); color: var(--ink-2); }
+  pre.bad { border-left-color: var(--bad); }
+  .file { margin: 14px 0 4px; font: 12px/1.4 "Cascadia Code", Consolas, monospace; color: var(--ink-3); }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 14.5px; }
+  th, td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  td code { font-size: 12.5px; overflow-wrap: break-word; }
+  td:first-child code { white-space: nowrap; }
+  td.status { font-weight: 700; white-space: nowrap; }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .callout h4 { margin: 0 0 8px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .warn h4 { color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .check h4 { color: var(--check-edge); }
+  .ai { background: var(--ai-soft); border-color: var(--ai-edge); }
+  .ai h4 { color: var(--ai-edge); }
+  .ai .prompt { font-style: italic; border-left: 2px solid var(--ai-edge); padding-left: 10px; margin-left: 2px; }
+  .stuck { font-size: 14.5px; color: var(--ink-2); }
+  .back { font-size: 13px; margin: -4px 0 8px; }
+  .toc { columns: 2; column-gap: 32px; font-size: 15px; padding-left: 20px; }
+  .toc li { break-inside: avoid; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+
+  @page { size: Letter; margin: 15mm 14mm; }
+  @media print {
+    body { max-width: none; padding: 0; font-size: 10.5pt; background: #fff; }
+    header.top { padding-top: 0; }
+    pre { white-space: pre-wrap; break-inside: avoid; font-size: 8.8pt; }
+    .callout, table, .file { break-inside: avoid; }
+    h2, h3, .file { break-after: avoid; }
+    h2 { margin-top: 30px; }
+    .appendix-start { break-before: page; }
+    a { text-decoration: none; }
+  }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W11 &middot; one lab, ten steps, each one builds on the last</p>
+  <h1>Happy Tails: a shelter API with a front door</h1>
+  <p class="lede">The Happy Tails animal shelter needs an API. Anyone should be able to browse the animals. Only shelter staff, holding a token, should be able to add or change one. And only the manager, with a username and password, should see the numbers. Tonight you build all of that in one Next.js app, one step at a time, testing each step in Postman before you move on.</p>
+</header>
+
+<p>This lab is meant to stretch you. Every step tells you what to build and how to check it. If you get stuck, every step also links to the full code for that step in the <a href="#code">Code reference</a> at the back. Try it yourself first, then look.</p>
+
+<h3>Contents</h3>
+<ol class="toc" start="0">
+  <li><a href="#step0">Run it and meet the data</a></li>
+  <li><a href="#step1">Public: the list of pets</a></li>
+  <li><a href="#step2">Public: one pet</a></li>
+  <li><a href="#step3">POST: add a pet</a></li>
+  <li><a href="#step4">PUT: replace a pet</a></li>
+  <li><a href="#step5">Private: a token in <code>.env.local</code></a></li>
+  <li><a href="#step6"><code>proxy.ts</code>: one file before every route</a></li>
+  <li><a href="#step7">Move the token check into the proxy</a></li>
+  <li><a href="#step8">Let the public routes back in</a></li>
+  <li><a href="#step9">Logging that helps</a></li>
+  <li><a href="#step10">The manager's door: Basic auth</a></li>
+</ol>
+<p><a href="#done">What "done" looks like</a> &middot; <a href="#further">Going further</a> &middot; <a href="#bite">Things that will bite you</a> &middot; <a href="#code">Code reference</a></p>
+
+<h3>What you'll have at the end</h3>
+<table>
+  <tr><th>Address</th><th>Verb</th><th>Who can call it</th><th>What it does</th></tr>
+  <tr><td><code>/api/health</code></td><td>GET</td><td>Anyone</td><td>Says the server is up (already done)</td></tr>
+  <tr><td><code>/api/pets</code></td><td>GET</td><td>Anyone</td><td>Every pet</td></tr>
+  <tr><td><code>/api/pets/2</code></td><td>GET</td><td>Anyone</td><td>One pet</td></tr>
+  <tr><td><code>/api/pets</code></td><td>POST</td><td>Staff (Bearer token)</td><td>Add a pet</td></tr>
+  <tr><td><code>/api/pets/2</code></td><td>PUT</td><td>Staff (Bearer token)</td><td>Replace a pet</td></tr>
+  <tr><td><code>/api/admin/summary</code></td><td>GET</td><td>Manager (username and password)</td><td>How many pets, adopted, waiting</td></tr>
+</table>
+
+<div class="callout ai">
+  <h4>Using Claude in this lab</h4>
+  <p>You have Claude chat open, so use it, but use it to <b>understand</b>, not to paste. Start every new chat by pasting this, so it knows exactly what you're working with:</p>
+  <p class="prompt">"I'm a beginner in a full-stack class. I'm building an API-only Next.js 16 app (App Router, TypeScript, no pages). Routes are files at app/api/.../route.ts that export functions named GET, POST and PUT. In Next 16, middleware.ts was renamed to proxy.ts: it sits in the project's top folder and exports a function called proxy. My data is an in-memory array in types/pet.ts, no database and no extra libraries. When I ask for help, explain the idea and give me a hint or a small piece first, not a whole finished file, unless I say I'm completely stuck."</p>
+  <p>When something breaks, give it three things: <b>the file</b>, <b>what the terminal printed</b>, and <b>what you expected vs. what Postman showed</b> (the status and the body). "It doesn't work" gets you a guess. Those three get you an answer.</p>
+  <p>If Claude ever suggests <code>middleware.ts</code>, <code>pages/api</code>, <code>req, res</code>, <code>NextApiRequest</code> or Express, it's describing an older Next or a different tool. Remind it: Next 16, App Router, <code>proxy.ts</code>.</p>
+</div>
+
+<!-- ============================================================ STEP 0 -->
+<h2 id="step0"><span class="step">0</span>Run it and meet the data</h2>
+
+<pre><code>cd mtc-ai-demos/week11/lab1
+npm install
+npm run dev</code></pre>
+
+<p>Keep that terminal where you can see it for the whole lab. When something goes wrong, Postman often just shows a status, and the reason is printed in the terminal.</p>
+
+<p>Open the <b>Postman desktop app</b> (the web version can't reach <code>localhost</code>). Make a collection called <b>Happy Tails</b> and save every request you make into it (<code>Ctrl</code>+<code>S</code>). Later steps ask you to re-run earlier requests to check you didn't break them, and a saved collection makes that a few clicks.</p>
+
+<p>Now read <code>types/pet.ts</code>. It's like the coffee menu from lecture: a type that says what a pet looks like, and a <code>const</code> array of pets that <b>is</b> the server's data. Nothing is stored anywhere else. When a route pushes onto that array or changes a pet in it, the very next request sees the change. That's what makes this a live model you can watch change from Postman.</p>
+
+<pre><code>export type Pet = {
+  id: number;
+  name: string;
+  species: string;
+  age: number;
+  adopted: boolean;
+};
+
+export const allowedSpecies = ["dog", "cat", "rabbit"];
+
+export const pets: Pet[] = [
+  { id: 1, name: "Biscuit", species: "dog", age: 3, adopted: false },
+  ...
+];</code></pre>
+
+<p>One route is already done for you, <code>app/api/health/route.ts</code>. Read it. That's the whole shape of a route: the folder is the address, the function's name is the verb.</p>
+
+<div class="callout check">
+  <h4>Test in Postman</h4>
+  <table>
+    <tr><th>Send</th><th>Auth / body</th><th>Expect</th><th>Body</th></tr>
+    <tr><td><code>GET http://localhost:3000/api/health</code></td><td>none</td><td class="status">200</td><td><code>{"status": "ok"}</code></td></tr>
+  </table>
+  <p>Also open <a href="http://localhost:3000">http://localhost:3000</a> in a browser. You get a 404 page. That's fine: this app has no pages at all, only an API.</p>
+</div>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"Here's my types/pet.ts: [paste it]. In plain words, what does <code>export const pets: Pet[]</code> mean? If a route on the server pushes a new pet onto this array, why does the next request see it, and why would it disappear when I restart the server?"</p>
+</div>
+
+<!-- ============================================================ STEP 1 -->
+<h2 id="step1"><span class="step">1</span>Public: the list of pets</h2>
+
+<p>Make <code>app/api/pets/route.ts</code>. Because of its folder, it answers at <code>/api/pets</code>. Export a function named <code>GET</code> that returns the whole <code>pets</code> array with <code>Response.json(...)</code>.</p>
+
+<p>Import <code>pets</code> from <code>types/pet.ts</code>. Count the folders: from <code>app/api/pets/</code> you go up three (<code>../../../</code>) to reach the top folder.</p>
+
+<pre><code>import { pets } from "../../../types/pet";
+
+export async function GET() {
+  // return the array as JSON
+}</code></pre>
+
+<div class="callout check">
+  <h4>Test in Postman</h4>
+  <table>
+    <tr><th>Send</th><th>Auth / body</th><th>Expect</th><th>Body</th></tr>
+    <tr><td><code>GET /api/pets</code></td><td>none</td><td class="status">200</td><td>All 6 pets, Biscuit through Waffles</td></tr>
+  </table>
+  <p>Got a <b>405</b>? The function's name isn't exactly <code>GET</code> (all capitals). Next routes on that name.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c1">Code C1: the list route</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"In a Next 16 route.ts file, why does the name of the exported function matter? What would happen if I named it <code>handler</code> instead of <code>GET</code>, and what status code would I see?"</p>
+</div>
+
+<!-- ============================================================ STEP 2 -->
+<h2 id="step2"><span class="step">2</span>Public: one pet</h2>
+
+<p>Make <code>app/api/pets/[id]/route.ts</code>. The square brackets mean "any value goes here," so this one file answers <code>/api/pets/1</code>, <code>/api/pets/2</code>, and so on. Next hands your function that value as its second input:</p>
+
+<pre><code>export async function GET(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+  // id is text: "2", not 2
+}</code></pre>
+
+<p>Find the pet whose <code>id</code> matches. Watch out: <code>id</code> from the address is text, and the ids in the array are numbers, so <code>"2" === 2</code> is <code>false</code>. Turn it into a number with <code>Number(id)</code> first.</p>
+
+<p>If there's no such pet, <code>find</code> gives you <code>undefined</code>. Don't let that slide through. Answer <b>404</b> yourself, with an error body in the same shape every time:</p>
+
+<pre><code>return Response.json({ error: `No pet with id ${id}` }, { status: 404 });</code></pre>
+
+<p>This file is one folder deeper, so the import goes up <b>four</b> folders.</p>
+
+<div class="callout check">
+  <h4>Test in Postman</h4>
+  <table>
+    <tr><th>Send</th><th>Auth / body</th><th>Expect</th><th>Body</th></tr>
+    <tr><td><code>GET /api/pets/2</code></td><td>none</td><td class="status">200</td><td><code>{"id": 2, "name": "Miso", "species": "cat", ...}</code></td></tr>
+    <tr><td><code>GET /api/pets/99</code></td><td>none</td><td class="status">404</td><td><code>{"error": "No pet with id 99"}</code></td></tr>
+    <tr><td><code>GET /api/pets/abc</code></td><td>none</td><td class="status">404</td><td><code>{"error": "No pet with id abc"}</code></td></tr>
+  </table>
+  <p>A <b>500</b> for <code>/api/pets/99</code> means you returned <code>Response.json(undefined)</code>. Add the "not found" check.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c2">Code C2: the one-pet route</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"In Next 16 route handlers, why is <code>params</code> a Promise that I have to <code>await</code>? And why is <code>id</code> a string even when the URL is /api/pets/2?"</p>
+  <p class="prompt">"Why is a missing pet a 404 and not a 500? Whose fault is each one, the client's or the server's?"</p>
+</div>
+
+<!-- ============================================================ STEP 3 -->
+<h2 id="step3"><span class="step">3</span>POST: add a pet</h2>
+
+<p>Go back to <code>app/api/pets/route.ts</code> and add a second function, <code>POST</code>, next to <code>GET</code>. Same address, different verb, different function.</p>
+
+<p>Read the body with <code>await request.json()</code>. It <b>throws</b> if the body isn't JSON, so wrap it in <code>try</code>/<code>catch</code> and answer 400:</p>
+
+<pre><code>let body;
+try {
+  body = await request.json();
+} catch {
+  return Response.json({ error: "The body must be JSON" }, { status: 400 });
+}</code></pre>
+
+<p>Then <b>check every field before you save anything</b>. Each failed check is a 400 with its own message:</p>
+<ul>
+  <li><code>name</code> must be a string and not empty. Use <code>typeof body.name !== "string"</code>.</li>
+  <li><code>species</code> must be one of <code>allowedSpecies</code>. Import it too, and use <code>allowedSpecies.includes(body.species)</code>.</li>
+  <li><code>age</code> must be a number, 0 or more.</li>
+</ul>
+
+<p>Only when all three pass do you build the new pet: <code>id</code> is <code>pets.length + 1</code>, <code>adopted</code> starts as <code>false</code>. Push it onto <code>pets</code> and return it with status <b>201</b> ("created"). <code>Response.json</code> always says 200 unless you tell it otherwise.</p>
+
+<div class="callout check">
+  <h4>Test in Postman</h4>
+  <p>For each POST: <b>Body</b> tab, then <b>raw</b>, then pick <b>JSON</b> from the dropdown on the right.</p>
+  <table>
+    <tr><th>Send</th><th>Auth / body</th><th>Expect</th><th>Body</th></tr>
+    <tr><td><code>POST /api/pets</code></td><td><code>{"name": "Nugget", "species": "dog", "age": 2}</code></td><td class="status">201</td><td><code>{"id": 7, "name": "Nugget", ..., "adopted": false}</code></td></tr>
+    <tr><td><code>GET /api/pets</code></td><td>none</td><td class="status">200</td><td>7 pets now. Nugget is on the end.</td></tr>
+    <tr><td><code>GET /api/pets/7</code></td><td>none</td><td class="status">200</td><td>Nugget. The other file sees the same array.</td></tr>
+    <tr><td><code>POST /api/pets</code></td><td><code>{}</code></td><td class="status">400</td><td><code>{"error": "name is required"}</code></td></tr>
+    <tr><td><code>POST /api/pets</code></td><td><code>{"name": "Rex", "species": "dragon", "age": 2}</code></td><td class="status">400</td><td><code>{"error": "species must be dog, cat or rabbit"}</code></td></tr>
+    <tr><td><code>POST /api/pets</code></td><td><code>{"name": "Rex", "species": "dog", "age": "two"}</code></td><td class="status">400</td><td><code>{"error": "age must be a number, 0 or more"}</code></td></tr>
+    <tr><td><code>POST /api/pets</code></td><td>Switch JSON to <b>Text</b> and send the word <code>banana</code></td><td class="status">400</td><td><code>{"error": "The body must be JSON"}</code></td></tr>
+  </table>
+  <p>Now stop the server (<code>Ctrl</code>+<code>C</code>), start it again, and <code>GET /api/pets</code>. Nugget is gone. The array lives in memory, so a restart puts it back to what the file says. (Next week it moves into a database.)</p>
+</div>
+
+<div class="callout warn">
+  <h4>Hold that thought</h4>
+  <p>Right now, <b>anyone</b> who can reach this server can add a pet. Nothing asked who you were. You'll fix that in Step 5.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c3">Code C3: the list route with POST</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"I'm checking a POST body by hand with typeof. What does <code>typeof</code> return for "two", for 2, and for undefined? Why does <code>"age": "4"</code> fail a number check but <code>"age": 4</code> pass?"</p>
+  <p class="prompt">"How does <code>Array.includes</code> work? Show me with <code>["dog", "cat", "rabbit"]</code> and the values "cat", "Cat" and undefined."</p>
+</div>
+
+<!-- ============================================================ STEP 4 -->
+<h2 id="step4"><span class="step">4</span>PUT: replace a pet</h2>
+
+<p>Add a <code>PUT</code> function to <code>app/api/pets/[id]/route.ts</code>, next to its <code>GET</code>. It takes the same two inputs as <code>GET</code> (the <code>request</code> and the <code>params</code>).</p>
+
+<div class="callout">
+  <h4>PUT vs. PATCH</h4>
+  <p><b>PUT</b> means "here is the whole new pet, replace the old one." The client must send <b>every</b> field. <b>PATCH</b> (what lecture did) means "change only the fields I sent." Tonight is PUT, so a body missing any field is a 400.</p>
+</div>
+
+<p>In order, the function should:</p>
+<ol>
+  <li>Find the pet, exactly like <code>GET</code> does. Not found: 404.</li>
+  <li>Read the body in a <code>try</code>/<code>catch</code>, exactly like <code>POST</code>. Not JSON: 400.</li>
+  <li>Run the same three checks as <code>POST</code>, plus a fourth: <code>adopted</code> must be <code>true</code> or <code>false</code> (<code>typeof body.adopted !== "boolean"</code>).</li>
+  <li>Change the pet you found (<code>pet.name = body.name</code>, and the same for the other three) and return it with <b>200</b>. Leave its <code>id</code> alone.</li>
+</ol>
+
+<p>Copying the checks from <code>POST</code> is fine. Recognizing a pattern you already wrote is the point.</p>
+
+<div class="callout check">
+  <h4>Test in Postman</h4>
+  <table>
+    <tr><th>Send</th><th>Auth / body</th><th>Expect</th><th>Body</th></tr>
+    <tr><td><code>PUT /api/pets/3</code></td><td><code>{"name": "Pepper", "species": "rabbit", "age": 1, "adopted": true}</code></td><td class="status">200</td><td>Pepper, now <code>"adopted":true</code></td></tr>
+    <tr><td><code>GET /api/pets/3</code></td><td>none</td><td class="status">200</td><td>Still adopted. The change stuck.</td></tr>
+    <tr><td><code>PUT /api/pets/3</code></td><td><code>{"adopted": true}</code></td><td class="status">400</td><td><code>{"error": "name is required"}</code>. That's PUT doing its job.</td></tr>
+    <tr><td><code>PUT /api/pets/3</code></td><td>the full body, but <code>"adopted":"yes"</code></td><td class="status">400</td><td><code>{"error": "adopted must be true or false"}</code></td></tr>
+    <tr><td><code>PUT /api/pets/99</code></td><td>the full body</td><td class="status">404</td><td><code>{"error": "No pet with id 99"}</code></td></tr>
+  </table>
+</div>
+
+<div class="callout check">
+  <h4>Checkpoint</h4>
+  <p>You now have GET, POST and PUT all working on one live list. Every route works, and every route is wide open. The rest of the lab is about deciding who gets in.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c4">Code C4: the one-pet route with PUT</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"Explain PUT vs. PATCH using a pet record as the example. If a client PUTs only <code>{"adopted": true}</code>, what should a strict PUT do, and why is that safer than guessing?"</p>
+</div>
+
+<!-- ============================================================ STEP 5 -->
+<h2 id="step5"><span class="step">5</span>Private: a token in <code>.env.local</code></h2>
+
+<p>Staff will prove who they are with a <b>token</b>: a secret string sent with every request. The token is a secret, so it never goes in your code. It goes in an environment file.</p>
+
+<h3>5a. Make sure Git will ignore it</h3>
+<p>Open <code>.gitignore</code> at the top of the repo and find the <code>.env*</code> line. That's what keeps env files out of Git. Every project you make from now on needs that line <b>before</b> you create the file.</p>
+
+<h3>5b. Make <code>.env.local</code></h3>
+<p>Make a file called <code>.env.local</code> in <code>week11/lab1/</code>, right next to <code>package.json</code> (not inside <code>app/</code>):</p>
+<pre><code>API_TOKEN=shelter-staff-2026</code></pre>
+<p>No quotes, no spaces around the <code>=</code>. Next picks it up without a restart. The terminal prints <code>Reload env: .env.local</code>. Your code reads it as <code>process.env.API_TOKEN</code>. Never give it a <code>NEXT_PUBLIC_</code> prefix. That prefix means "paste this into the browser's code," which is exactly where a secret must not go.</p>
+
+<h3>5c. How the token is sent</h3>
+<p>Lecture used a made-up header called <code>x-auth</code>. The standard place for a token is the <code>Authorization</code> header, and the value is the word <code>Bearer</code>, a space, then the token. "Bearer" means "whoever bears (carries) this token gets in."</p>
+<pre class="term"><code>Authorization: Bearer shelter-staff-2026</code></pre>
+
+<h3>5d. Check it in POST</h3>
+<p>At the very top of your <code>POST</code> function, before reading the body, compare the header to what it should be. If it doesn't match, answer <b>401</b> ("I don't know who you are") and stop:</p>
+<pre><code>if (request.headers.get("authorization") !== `Bearer ${process.env.API_TOKEN}`) {
+  return Response.json({ error: "Missing or wrong token" }, { status: 401 });
+}</code></pre>
+
+<div class="callout check">
+  <h4>Test in Postman</h4>
+  <p>To send the token: <b>Authorization</b> tab, <b>Auth Type</b> = <b>Bearer Token</b>, paste <code>shelter-staff-2026</code> into <b>Token</b>. Then look at the <b>Headers</b> tab and show the hidden headers. There's the <code>Authorization: Bearer ...</code> line Postman built for you.</p>
+  <table>
+    <tr><th>Send</th><th>Auth / body</th><th>Expect</th><th>Body</th></tr>
+    <tr><td><code>POST /api/pets</code></td><td>No Auth, Nugget body</td><td class="status">401</td><td><code>{"error": "Missing or wrong token"}</code></td></tr>
+    <tr><td><code>POST /api/pets</code></td><td>Bearer <code>wrong</code>, Nugget body</td><td class="status">401</td><td><code>{"error": "Missing or wrong token"}</code></td></tr>
+    <tr><td><code>POST /api/pets</code></td><td>Bearer <code>shelter-staff-2026</code>, Nugget body</td><td class="status">201</td><td>Nugget, id 7</td></tr>
+    <tr><td><code>PUT /api/pets/3</code></td><td><b>No Auth</b>, the full body</td><td class="status">200</td><td>It worked, with no token at all. Why?</td></tr>
+  </table>
+</div>
+
+<div class="callout warn">
+  <h4>The problem with this</h4>
+  <p>You locked one door. <code>PUT</code> is still open. You could paste the same check into <code>PUT</code>, and into every route you write next month, and hope you never forget one. Forgetting one is how real apps get broken into. Next step: put the check in <b>one place</b> that every request has to pass through.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c5">Code C5: the token check at the top of POST</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"What is the Authorization header, and what does the word Bearer mean in <code>Authorization: Bearer abc123</code>? Why is a header better than putting the token in the URL, like <code>?token=abc123</code>?"</p>
+  <p class="prompt">"In Next.js, what's the difference between <code>process.env.API_TOKEN</code> and <code>process.env.NEXT_PUBLIC_API_TOKEN</code>? Where can each one be seen?"</p>
+</div>
+
+<!-- ============================================================ STEP 6 -->
+<h2 id="step6"><span class="step">6</span><code>proxy.ts</code>: one file before every route</h2>
+
+<p><code>proxy.ts</code> is a single file whose function runs <b>before every request</b> reaches any route. Start it the way lecture did, as a logger only, so you can prove it's running before you trust it with anything.</p>
+
+<p>Make <code>proxy.ts</code> in the <b>top folder</b> of the project, next to <code>package.json</code>, <b>not</b> inside <code>app/</code>:</p>
+
+<pre class="term"><code>week11/lab1/
+  app/
+  types/
+  .env.local
+  package.json
+  proxy.ts      &lt;-- here</code></pre>
+
+<pre><code>import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function proxy(request: NextRequest) {
+  console.log("proxy saw:", request.method, request.nextUrl.pathname);
+  return NextResponse.next();
+}</code></pre>
+
+<p><code>NextResponse.next()</code> means "carry on to the route." Right now the proxy lets everything through. It only watches.</p>
+
+<div class="callout check">
+  <h4>Test in Postman, then read the terminal</h4>
+  <table>
+    <tr><th>Send</th><th>Auth / body</th><th>Expect</th><th>Terminal shows</th></tr>
+    <tr><td><code>GET /api/pets</code></td><td>none</td><td class="status">200</td><td><code>proxy saw: GET /api/pets</code></td></tr>
+    <tr><td><code>DELETE /api/pets/1</code></td><td>none</td><td class="status">405</td><td><code>proxy saw: DELETE /api/pets/1</code>, even though no route answers DELETE</td></tr>
+    <tr><td><code>GET /api/nope</code></td><td>none</td><td class="status">404</td><td><code>proxy saw: GET /api/nope</code>, even for an address that doesn't exist</td></tr>
+  </table>
+  <p>The proxy sees <b>everything</b>, before Next even knows whether a route exists. That's why it's the right place for checks every route needs.</p>
+</div>
+
+<div class="callout warn">
+  <h4>No <code>proxy saw:</code> line?</h4>
+  <p>The file is in the wrong folder. Anywhere other than the top folder, it's an ordinary file nothing calls, and Next doesn't warn you. Also, the line that looks like <code>GET /api/pets 200 in 12ms</code> is Next's own log, not yours. Yours starts with <code>proxy saw:</code>.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c6">Code C6: the logging proxy</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"My Next 16 proxy.ts doesn't seem to run: no console.log appears and there's no error. Here's my folder layout: [paste it]. Where exactly does Next 16 look for proxy.ts, and what is it called in older versions?"</p>
+</div>
+
+<!-- ============================================================ STEP 7 -->
+<h2 id="step7"><span class="step">7</span>Move the token check into the proxy</h2>
+
+<p>Now give the proxy a job. Copy your token check from <code>POST</code> into the proxy, between the log line and <code>return NextResponse.next()</code>. In the proxy the header comes from the same place: <code>request.headers.get("authorization")</code>.</p>
+
+<p>Then <b>delete the check from <code>POST</code></b>. One place decides who gets in. If the check lives in two places, one day they'll disagree.</p>
+
+<p>The rule from lecture: <b>what the proxy returns decides what happens next.</b> <code>NextResponse.next()</code> means carry on to the route. A <code>Response.json(..., {status: 401})</code> means stop here, and the route never runs.</p>
+
+<div class="callout check">
+  <h4>Test in Postman</h4>
+  <table>
+    <tr><th>Send</th><th>Auth / body</th><th>Expect</th><th>Body</th></tr>
+    <tr><td><code>POST /api/pets</code></td><td>No Auth, Nugget body</td><td class="status">401</td><td><code>{"error": "Missing or wrong token"}</code></td></tr>
+    <tr><td><code>POST /api/pets</code></td><td>Bearer token, Nugget body</td><td class="status">201</td><td>Nugget</td></tr>
+    <tr><td><code>PUT /api/pets/3</code></td><td>No Auth, full body</td><td class="status">401</td><td>Locked now, and you didn't touch the PUT file</td></tr>
+    <tr><td><code>PUT /api/pets/3</code></td><td>Bearer token, full body</td><td class="status">200</td><td>Pepper</td></tr>
+    <tr><td><code>GET /api/pets</code></td><td>No Auth</td><td class="status">401</td><td>Wait. The public list is locked too.</td></tr>
+    <tr><td><code>GET /api/health</code></td><td>No Auth</td><td class="status">401</td><td>So is the health check.</td></tr>
+  </table>
+  <p>The proxy runs before <b>every</b> request, so it locked <b>everything</b>. The public can't even browse the animals. That's the next step.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c7">Code C7: the proxy as a gate</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"In a Next 16 proxy, what's the difference between returning <code>NextResponse.next()</code> and returning <code>Response.json({...}, {status: 401})</code>? What happens to the route in each case?"</p>
+</div>
+
+<!-- ============================================================ STEP 8 -->
+<h2 id="step8"><span class="step">8</span>Let the public routes back in</h2>
+
+<p>Give the proxy a list of the routes anyone may use, and check that list <b>first</b>. Public means <b>reading</b> only. <code>GET /api/pets</code> is public, but <code>POST /api/pets</code> is the same address with a different verb, and it must stay locked. So the check needs both the verb and the address.</p>
+
+<p>At the top of <code>proxy.ts</code>, above the <code>proxy</code> function:</p>
+<pre><code>// Anyone may READ these without a token. Writing to them still needs one.
+const publicPaths = ["/api/health", "/api/pets"];
+
+function isPublic(method: string, path: string) {
+  if (method !== "GET") return false;
+  return publicPaths.includes(path) || path.startsWith("/api/pets/");
+}</code></pre>
+<p>Why the extra <code>startsWith</code>? <code>/api/pets/2</code>, <code>/api/pets/3</code> and so on can't all be typed into a list, so everything under <code>/api/pets/</code> counts too.</p>
+
+<p>Then, inside <code>proxy</code>, before the token check: if <code>isPublic(request.method, request.nextUrl.pathname)</code> is true, <code>return NextResponse.next()</code> straight away.</p>
+
+<div class="callout">
+  <h4>The teaching point: deny by default</h4>
+  <p>You listed what's <b>open</b> and locked everything else. The other way round (list what's locked, leave everything else open) feels the same today. But the day someone adds <code>/api/pets/delete-all</code> and forgets to add it to the "locked" list, it's open to the world. With your way, a new route you forget about is locked until someone decides otherwise. When you forget, it stays safe.</p>
+</div>
+
+<div class="callout check">
+  <h4>Test in Postman: re-run your whole collection</h4>
+  <table>
+    <tr><th>Send</th><th>Auth / body</th><th>Expect</th><th>Why</th></tr>
+    <tr><td><code>GET /api/health</code></td><td>No Auth</td><td class="status">200</td><td>Public</td></tr>
+    <tr><td><code>GET /api/pets</code></td><td>No Auth</td><td class="status">200</td><td>Public</td></tr>
+    <tr><td><code>GET /api/pets/2</code></td><td>No Auth</td><td class="status">200</td><td>Public (starts with <code>/api/pets/</code>)</td></tr>
+    <tr><td><code>GET /api/pets/99</code></td><td>No Auth</td><td class="status">404</td><td>Public, so it reached the route, which said "not found"</td></tr>
+    <tr><td><code>POST /api/pets</code></td><td>No Auth, Nugget body</td><td class="status">401</td><td>Same address, but not a GET</td></tr>
+    <tr><td><code>POST /api/pets</code></td><td>Bearer token, Nugget body</td><td class="status">201</td><td>Staff</td></tr>
+    <tr><td><code>PUT /api/pets/3</code></td><td>No Auth, full body</td><td class="status">401</td><td>Not a GET</td></tr>
+    <tr><td><code>GET /api/nope</code></td><td>No Auth</td><td class="status">401</td><td>Not on the list, so locked by default (not 404!)</td></tr>
+  </table>
+</div>
+
+<p class="stuck">Stuck? <a href="#c8">Code C8: the proxy with public routes</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"Why is it safer to keep a list of public routes and lock everything else, instead of a list of private routes with everything else open? Give me a realistic example of the second way going wrong."</p>
+  <p class="prompt">"Here's my isPublic function: [paste it]. Without fixing anything, trace what it returns for GET /api/pets, POST /api/pets, GET /api/pets/2, GET /api/petsxyz and GET /api/admin/summary."</p>
+</div>
+
+<!-- ============================================================ STEP 9 -->
+<h2 id="step9"><span class="step">9</span>Logging that helps</h2>
+
+<p><code>proxy saw: GET /api/pets</code> proved the proxy was running. It isn't enough once the proxy is making decisions. When someone says "I got a 401 at about 2:15," you want to find that line and see <b>why</b>. Good log lines follow a few rules:</p>
+
+<ol>
+  <li><b>One line per request, the same shape every time</b>, so your eye (or a search) can scan down them.</li>
+  <li><b>When, what verb, what address</b> at the start of every line. <code>new Date().toISOString()</code> gives you a timestamp like <code>2026-10-08T18:59:52.845Z</code>.</li>
+  <li><b>Say what was decided and why</b>: <code>-&gt; public</code>, <code>-&gt; allowed (token)</code>, <code>-&gt; 401 missing or wrong token</code>.</li>
+  <li><b><code>console.warn</code> for things that went wrong</b> (a 401, a bad body), <code>console.log</code> for normal traffic. Later, real log tools can filter on that.</li>
+  <li><b>Log when the data changes</b>: <code>created pet 7 (Nugget)</code>, <code>updated pet 3 (Pepper)</code>. Don't bother logging every read. The proxy already has those.</li>
+  <li><b>Never log a secret.</b> Not the token, not a password, not the whole <code>Authorization</code> header.</li>
+</ol>
+
+<p>That last rule is the one that gets people fired. Logs get pasted into chat, screenshotted for help, and shipped off to logging services that lots of people can read. A line like this hands your key to every one of them:</p>
+<pre class="bad"><code>console.log("auth header:", request.headers.get("authorization"));   // NEVER</code></pre>
+<p>Log <b>what kind</b> of check happened and <b>what was decided</b>, never the value that was checked.</p>
+
+<h3>9a. In the proxy</h3>
+<p>Build the start of the line once, at the top of <code>proxy</code>, and use it on every path out of the function:</p>
+<pre><code>const path = request.nextUrl.pathname;
+const line = `${new Date().toISOString()} ${request.method} ${path}`;
+
+// ...then before each return:
+console.log(line, "-&gt; public");
+console.warn(line, "-&gt; 401 missing or wrong token");
+console.log(line, "-&gt; allowed (token)");</code></pre>
+<p>Delete the old <code>proxy saw:</code> line.</p>
+
+<h3>9b. In the routes</h3>
+<p>In <code>POST</code>, right after the push: <code>console.log(`created pet ${pet.id} (${pet.name})`)</code>. In <code>PUT</code>, after the changes: <code>updated pet ...</code>. Before each 400, a <code>console.warn</code> that says which check failed, like <code>console.warn("POST /api/pets: bad species", body.species)</code>. The species someone typed isn't a secret, so it's fine to log, and it's exactly what you'd want to know.</p>
+
+<div class="callout check">
+  <h4>Test: run your collection, then read the terminal</h4>
+  <p>It should read like a story. Something like this (your times will differ):</p>
+<pre class="term"><code>2026-10-08T18:59:52.845Z POST /api/pets -&gt; 401 missing or wrong token
+2026-10-08T18:59:52.958Z POST /api/pets -&gt; allowed (token)
+created pet 7 (Nugget)
+ POST /api/pets 201 in 27ms (next.js: 9ms, proxy.ts: 9ms, application-code: 9ms)
+2026-10-08T18:59:53.275Z POST /api/pets -&gt; allowed (token)
+POST /api/pets: no name
+ POST /api/pets 400 in 19ms (next.js: 6ms, proxy.ts: 7ms, application-code: 7ms)
+2026-10-08T18:59:53.733Z GET /api/pets/7 -&gt; public
+ GET /api/pets/7 200 in 38ms (next.js: 23ms, proxy.ts: 8ms, application-code: 8ms)
+2026-10-08T18:59:53.870Z PUT /api/pets/3 -&gt; allowed (token)
+updated pet 3 (Pepper)
+ PUT /api/pets/3 200 in 22ms (next.js: 7ms, proxy.ts: 8ms, application-code: 7ms)</code></pre>
+  <p>Look at the first line. The 401 has <b>no</b> Next line after it. A request the proxy turns away never reaches Next's own log, so your line is the only record it ever happened. That's why the proxy logs every decision, not only the successes.</p>
+  <p>Then search your terminal for <code>shelter-staff-2026</code>. It must not be there.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c9">Code C9: the proxy with good logging</a> &middot; <a href="#c10">C10: POST with log lines</a> &middot; <a href="#c11">C11: PUT with log lines</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"Here are some lines from my server's terminal: [paste them]. If I were debugging a complaint like 'my request failed around 2:15,' what's good about these lines and what's missing? List things that should never appear in a log, and why."</p>
+  <p class="prompt">"What's the difference between console.log, console.warn and console.error, and when would a real logging service care which one I used?"</p>
+</div>
+
+<!-- ============================================================ STEP 10 -->
+<h2 id="step10"><span class="step">10</span>The manager's door: Basic auth</h2>
+
+<p>The manager wants a summary, but a staff token shouldn't be enough to see it. Managers log in with a <b>username and password</b>. The oldest, simplest way to send those over HTTP is <b>Basic auth</b>, and you're going to check it by hand.</p>
+
+<h3>10a. The summary route</h3>
+<p>Make <code>app/api/admin/summary/route.ts</code> with a <code>GET</code> that works its answer out from the live list:</p>
+<ul>
+  <li><code>total</code>: how many pets</li>
+  <li><code>adopted</code>: how many have <code>adopted: true</code>. Use <code>pets.filter(...)</code>, then <code>.length</code>.</li>
+  <li><code>waiting</code>: total minus adopted</li>
+</ul>
+<p>Restart the server first (<code>Ctrl</code>+<code>C</code>, <code>npm run dev</code>) so the list is fresh and your numbers match these. Then test it with your Bearer token: <b>200</b>, <code>{"total":6,"adopted":1,"waiting":5}</code>. Without a token: 401. Right now it's just another locked route.</p>
+
+<h3>10b. Add the manager's login to <code>.env.local</code></h3>
+<pre><code>API_TOKEN=shelter-staff-2026
+ADMIN_USER=admin
+ADMIN_PASS=adopt-dont-shop</code></pre>
+
+<h3>10c. What Basic auth actually sends</h3>
+<p>The client glues the username and password together with a colon, then <b>base64-encodes</b> the result, and sends that after the word <code>Basic</code>:</p>
+<pre class="term"><code>admin:adopt-dont-shop                       glued together with a colon
+YWRtaW46YWRvcHQtZG9udC1zaG9w                base64-encoded
+Authorization: Basic YWRtaW46YWRvcHQtZG9udC1zaG9w</code></pre>
+<p>Try it yourself. Open any browser tab's DevTools console and type <code>btoa("admin:adopt-dont-shop")</code>, then <code>atob("YWRtaW46YWRvcHQtZG9udC1zaG9w")</code>. <code>btoa</code> encodes and <code>atob</code> decodes, and both exist in the browser <b>and</b> on your Next server.</p>
+
+<div class="callout warn">
+  <h4>Base64 is not encryption</h4>
+  <p>You just decoded a password with one function and no key. Base64 only turns any text into safe, plain letters for a header. Anyone who sees the header has the password. That's why Basic auth is only ever OK over <b>HTTPS</b>, where the whole request is encrypted on the way. <code>localhost</code> is fine for learning.</p>
+</div>
+
+<h3>10d. Check it in the proxy</h3>
+<p>The server does the client's steps backwards. Add a new block to <code>proxy</code> for any address that starts with <code>/api/admin</code>. Put it <b>after</b> the public check and <b>before</b> the token check. (Think about why the order matters: what would the token check do to a request carrying <code>Basic ...</code>?)</p>
+<ol>
+  <li><b>Accept the header</b>: <code>const auth = request.headers.get("authorization") ?? "";</code>. The <code>?? ""</code> turns "no header" into an empty string, so the next line can't crash.</li>
+  <li>If it doesn't start with <code>"Basic "</code>, answer 401.</li>
+  <li><b>Base64-decode</b> the part after <code>"Basic "</code>: <code>atob(auth.slice("Basic ".length))</code> gives you <code>"admin:adopt-dont-shop"</code>.</li>
+  <li><b>Split</b> on the colon: <code>const [user, pass] = decoded.split(":");</code></li>
+  <li><b>Compare</b> both to <code>process.env.ADMIN_USER</code> and <code>process.env.ADMIN_PASS</code>. Either one wrong: 401.</li>
+  <li>Both right: log it and <code>return NextResponse.next()</code>.</li>
+</ol>
+
+<p>Every admin 401 should also send one extra header, which tells a browser to pop up its login box:</p>
+<pre><code>return Response.json(
+  { error: "Wrong username or password" },
+  { status: 401, headers: { "WWW-Authenticate": 'Basic realm="admin"' } }
+);</code></pre>
+
+<p>Log the decision like every other path (<code>-&gt; 401 wrong admin login (user "admin")</code>, <code>-&gt; allowed (admin "admin")</code>). The username is OK to log. <b>The password never is.</b></p>
+
+<div class="callout check">
+  <h4>Test in Postman</h4>
+  <p>The numbers below assume a fresh list, so restart the server once more before you start. To send a login: <b>Authorization</b> tab, <b>Auth Type</b> = <b>Basic Auth</b>, and fill in <b>Username</b> and <b>Password</b>. Then check the hidden <b>Headers</b>. Postman did the gluing and base64-ing for you, and you should see exactly <code>Basic YWRtaW46YWRvcHQtZG9udC1zaG9w</code>.</p>
+  <table>
+    <tr><th>Send</th><th>Auth / body</th><th>Expect</th><th>Body</th></tr>
+    <tr><td><code>GET /api/admin/summary</code></td><td>No Auth</td><td class="status">401</td><td><code>{"error": "Admin login required"}</code></td></tr>
+    <tr><td><code>GET /api/admin/summary</code></td><td>Bearer <code>shelter-staff-2026</code></td><td class="status">401</td><td><code>{"error": "Admin login required"}</code>. A staff token doesn't open the manager's door.</td></tr>
+    <tr><td><code>GET /api/admin/summary</code></td><td>Basic <code>admin</code> / <code>wrong</code></td><td class="status">401</td><td><code>{"error": "Wrong username or password"}</code></td></tr>
+    <tr><td><code>GET /api/admin/summary</code></td><td>Basic <code>admin</code> / <code>adopt-dont-shop</code></td><td class="status">200</td><td><code>{"total": 6, "adopted": 1, "waiting": 5}</code></td></tr>
+    <tr><td><code>POST /api/pets</code></td><td>Bearer token, Nugget body</td><td class="status">201</td><td>Nugget</td></tr>
+    <tr><td><code>PUT /api/pets/3</code></td><td>Bearer token, Pepper with <code>"adopted":true</code></td><td class="status">200</td><td>Pepper, adopted</td></tr>
+    <tr><td><code>GET /api/admin/summary</code></td><td>Basic, right login</td><td class="status">200</td><td><code>{"total": 7, "adopted": 2, "waiting": 5}</code>. The live model again.</td></tr>
+    <tr><td><code>GET /api/pets</code></td><td>No Auth</td><td class="status">200</td><td>Public routes still public</td></tr>
+  </table>
+  <p>Then try it in a <b>browser</b>: open <a href="http://localhost:3000/api/admin/summary">http://localhost:3000/api/admin/summary</a>. The <code>WWW-Authenticate</code> header makes the browser pop up its own login box. Type the username and password and you get the JSON. The browser then remembers them until you close it.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c12">Code C12: the summary route</a> &middot; <a href="#c13">C13: the finished proxy</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"Explain HTTP Basic auth step by step: what exactly does the client send, and what does the server have to do to check it? What is base64, and why isn't it encryption?"</p>
+  <p class="prompt">"What does the WWW-Authenticate response header do, and why does my browser show a login box when it gets a 401 with <code>WWW-Authenticate: Basic</code>?"</p>
+  <p class="prompt">"In my proxy, I check /api/admin before I check the Bearer token. Walk me through what would happen to a request with <code>Authorization: Basic ...</code> if I swapped the order."</p>
+</div>
+
+<!-- ============================================================ DONE -->
+<h2 id="done">What "done" looks like</h2>
+<ul>
+  <li><code>GET /api/health</code>, <code>GET /api/pets</code> and <code>GET /api/pets/:id</code> work with no auth at all.</li>
+  <li><code>POST /api/pets</code> and <code>PUT /api/pets/:id</code> need <code>Authorization: Bearer shelter-staff-2026</code>, and check every field, answering 400 with <code>{"error": "..."}</code> when one is wrong.</li>
+  <li><code>GET /api/admin/summary</code> needs Basic auth with the username and password from <code>.env.local</code>, and a staff token is <b>not</b> enough.</li>
+  <li>Every secret lives in <code>.env.local</code>, and <code>git status</code> doesn't list that file.</li>
+  <li>There is <b>one</b> auth check, in <code>proxy.ts</code>. No route checks a token itself.</li>
+  <li>The terminal shows one timestamped line per request with the decision, a line for every create and update, and never a token or password.</li>
+  <li><code>npm run build</code> finishes with no errors.</li>
+</ul>
+
+<!-- ============================================================ FURTHER -->
+<h2 id="further">Going further</h2>
+<p>Finished early? Each of these is a real hole or a real feature. Try to explain what's going on <b>before</b> you fix it.</p>
+<ol>
+  <li><b>The undefined token.</b> Comment out <code>API_TOKEN</code> in <code>.env.local</code> (put a <code>#</code> in front of it) and restart the server. In Postman, set Authorization to <b>No Auth</b> and add a header by hand on the Headers tab: <code>Authorization</code> = <code>Bearer undefined</code>. Send a POST. What happens, and why? (Hint: what does <code>`Bearer ${process.env.API_TOKEN}`</code> become when the variable is missing?) Make the proxy refuse everything if the token isn't set. Does the same hole exist for the admin login?</li>
+  <li><b>Garbage after "Basic".</b> Send <code>Authorization: Basic hello!</code> by hand to <code>/api/admin/summary</code>. You get a 500 and a page of HTML. Read the terminal. Which line threw? Make it a clean 401 instead. (Hint: <code>try</code>/<code>catch</code>, like reading a body.)</li>
+  <li><b>A colon in the password.</b> Change <code>ADMIN_PASS</code> to <code>adopt:dont-shop</code> and try to log in with it. What does <code>"admin:adopt:dont-shop".split(":")</code> give you? Fix it so only the <b>first</b> colon splits. (Hint: <code>indexOf</code> and <code>slice</code>.)</li>
+  <li><b>DELETE, and the id bug.</b> Add <code>DELETE</code> to <code>app/api/pets/[id]/route.ts</code> (staff only, answers 204 with no body; lecture's demo has one). Delete pet 2, then POST a new pet. What id does it get? Is that id already taken? Fix how ids are made.</li>
+  <li><b>Filter the list.</b> Make <code>GET /api/pets?species=cat</code> return only cats. In a route, <code>new URL(request.url).searchParams.get("species")</code> reads it. Does the proxy still treat it as public? Why?</li>
+  <li><b>A bigger summary.</b> Add <code>bySpecies</code> to the summary: <code>{"dog": 3, "cat": 2, "rabbit": 1}</code>.</li>
+</ol>
+
+<!-- ============================================================ BITE -->
+<h2 id="bite">Things that will bite you</h2>
+<ul>
+  <li><b>Postman on the web can't reach <code>localhost</code>.</b> Use the desktop app.</li>
+  <li><b>Saving a file can reset the list.</b> While <code>npm run dev</code> runs, saving reloads the code, and the array goes back to what <code>types/pet.ts</code> says. That isn't your POST being broken. Re-run it.</li>
+  <li><b><code>proxy.ts</code> in the wrong folder does nothing, silently.</b> Top folder, next to <code>package.json</code>.</li>
+  <li><b><code>.env.local</code> in the wrong folder</b> means <code>process.env.API_TOKEN</code> is <code>undefined</code>, and every token is wrong. Same folder as <code>package.json</code>. The terminal lists <code>Environments: .env.local</code> at startup when it's found.</li>
+  <li><b>Body type set to Text instead of JSON</b> in Postman makes every POST a 400 "The body must be JSON".</li>
+  <li><b><code>"age": "2"</code> is text.</b> <code>"age": 2</code> is a number. Same for <code>"adopted": "true"</code> vs <code>"adopted": true</code>.</li>
+  <li><b>The Authorization tab and a hand-typed Authorization header fight.</b> If you type the header yourself on the Headers tab, set the Authorization tab to <b>No Auth</b>.</li>
+  <li><b>A browser visit logs extra requests</b> like <code>GET /favicon.ico -&gt; 401</code>. That's the browser asking for a tab icon, and your proxy correctly locking an address that isn't on the public list. Harmless.</li>
+  <li><b>Claude says <code>middleware.ts</code>.</b> That's the Next 15 name. In Next 16 it's <code>proxy.ts</code> with a function called <code>proxy</code>.</li>
+  <li><b>Port 3000 taken?</b> Next picks 3001 and says so in the terminal. Use whatever it says, or stop the other <code>npm run dev</code>.</li>
+</ul>
+
+<!-- ============================================================ CODE -->
+<h2 id="code" class="appendix-start">Code reference</h2>
+<p>The full code at the end of each step. Try the step first; come here when you're stuck or want to compare. Each block says which file it goes in, and links back to its step.</p>
+
+<h3 id="c1">C1 &middot; The list route</h3>
+<p class="back"><a href="#step1">&uarr; back to Step 1</a></p>
+<p class="file">app/api/pets/route.ts</p>
+<pre><code>import { pets } from "../../../types/pet";
+
+export async function GET() {
+  return Response.json(pets);
+}</code></pre>
+
+<h3 id="c2">C2 &middot; The one-pet route</h3>
+<p class="back"><a href="#step2">&uarr; back to Step 2</a></p>
+<p class="file">app/api/pets/[id]/route.ts</p>
+<pre><code>import { pets } from "../../../../types/pet";
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+  const pet = pets.find((p) =&gt; p.id === Number(id));
+  if (!pet) {
+    return Response.json({ error: `No pet with id ${id}` }, { status: 404 });
+  }
+  return Response.json(pet);
+}</code></pre>
+
+<h3 id="c3">C3 &middot; The list route with POST</h3>
+<p class="back"><a href="#step3">&uarr; back to Step 3</a></p>
+<p class="file">app/api/pets/route.ts</p>
+<pre><code>import { pets, allowedSpecies } from "../../../types/pet";
+import type { Pet } from "../../../types/pet";
+
+export async function GET() {
+  return Response.json(pets);
+}
+
+export async function POST(request: Request) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "The body must be JSON" }, { status: 400 });
+  }
+
+  if (typeof body.name !== "string" || body.name === "") {
+    return Response.json({ error: "name is required" }, { status: 400 });
+  }
+  if (!allowedSpecies.includes(body.species)) {
+    return Response.json({ error: "species must be dog, cat or rabbit" }, { status: 400 });
+  }
+  if (typeof body.age !== "number" || body.age &lt; 0) {
+    return Response.json({ error: "age must be a number, 0 or more" }, { status: 400 });
+  }
+
+  const pet: Pet = {
+    id: pets.length + 1,
+    name: body.name,
+    species: body.species,
+    age: body.age,
+    adopted: false,
+  };
+  pets.push(pet);
+  return Response.json(pet, { status: 201 });
+}</code></pre>
+
+<h3 id="c4">C4 &middot; The one-pet route with PUT</h3>
+<p class="back"><a href="#step4">&uarr; back to Step 4</a></p>
+<p class="file">app/api/pets/[id]/route.ts</p>
+<pre><code>import { pets, allowedSpecies } from "../../../../types/pet";
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+  const pet = pets.find((p) =&gt; p.id === Number(id));
+  if (!pet) {
+    return Response.json({ error: `No pet with id ${id}` }, { status: 404 });
+  }
+  return Response.json(pet);
+}
+
+// PUT replaces the WHOLE pet, so every field is required.
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+  const pet = pets.find((p) =&gt; p.id === Number(id));
+  if (!pet) {
+    return Response.json({ error: `No pet with id ${id}` }, { status: 404 });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "The body must be JSON" }, { status: 400 });
+  }
+
+  if (typeof body.name !== "string" || body.name === "") {
+    return Response.json({ error: "name is required" }, { status: 400 });
+  }
+  if (!allowedSpecies.includes(body.species)) {
+    return Response.json({ error: "species must be dog, cat or rabbit" }, { status: 400 });
+  }
+  if (typeof body.age !== "number" || body.age &lt; 0) {
+    return Response.json({ error: "age must be a number, 0 or more" }, { status: 400 });
+  }
+  if (typeof body.adopted !== "boolean") {
+    return Response.json({ error: "adopted must be true or false" }, { status: 400 });
+  }
+
+  pet.name = body.name;
+  pet.species = body.species;
+  pet.age = body.age;
+  pet.adopted = body.adopted;
+  return Response.json(pet);
+}</code></pre>
+
+<h3 id="c5">C5 &middot; The token check at the top of POST</h3>
+<p class="back"><a href="#step5">&uarr; back to Step 5</a></p>
+<p class="file">.env.local (next to package.json)</p>
+<pre><code>API_TOKEN=shelter-staff-2026</code></pre>
+<p class="file">app/api/pets/route.ts (only the start of POST changes)</p>
+<pre><code>export async function POST(request: Request) {
+  // The token lives in .env.local and is only ever read here, on the server.
+  if (request.headers.get("authorization") !== `Bearer ${process.env.API_TOKEN}`) {
+    return Response.json({ error: "Missing or wrong token" }, { status: 401 });
+  }
+
+  let body;
+  // ... the rest of POST stays exactly as it was in Step 3
+}</code></pre>
+
+<h3 id="c6">C6 &middot; The logging proxy</h3>
+<p class="back"><a href="#step6">&uarr; back to Step 6</a></p>
+<p class="file">proxy.ts (top folder, next to package.json)</p>
+<pre><code>import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function proxy(request: NextRequest) {
+  console.log("proxy saw:", request.method, request.nextUrl.pathname);
+  return NextResponse.next();
+}</code></pre>
+
+<h3 id="c7">C7 &middot; The proxy as a gate</h3>
+<p class="back"><a href="#step7">&uarr; back to Step 7</a></p>
+<p class="file">proxy.ts. Also delete the token check from POST in app/api/pets/route.ts (it's back to C3).</p>
+<pre><code>import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function proxy(request: NextRequest) {
+  console.log("proxy saw:", request.method, request.nextUrl.pathname);
+
+  // Return a response and the request stops here -- no route ever runs.
+  if (request.headers.get("authorization") !== `Bearer ${process.env.API_TOKEN}`) {
+    return Response.json({ error: "Missing or wrong token" }, { status: 401 });
+  }
+
+  // Return NextResponse.next() and it carries on to the route.
+  return NextResponse.next();
+}</code></pre>
+
+<h3 id="c8">C8 &middot; The proxy with public routes</h3>
+<p class="back"><a href="#step8">&uarr; back to Step 8</a></p>
+<p class="file">proxy.ts</p>
+<pre><code>import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+// Anyone may READ these without a token. Writing to them still needs one.
+const publicPaths = ["/api/health", "/api/pets"];
+
+function isPublic(method: string, path: string) {
+  if (method !== "GET") return false;
+  return publicPaths.includes(path) || path.startsWith("/api/pets/");
+}
+
+export function proxy(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  console.log("proxy saw:", request.method, path);
+
+  if (isPublic(request.method, path)) {
+    return NextResponse.next();
+  }
+
+  if (request.headers.get("authorization") !== `Bearer ${process.env.API_TOKEN}`) {
+    return Response.json({ error: "Missing or wrong token" }, { status: 401 });
+  }
+
+  return NextResponse.next();
+}</code></pre>
+
+<h3 id="c9">C9 &middot; The proxy with good logging</h3>
+<p class="back"><a href="#step9">&uarr; back to Step 9</a></p>
+<p class="file">proxy.ts</p>
+<pre><code>import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+// Anyone may READ these without a token. Writing to them still needs one.
+const publicPaths = ["/api/health", "/api/pets"];
+
+function isPublic(method: string, path: string) {
+  if (method !== "GET") return false;
+  return publicPaths.includes(path) || path.startsWith("/api/pets/");
+}
+
+export function proxy(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  // Same start to every line: when, what verb, what address. Never the token.
+  const line = `${new Date().toISOString()} ${request.method} ${path}`;
+
+  if (isPublic(request.method, path)) {
+    console.log(line, "-&gt; public");
+    return NextResponse.next();
+  }
+
+  const auth = request.headers.get("authorization") ?? "";
+
+  if (auth !== `Bearer ${process.env.API_TOKEN}`) {
+    console.warn(line, "-&gt; 401 missing or wrong token");
+    return Response.json({ error: "Missing or wrong token" }, { status: 401 });
+  }
+
+  console.log(line, "-&gt; allowed (token)");
+  return NextResponse.next();
+}</code></pre>
+
+<h3 id="c10">C10 &middot; POST with log lines</h3>
+<p class="back"><a href="#step9">&uarr; back to Step 9</a></p>
+<p class="file">app/api/pets/route.ts (finished)</p>
+<pre><code>import { pets, allowedSpecies } from "../../../types/pet";
+import type { Pet } from "../../../types/pet";
+
+// Public: anyone can see the list.
+export async function GET() {
+  return Response.json(pets);
+}
+
+// Private: needs the staff token (the proxy checks it before we get here).
+export async function POST(request: Request) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    console.warn("POST /api/pets: body was not JSON");
+    return Response.json({ error: "The body must be JSON" }, { status: 400 });
+  }
+
+  if (typeof body.name !== "string" || body.name === "") {
+    console.warn("POST /api/pets: no name");
+    return Response.json({ error: "name is required" }, { status: 400 });
+  }
+  if (!allowedSpecies.includes(body.species)) {
+    console.warn("POST /api/pets: bad species", body.species);
+    return Response.json({ error: "species must be dog, cat or rabbit" }, { status: 400 });
+  }
+  if (typeof body.age !== "number" || body.age &lt; 0) {
+    console.warn("POST /api/pets: bad age", body.age);
+    return Response.json({ error: "age must be a number, 0 or more" }, { status: 400 });
+  }
+
+  const pet: Pet = {
+    id: pets.length + 1,
+    name: body.name,
+    species: body.species,
+    age: body.age,
+    adopted: false,
+  };
+  pets.push(pet);
+  console.log(`created pet ${pet.id} (${pet.name})`);
+  return Response.json(pet, { status: 201 });
+}</code></pre>
+
+<h3 id="c11">C11 &middot; PUT with log lines</h3>
+<p class="back"><a href="#step9">&uarr; back to Step 9</a></p>
+<p class="file">app/api/pets/[id]/route.ts (finished)</p>
+<pre><code>import { pets, allowedSpecies } from "../../../../types/pet";
+
+// Public: anyone can look up one pet.
+export async function GET(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+  const pet = pets.find((p) =&gt; p.id === Number(id));
+  if (!pet) {
+    return Response.json({ error: `No pet with id ${id}` }, { status: 404 });
+  }
+  return Response.json(pet);
+}
+
+// Private: PUT replaces the WHOLE pet, so every field is required.
+// (PATCH would change only the fields you sent.)
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+  const pet = pets.find((p) =&gt; p.id === Number(id));
+  if (!pet) {
+    return Response.json({ error: `No pet with id ${id}` }, { status: 404 });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    console.warn(`PUT /api/pets/${id}: body was not JSON`);
+    return Response.json({ error: "The body must be JSON" }, { status: 400 });
+  }
+
+  if (typeof body.name !== "string" || body.name === "") {
+    console.warn(`PUT /api/pets/${id}: no name`);
+    return Response.json({ error: "name is required" }, { status: 400 });
+  }
+  if (!allowedSpecies.includes(body.species)) {
+    console.warn(`PUT /api/pets/${id}: bad species`, body.species);
+    return Response.json({ error: "species must be dog, cat or rabbit" }, { status: 400 });
+  }
+  if (typeof body.age !== "number" || body.age &lt; 0) {
+    console.warn(`PUT /api/pets/${id}: bad age`, body.age);
+    return Response.json({ error: "age must be a number, 0 or more" }, { status: 400 });
+  }
+  if (typeof body.adopted !== "boolean") {
+    console.warn(`PUT /api/pets/${id}: bad adopted`, body.adopted);
+    return Response.json({ error: "adopted must be true or false" }, { status: 400 });
+  }
+
+  pet.name = body.name;
+  pet.species = body.species;
+  pet.age = body.age;
+  pet.adopted = body.adopted;
+  console.log(`updated pet ${pet.id} (${pet.name})`);
+  return Response.json(pet);
+}</code></pre>
+
+<h3 id="c12">C12 &middot; The summary route</h3>
+<p class="back"><a href="#step10">&uarr; back to Step 10</a></p>
+<p class="file">app/api/admin/summary/route.ts</p>
+<pre><code>import { pets } from "../../../../types/pet";
+
+// Admin only: the proxy wants a username and password (Basic auth)
+// for anything under /api/admin.
+// The numbers are worked out from the live list, so they change after every POST and PUT.
+export async function GET() {
+  const adopted = pets.filter((p) =&gt; p.adopted).length;
+  return Response.json({
+    total: pets.length,
+    adopted: adopted,
+    waiting: pets.length - adopted,
+  });
+}</code></pre>
+
+<h3 id="c13">C13 &middot; The finished proxy</h3>
+<p class="back"><a href="#step10">&uarr; back to Step 10</a></p>
+<p class="file">.env.local</p>
+<pre><code>API_TOKEN=shelter-staff-2026
+ADMIN_USER=admin
+ADMIN_PASS=adopt-dont-shop</code></pre>
+<p class="file">proxy.ts (finished)</p>
+<pre><code>// Goes in the top folder, next to package.json. Anywhere else, Next never calls it.
+// Every request passes through here before it reaches a route.
+// Needs .env.local with API_TOKEN, ADMIN_USER and ADMIN_PASS.
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+// Anyone may READ these without a token. Writing to them still needs one.
+const publicPaths = ["/api/health", "/api/pets"];
+
+function isPublic(method: string, path: string) {
+  if (method !== "GET") return false;
+  return publicPaths.includes(path) || path.startsWith("/api/pets/");
+}
+
+export function proxy(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  // Same start to every line: when, what verb, what address. Never the token or password.
+  const line = `${new Date().toISOString()} ${request.method} ${path}`;
+
+  // 1. Public routes: let them straight through.
+  if (isPublic(request.method, path)) {
+    console.log(line, "-&gt; public");
+    return NextResponse.next();
+  }
+
+  const auth = request.headers.get("authorization") ?? "";
+
+  // 2. Admin routes: a username and password (Basic auth).
+  if (path.startsWith("/api/admin")) {
+    // The WWW-Authenticate header makes a browser pop up its login box.
+    const askForLogin = { "WWW-Authenticate": 'Basic realm="admin"' };
+
+    if (!auth.startsWith("Basic ")) {
+      console.warn(line, "-&gt; 401 no admin login sent");
+      return Response.json(
+        { error: "Admin login required" },
+        { status: 401, headers: askForLogin }
+      );
+    }
+
+    const decoded = atob(auth.slice("Basic ".length)); // "YWRtaW46..." -&gt; "admin:password"
+    const [user, pass] = decoded.split(":");
+
+    if (user !== process.env.ADMIN_USER || pass !== process.env.ADMIN_PASS) {
+      console.warn(line, `-&gt; 401 wrong admin login (user "${user}")`);
+      return Response.json(
+        { error: "Wrong username or password" },
+        { status: 401, headers: askForLogin }
+      );
+    }
+
+    console.log(line, `-&gt; allowed (admin "${user}")`);
+    return NextResponse.next();
+  }
+
+  // 3. Everything else: the staff token (Bearer).
+  if (auth !== `Bearer ${process.env.API_TOKEN}`) {
+    console.warn(line, "-&gt; 401 missing or wrong token");
+    return Response.json({ error: "Missing or wrong token" }, { status: 401 });
+  }
+
+  console.log(line, "-&gt; allowed (token)");
+  return NextResponse.next();
+}</code></pre>
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 11 lab.</p>
+</footer>
+
+</body>
+</html>
