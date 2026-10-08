@@ -44,6 +44,18 @@ Only one demo can hold port 3000, so stop the previous `npm run dev` before star
 
 Do not merge `answers` into `main` — that would hand students the solution. When a new exercise starts, `main` moves forward to the new starting point and `answers` is rebuilt on top of it.
 
+### Commit straight to `main` — no feature branches, no PRs
+
+**This is a private, solo repo. Never create a `pa/...` branch or open a pull request here.** This overrides the global "default to a branch + PR" rule; it is the repo-specific instruction that rule defers to. Branches here only leave behind work that has to be found and merged by hand later, and there is no reviewer for a PR to wait on.
+
+Adding or changing a lab or demo always goes in this order:
+
+1. **Commit the starter to `main` and push.** This is the "before" state students get: the exercise set up, unsolved.
+2. **Merge `main` into `answers`** (`git checkout answers`, `git merge --no-ff main`) and push.
+3. **Solve it on `answers`.** Commit the finished version directly on `answers` and push.
+
+A fix to the starter repeats the cycle: commit on `main`, merge `main` into `answers`, then fix the solution there if it needs it. Merges only ever go `main` → `answers`, never the other way. If you're ever on a branch other than `main` or `answers` while making these changes, stop and get back onto the right one before you commit.
+
 ## Do not over-engineer
 
 **This is a beginners class.** That is the single most important constraint in this repo, and it outranks every instinct toward good production code. A demo exists to make one idea visible, and every extra layer buries it.
