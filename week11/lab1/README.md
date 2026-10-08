@@ -4,6 +4,14 @@ One lab that builds on itself, covering everything from this week's lecture in o
 
 The starting point has no routes except `/api/health`, and a ready-made list of pets in `types/pet.ts`, the same idea as the coffee `menu` from lecture. That array *is* the server's data, so every POST and PUT you write changes what the next GET sees.
 
+**This is the `answers` branch: the finished lab.** It needs a `.env.local` next to `package.json` before the locked routes will open:
+
+```
+API_TOKEN=shelter-staff-2026
+ADMIN_USER=admin
+ADMIN_PASS=adopt-dont-shop
+```
+
 ## How to run it
 
 ```
@@ -34,6 +42,28 @@ The ten steps, each one building on the last:
 | 8 | A list of public routes in the proxy | Deny by default: list what's open, lock the rest |
 | 9 | Proper log lines | Timestamp, verb, address, decision, and never a secret |
 | 10 | `GET /api/admin/summary` behind Basic auth | Decode the header, split it, compare it to `.env.local` |
+
+## The finished version
+
+| File | What it does |
+|---|---|
+| `app/api/pets/route.ts` | `GET` the list; `POST` a pet after checking name, species and age |
+| `app/api/pets/[id]/route.ts` | `GET` one pet or a 404; `PUT` a whole pet, all four fields required |
+| `app/api/admin/summary/route.ts` | `GET` total, adopted and waiting, worked out from the live list |
+| `proxy.ts` | Public GETs straight through; `/api/admin` needs Basic auth; everything else needs the Bearer token; one log line per request |
+
+The order of the checks in `proxy.ts` is the lesson: public first, then admin, then the token. Anything not on the public list is locked by default, so `GET /api/nope` is a 401, not a 404. The Basic auth check is done by hand:
+
+```ts
+const decoded = atob(auth.slice("Basic ".length)); // "YWRtaW46..." -> "admin:password"
+const [user, pass] = decoded.split(":");
+
+if (user !== process.env.ADMIN_USER || pass !== process.env.ADMIN_PASS) {
+  // 401, with WWW-Authenticate so a browser pops up its login box
+}
+```
+
+The "Going further" list in the handout is left unsolved on purpose. Two of its items are real holes in this answer: an unset `API_TOKEN` makes `Bearer undefined` a valid token, and `Basic hello!` makes `atob` throw into a 500.
 
 ## The teaching point
 
