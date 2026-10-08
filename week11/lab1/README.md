@@ -48,15 +48,20 @@ The eleven steps, each one building on the last:
 
 | File | What it does |
 |---|---|
-| `app/api/pets/route.ts` | `GET` the list; `POST` a pet after checking name, species and age |
-| `app/api/pets/[id]/route.ts` | `GET` one pet or a 404; `PUT` a whole pet, all four fields required |
+| `app/api/pets/route.ts` | `GET` the list; `POST` a pet after checking the body is an object, then name, species and age; an outer `try`/`catch` turns anything unexpected into a plain JSON 500 |
+| `app/api/pets/[id]/route.ts` | `GET` one pet or a 404; `PUT` a whole pet, all four fields required, with the same safety net |
 | `app/api/admin/summary/route.ts` | `GET` total, adopted and waiting, worked out from the live list |
 | `proxy.ts` | Public GETs straight through; `/api/admin` needs Basic auth; everything else needs the Bearer token; one log line per request |
 
 The order of the checks in `proxy.ts` is the lesson: public first, then admin, then the token. Anything not on the public list is locked by default, so `GET /api/nope` is a 401, not a 404. The Basic auth check is done by hand:
 
 ```ts
-const decoded = atob(auth.slice("Basic ".length)); // "YWRtaW46..." -> "admin:password"
+let decoded;
+try {
+  decoded = atob(auth.slice("Basic ".length)); // "YWRtaW46..." -> "admin:password"
+} catch {
+  // not base64: the client's mistake, so a 401 that says what was expected
+}
 const [user, pass] = decoded.split(":");
 
 if (user !== process.env.ADMIN_USER || pass !== process.env.ADMIN_PASS) {
@@ -64,7 +69,9 @@ if (user !== process.env.ADMIN_USER || pass !== process.env.ADMIN_PASS) {
 }
 ```
 
-The "Going further" list in the handout is left unsolved on purpose. Two of its items are real holes in this answer: an unset `API_TOKEN` makes `Bearer undefined` a valid token, and `Basic hello!` makes `atob` throw into a 500.
+The error rule throughout: the client's fault is a 4xx whose message says what to send instead, logged with `console.warn`; our fault is `{"error": "Something went wrong on our side"}` with a 500, and the real error goes only to `console.error`. Nothing you can send from Postman gets an empty-body 500.
+
+The "Going further" list in the handout is left unsolved on purpose. One of its items is a real hole in this answer: an unset `API_TOKEN` makes `Bearer undefined` a valid token.
 
 ## The teaching point
 

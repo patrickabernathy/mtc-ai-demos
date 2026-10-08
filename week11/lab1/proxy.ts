@@ -38,7 +38,19 @@ export function proxy(request: NextRequest) {
       );
     }
 
-    const decoded = atob(auth.slice("Basic ".length)); // "YWRtaW46..." -> "admin:password"
+    // atob throws if the text isn't real base64.
+    // That's the client's mistake, so it's a 401, not a 500.
+    let decoded;
+    try {
+      decoded = atob(auth.slice("Basic ".length)); // "YWRtaW46..." -> "admin:password"
+    } catch {
+      console.warn(line, "-> 401 admin login was not base64");
+      return Response.json(
+        { error: "Basic auth must be base64 of username:password" },
+        { status: 401, headers: askForLogin }
+      );
+    }
+
     const [user, pass] = decoded.split(":");
 
     if (user !== process.env.ADMIN_USER || pass !== process.env.ADMIN_PASS) {
