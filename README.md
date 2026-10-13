@@ -11,6 +11,7 @@ All the class code for the MTC AI-Enabled Full-Stack Developer program is here. 
 - [Part 5: Run the lab](#part-5-run-the-lab)
 - [Part 6: Look at the answers](#part-6-look-at-the-answers)
 - [Help! Something went wrong](#help-something-went-wrong)
+- [If all else fails: start over](#if-all-else-fails-start-over)
 
 ---
 
@@ -26,7 +27,7 @@ All the class code for the MTC AI-Enabled Full-Stack Developer program is here. 
 > [!WARNING]
 > ## Three rules that keep your work safe
 >
-> 1. **One folder.** Always use the folder in the box above. Never download the code again.
+> 1. **One folder.** Always use the folder in the box above. Never download the code a second time (unless you are [starting over](#if-all-else-fails-start-over)).
 > 2. **Never work on `main`.** Make your own branch first (Part 4).
 > 3. **Commit before you switch.** Before you change to a different branch, ALWAYS commit your work first. If you skip this, your work can get mixed up or lost.
 
@@ -58,7 +59,7 @@ All the class code for the MTC AI-Enabled Full-Stack Developer program is here. 
 
 **4. Close VS Code and open it again.** Now it can find Git and Node.
 
-**5. Tell Git your name.**
+**5. Set up Git.**
 
 1. In VS Code, click the menu **Terminal → New Terminal**.
 2. Type this line, but put **your** name between the quotes. Press Enter.
@@ -71,6 +72,12 @@ All the class code for the MTC AI-Enabled Full-Stack Developer program is here. 
 
    ```
    git config --global user.email "you@example.com"
+   ```
+
+4. Type this line exactly as it is. Press Enter. It makes Git stop and warn you, instead of mixing your work into the teacher's code.
+
+   ```
+   git config --global pull.ff only
    ```
 
 Nothing will print. That's normal. You never have to do this again on this computer.
@@ -240,6 +247,8 @@ git pull
 
 **You should see:** the bottom-left says `main`, and the newest week's folder is now on the left side.
 
+**Pull showed an error?** Don't keep going. Go to [Help! Something went wrong](#help-something-went-wrong) and find the error there.
+
 ### Step 6: Make a new branch for today
 
 **VS Code buttons:**
@@ -348,7 +357,7 @@ git switch jsmith/week11-lab1
 
 **"Your local changes would be overwritten by checkout."** Or VS Code asks about *Stash* or *Migrate changes*. This means you tried to switch branches without committing. Click **Cancel**. Commit your work (Part 4, Step 4). Then switch.
 
-**Pull on `main` says "diverged" or "merge conflict" or "need to specify how to reconcile".** This means you committed work on `main` by mistake. Type these four lines (use your name). They save your work onto a new branch, then put `main` back the way the teacher has it:
+**Pull on `main` says "Not possible to fast-forward" or "diverged" or "merge conflict" or "need to specify how to reconcile".** This means you committed work on `main` by mistake. Type these four lines (use your name). They save your work onto a new branch, then put `main` back the way the teacher has it:
 
 ```
 git switch -c jsmith/rescued-work
@@ -361,4 +370,25 @@ Your work is safe on `jsmith/rescued-work`. Now do [Part 4, Step 6](#step-6-make
 
 **There's no branch name in the bottom-left corner.** You opened a week folder instead of the whole repo. Click **File → Open Folder** and open `mtc-ai-demos` itself.
 
-**Still stuck?** Don't delete anything and don't download the code again. Ask your teacher.
+**Still stuck?** Ask your teacher. Or, if nothing else works, start over (below).
+
+### If all else fails: start over
+
+You can always start over. You delete your copy of the code and get a fresh one.
+
+> [!CAUTION]
+> **This deletes ALL the work you've done, on every branch.** If you want to keep something, save a copy first (step 1).
+
+1. **Save a copy of your work, if you want it.** Open your Projects folder. Go into `mtc-ai-demos` and find the folder you worked in, like `week11` → `lab1`. Copy that folder to your Desktop. (This only saves the branch you're on right now.)
+2. **Stop the app** if it's running: click in the terminal and press `Ctrl + C`.
+3. **Close VS Code all the way.**
+   - **Windows:** click **File → Exit**.
+   - **Mac:** click **Code → Quit Visual Studio Code** at the top of the screen (or press `Cmd + Q`).
+4. **Delete the `mtc-ai-demos` folder.**
+   - **Windows:** press `Windows key + E`. Go to **This PC → Local Disk (C:) → Projects**. Right-click **mtc-ai-demos** and click **Delete** (the trash can icon).
+   - **Mac:** open Finder. Click **Projects** in the left side bar. Drag **mtc-ai-demos** to the Trash.
+   - Windows says a file is "in use"? VS Code or a terminal is still open. Close it and try again.
+5. **Leave the `Projects` folder alone.** Only `mtc-ai-demos` goes in the trash.
+6. **Get a fresh copy:** do [Part 3: Get the code](#part-3-get-the-code-one-time) again.
+7. **Make a branch:** do [Part 4, Step 6](#step-6-make-a-new-branch-for-today).
+8. If you saved a copy in step 1, copy your files from the Desktop back into the same folder.
