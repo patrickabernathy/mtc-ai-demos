@@ -1,16 +1,16 @@
-# The Corner Store
+# MTC AI Demos
 
-Class code for the MTC AI-Enabled Full-Stack Developer program. Every demo and lab from every week lives in this one repo, in folders named `week1/` through `week11/`.
+All the class code for the MTC AI-Enabled Full-Stack Developer program is here. Every week has its own folder: `week1`, `week2`, and so on.
 
-**New here, or lost your copy?** Work through this page top to bottom. Every step says exactly what to click or type, for Windows and for Mac.
+**New here? Lost your copy? Stuck with Git?** Start at the top and do one step at a time. Every step tells you exactly what to click or type, for Windows and for Mac.
 
-- [Before you start (one time)](#before-you-start-one-time)
-- [Step 1 — Make your Projects folder (one time)](#step-1--make-your-projects-folder-one-time)
-- [Step 2 — Clone the repo (one time)](#step-2--clone-the-repo-one-time)
-- [Step 3 — Every class: save your work, get the new code, make a branch](#step-3--every-class-save-your-work-get-the-new-code-make-a-branch)
-- [Step 4 — Open and run the demo or lab](#step-4--open-and-run-the-demo-or-lab)
-- [Something went wrong](#something-went-wrong)
-- [The project board](#the-project-board)
+- [Part 1: Set up your computer (one time)](#part-1-set-up-your-computer-one-time)
+- [Part 2: Make your Projects folder (one time)](#part-2-make-your-projects-folder-one-time)
+- [Part 3: Get the code (one time)](#part-3-get-the-code-one-time)
+- [Part 4: Start of EVERY class](#part-4-start-of-every-class)
+- [Part 5: Run the lab](#part-5-run-the-lab)
+- [Part 6: Look at the answers](#part-6-look-at-the-answers)
+- [Help! Something went wrong](#help-something-went-wrong)
 
 ---
 
@@ -19,87 +19,114 @@ Class code for the MTC AI-Enabled Full-Stack Developer program. Every demo and l
 >
 > **Windows: `C:\Projects\mtc-ai-demos`**
 >
-> **Mac: `~/Projects/mtc-ai-demos`** (that is `/Users/your-name/Projects/mtc-ai-demos`)
+> **Mac: `~/Projects/mtc-ai-demos`**
 >
-> **Write this down.** Not on the Desktop, not in Downloads, not in OneDrive or iCloud. Downloads gets cleaned out, and OneDrive and iCloud try to sync the thousands of files in `node_modules` and break things. You clone this repo **once**, into this folder, and come back to the same folder every class.
+> **Write this down on paper.** Do not put it on the Desktop, in Downloads, in OneDrive, or in iCloud. You get the code **one time**, into this folder. Then you come back to this same folder every class.
+
+> [!WARNING]
+> ## Three rules that keep your work safe
+>
+> 1. **One folder.** Always use the folder in the box above. Never download the code again.
+> 2. **Never work on `main`.** Make your own branch first (Part 4).
+> 3. **Commit before you switch.** Before you change to a different branch, ALWAYS commit your work first. If you skip this, your work can get mixed up or lost.
 
 ---
 
-## Before you start (one time)
+## Words you will see
 
-1. **Install Git.**
-   - **Windows:** download it from <https://git-scm.com/download/win> and run the installer. Click **Next** on every screen — the defaults are fine.
-   - **Mac:** open the **Terminal** app (press `Cmd + Space`, type `Terminal`, press Enter), type `git --version`, and press Enter. If a box pops up offering to install the "command line developer tools", click **Install** and wait for it to finish.
-2. **Install VS Code** from <https://code.visualstudio.com>.
-3. **Install Node.js** — the **LTS** version — from <https://nodejs.org>.
-4. **Close and reopen VS Code** after installing Git and Node, so it can find them.
-5. **Tell Git who you are.** Open VS Code, click the menu **Terminal → New Terminal**, and type these two lines, with your own name and email, pressing Enter after each:
+- **Repo** — the whole project folder, `mtc-ai-demos`.
+- **Clone** — download the repo to your computer. You do this one time.
+- **Branch** — your own copy of the code to work on. You can switch between branches. The name of the branch you are on is in the **bottom-left corner** of VS Code.
+- **`main`** — the teacher's branch. New labs show up here every week. Don't do your work here.
+- **`answers`** — the teacher's branch with the finished answers.
+- **Commit** — save your work into your branch. Like pressing Save, but for Git.
+- **Pull** — get the newest code from the teacher.
+- **Terminal** — the box where you type commands. In VS Code, open one with the menu **Terminal → New Terminal**.
+
+---
+
+## Part 1: Set up your computer (one time)
+
+**1. Install Git.**
+
+- **Windows:** go to <https://git-scm.com/download/win>. Download it. Open the file. Click **Next** on every screen, then **Install**, then **Finish**.
+- **Mac:** press `Cmd + Space`. Type `Terminal`. Press Enter. In the window that opens, type `git --version` and press Enter. If a box pops up asking to install "command line developer tools", click **Install**. Wait until it says it's done.
+
+**2. Install VS Code.** Go to <https://code.visualstudio.com>. Download it. Install it.
+
+**3. Install Node.js.** Go to <https://nodejs.org>. Download the one that says **LTS**. Install it.
+
+**4. Close VS Code and open it again.** Now it can find Git and Node.
+
+**5. Tell Git your name.**
+
+1. In VS Code, click the menu **Terminal → New Terminal**.
+2. Type this line, but put **your** name between the quotes. Press Enter.
 
    ```
    git config --global user.name "Your Name"
+   ```
+
+3. Type this line, but put **your** email between the quotes. Press Enter.
+
+   ```
    git config --global user.email "you@example.com"
    ```
 
-   Skip this and your first commit fails with *"Please tell me who you are."* You only ever do it once per computer.
+Nothing will print. That's normal. You never have to do this again on this computer.
 
-## Step 1 — Make your Projects folder (one time)
+## Part 2: Make your Projects folder (one time)
 
 ### Windows
 
-1. Open **File Explorer** (the folder icon on the taskbar, or press `Windows key + E`).
-2. In the left side panel, click **This PC**, then double-click **Local Disk (C:)**.
-3. Right-click an empty spot → **New → Folder**. Name it `Projects` and press Enter.
-4. You now have `C:\Projects`.
+1. Press `Windows key + E`. File Explorer opens.
+2. On the left side, click **This PC**.
+3. Double-click **Local Disk (C:)**.
+4. Right-click on an empty white spot.
+5. Click **New**, then click **Folder**.
+6. Type `Projects` and press Enter.
 
-Or, in a VS Code terminal (**Terminal → New Terminal**):
-
-```
-mkdir C:\Projects
-```
+**You should see:** a folder called `Projects` inside `Local Disk (C:)`. Its full name is `C:\Projects`.
 
 ### Mac
 
-1. Open **Finder**.
-2. In the menu bar, click **Go → Home** (or press `Shift + Cmd + H`). This is the folder with your name on it.
-3. Click **File → New Folder**. Name it `Projects` and press Enter.
-4. You now have `~/Projects`. (`~` is just short for "my home folder".)
-5. **Drag the `Projects` folder into the Finder sidebar under Favorites** so you can always find it in one click.
+1. Click the **Finder** icon (the blue smiling face) in the Dock.
+2. At the top of the screen, click **Go**, then click **Home**. This is the folder with your name on it.
+3. At the top of the screen, click **File**, then click **New Folder**.
+4. Type `Projects` and press Enter.
+5. Drag the new `Projects` folder into the Finder's left side bar, under **Favorites**. Now you can always find it with one click.
 
-Or, in a VS Code terminal (**Terminal → New Terminal**):
+**You should see:** a folder called `Projects` in your home folder. Its full name is `~/Projects`. (`~` means "my home folder".)
 
-```
-mkdir ~/Projects
-```
+## Part 3: Get the code (one time)
 
-If either command says the folder already exists, that's fine — it means you already have one.
+This downloads the code into your Projects folder. **Only do this ONE time, ever.** Next class, do Part 4 instead.
 
-## Step 2 — Clone the repo (one time)
+Pick **Way A** or **Way B**. You only need one.
 
-Cloning downloads your own copy of the repo. **You only do this once.** If you're ever about to clone it a second time, stop and go to [Step 3](#step-3--every-class-save-your-work-get-the-new-code-make-a-branch) instead — that's how you get new code.
+### Way A: Use VS Code buttons
 
-Pick **one** of these two ways.
-
-### Option A — using VS Code (easiest)
-
-1. Open VS Code. If a folder is already open, click **File → Close Folder** first.
-2. Open the Command Palette: `Ctrl + Shift + P` on Windows, `Cmd + Shift + P` on Mac.
-3. Type `Git: Clone` and press Enter.
-4. Paste this address and press Enter:
+1. Open VS Code.
+2. If a folder is already open, click **File → Close Folder**.
+3. Press `Ctrl + Shift + P` (Windows) or `Cmd + Shift + P` (Mac). A box opens at the top.
+4. Type `Git: Clone` and press Enter.
+5. Copy this address, paste it in the box, and press Enter:
 
    ```
    https://github.com/patrickabernathy/mtc-ai-demos.git
    ```
 
-5. A folder picker opens. **Look at where it is before you click anything — it often starts in Downloads or Documents.**
-   - **Windows:** go to **This PC → Local Disk (C:) → Projects**.
-   - **Mac:** go to your home folder → **Projects** (or click **Projects** in the sidebar if you added it there).
-6. Click **Select as Repository Destination**.
-7. When VS Code asks *"Would you like to open the cloned repository?"*, click **Open**.
+6. A window opens asking where to put it. **STOP and look at it. It often starts in Downloads. That is the wrong place.**
+   - **Windows:** click **This PC**, then **Local Disk (C:)**, then click **Projects** one time.
+   - **Mac:** click **Projects** in the left side bar.
+7. Click the button **Select as Repository Destination**.
+8. Wait. A box asks *"Would you like to open the cloned repository?"* Click **Open**.
 
-### Option B — using the command line
+### Way B: Type commands
 
-1. Open VS Code and click **Terminal → New Terminal**.
-2. Type these lines, pressing Enter after each:
+1. Open VS Code.
+2. Click the menu **Terminal → New Terminal**.
+3. Type these two lines. Press Enter after each one.
 
    **Windows:**
 
@@ -115,96 +142,128 @@ Pick **one** of these two ways.
    git clone https://github.com/patrickabernathy/mtc-ai-demos.git
    ```
 
-3. Open the folder: **File → Open Folder**, go to **Projects**, click **mtc-ai-demos** once, then click **Select Folder** (Windows) or **Open** (Mac).
+4. Click **File → Open Folder**.
+5. Go to your **Projects** folder. Click **mtc-ai-demos** one time.
+6. Click **Select Folder** (Windows) or **Open** (Mac).
 
-### Check that it worked
+### Did it work?
 
-The Explorer panel on the left of VS Code should say **MTC-AI-DEMOS** at the top, with folders `week1`, `week2`, … underneath. If it does, you're done with this step forever.
+Look at the left side of VS Code. **You should see:** the word **MTC-AI-DEMOS** at the top, and folders called `week1`, `week2`, `week3`... under it.
 
-## Step 3 — Every class: save your work, get the new code, make a branch
+Yes? You never have to do Part 3 again.
 
-New demos and labs are added to the `main` branch every week. **Do all of this at the start of every class, before you type anything.**
+## Part 4: Start of EVERY class
 
-The one rule that keeps Git from hurting you: **never do your own work on `main`.** `main` is the instructor's copy. Your work goes on your own branch. Then getting new code is always just *switch to `main`, pull*.
+Do this **every class, before you type any code.** It saves your old work, gets the new lab, and makes a new branch for today.
 
-Name your branches `yourname/week-and-lab`, lowercase, no spaces — for example `jsmith/week11-lab1`.
+Every step shows two ways: **VS Code buttons** or **type a command**. Use whichever one you like.
 
-Your branches stay on your computer. **You don't need to push or publish anything**, and if VS Code shows a **Publish Branch** button, you can ignore it. (If you click it by accident, GitHub will refuse with a permission error. That's expected — your work is still saved on your computer.)
+> **Brand new, just did Part 3?** You have nothing to save yet. Skip to [Step 6](#step-6-make-a-new-branch-for-today).
 
-> **Just cloned it for the first time?** You're on `main` with no changes. Skip straight to [3e — Make your branch for today](#3e--make-your-branch-for-today).
+> **Is a terminal busy running `npm run dev`?** Click in it and press `Ctrl + C` first (that's `Ctrl` on Mac too). Then you can type in it.
 
-### 3a — Check which branch you're on
+### Step 1: Open your folder
 
-- **VS Code:** look at the **bottom-left corner** of the window. The name next to the little branch icon is your current branch.
-- **Command line** (in **Terminal → New Terminal**, inside `mtc-ai-demos`):
+1. Open VS Code.
+2. Click **File → Open Recent → mtc-ai-demos**.
+3. Not in the list? Click **File → Open Folder** and open `C:\Projects\mtc-ai-demos` (Windows) or `~/Projects/mtc-ai-demos` (Mac).
 
-  ```
-  git branch --show-current
-  ```
+### Step 2: Look at the bottom-left corner
 
-### 3b — If it says `main` and you have changes, move them onto a branch first
+There is a little branch icon and a name next to it. That name is the branch you are on.
 
-If you've been working on `main` by mistake, this carries your unsaved changes over to a new branch so nothing is lost. If you're already on your own branch, skip this.
+- **It says `main`** → go to Step 3.
+- **It says your own branch, like `jsmith/week10-lab1`** → skip to Step 4.
 
-- **VS Code:** click the branch name in the **bottom-left corner** → choose **+ Create new branch...** → type a name like `jsmith/week10-work` → press Enter.
-- **Command line:**
+Or type this in the terminal, and it prints the branch name:
+
+```
+git branch --show-current
+```
+
+### Step 3: Only if you're on `main` — did you change anything?
+
+Look at the **Source Control** icon on the far left of VS Code (it looks like three dots joined by lines). **Is there a number on it?**
+
+- **No number** → you have nothing to save. Skip to Step 5.
+- **A number** → you did work on `main` by mistake. That's OK. Make a branch to hold it:
+
+  **VS Code buttons:**
+
+  1. Click the branch name in the **bottom-left corner**.
+  2. A list opens at the top. Click **+ Create new branch...**
+  3. Type your name and last week, like `jsmith/week10-work`. No spaces. Press Enter.
+  4. Now go to Step 4.
+
+  **Or type:**
 
   ```
   git switch -c jsmith/week10-work
   ```
 
-### 3c — Commit your work
+### Step 4: Commit (save) your work
 
-This saves everything you've changed onto your branch.
+**VS Code buttons:**
 
-- **VS Code:**
-  1. Click the **Source Control** icon in the left bar (it looks like a branch with three dots), or press `Ctrl + Shift + G` — that's `Ctrl` on Mac too.
-  2. Type a short message in the **Message** box, like `My week 10 work`.
-  3. Click **Commit**.
-  4. If it asks *"There are no staged changes to commit. Would you like to stage all your changes and commit them directly?"*, click **Yes**.
-  5. If the list of changes is now empty, your work is saved.
-- **Command line:**
+1. Click the **Source Control** icon on the far left (three dots joined by lines).
+2. Click in the **Message** box at the top. Type a few words, like `my week 10 work`.
+3. Click the blue **Commit** button.
+4. If a box asks *"There are no staged changes... Would you like to stage all your changes and commit them directly?"*, click **Yes**.
 
-  ```
-  git add -A
-  git commit -m "My week 10 work"
-  ```
+**Or type** (two lines, press Enter after each):
 
-If Source Control shows no changes (or `git commit` says *"nothing to commit"*), there was nothing to save — move on.
+```
+git add -A
+git commit -m "my week 10 work"
+```
 
-### 3d — Switch back to `main` and pull the new code
+**You should see:** the number on the Source Control icon is gone. Your work is saved.
 
-- **VS Code:**
-  1. Click the branch name in the **bottom-left corner** and choose **main** from the list at the top.
-  2. In the **Source Control** panel, click the **`...`** (three dots, top of the panel) → **Pull**.
-- **Command line:**
+If a blue **Publish Branch** button shows up, **ignore it.** You don't need it. (If you click it by accident, you'll get a permission error. That's fine. Your work is still saved on your computer.)
 
-  ```
-  git switch main
-  git pull
-  ```
+### Step 5: Switch to `main` and pull the new code
 
-The new week's folder should now show up in the Explorer panel.
+**VS Code buttons:**
 
-### 3e — Make your branch for today
+1. Click the branch name in the **bottom-left corner**.
+2. Click **main** in the list.
+3. Click the **Source Control** icon on the far left.
+4. At the top of that panel, click the **`...`** (three dots).
+5. Click **Pull**.
 
-- **VS Code:** click the branch name in the **bottom-left corner** → **+ Create new branch...** → type a name like `jsmith/week11-lab1` → press Enter. The bottom-left corner now shows your new branch.
-- **Command line:**
+**Or type** (press Enter after each):
 
-  ```
-  git switch -c jsmith/week11-lab1
-  ```
+```
+git switch main
+git pull
+```
 
-Your old work is still safe on your old branch. To look at it again, switch to that branch the same way you switched to `main`.
+**You should see:** the bottom-left says `main`, and the newest week's folder is now on the left side.
 
-## Step 4 — Open and run the demo or lab
+### Step 6: Make a new branch for today
 
-**Always open the whole `mtc-ai-demos` folder in VS Code, not just one week's folder.** That way Source Control always works and you always know where you are.
+**VS Code buttons:**
 
-1. Open VS Code. Use **File → Open Recent → mtc-ai-demos**. If it's not in the list, use **File → Open Folder** and go to `C:\Projects\mtc-ai-demos` (Windows) or `~/Projects/mtc-ai-demos` (Mac).
-2. Find the folder for today. The **highest week number is the newest**, and your instructor will tell you which demo or lab — for example `week11/lab1`.
-3. Read that folder's `README.md`: right-click it in the Explorer panel → **Open Preview**. It tells you what the exercise is.
-4. Click **Terminal → New Terminal** and type these lines, pressing Enter after each (use your folder in place of `week11/lab1`):
+1. Click the branch name in the **bottom-left corner**.
+2. Click **+ Create new branch...**
+3. Type your name and today's lab, like `jsmith/week11-lab1`. Use small letters. No spaces. Press Enter.
+
+**Or type:**
+
+```
+git switch -c jsmith/week11-lab1
+```
+
+**You should see:** your new branch name in the bottom-left corner. **Now** you can start working.
+
+Your old work is not gone. It's saved on your old branch. To see it again, do the "commit first" rule, then switch to that branch the same way you switched to `main`.
+
+## Part 5: Run the lab
+
+1. Find today's folder on the left side of VS Code. **The biggest week number is the newest.** Your teacher will tell you which one, like `week11` → `lab1`.
+2. Inside it, right-click `README.md` and click **Open Preview**. Read it. It tells you what to do.
+3. Click the menu **Terminal → New Terminal**.
+4. Type these three lines. Press Enter after each one. Wait for each to finish. (Use your folder instead of `week11/lab1`.)
 
    ```
    cd week11/lab1
@@ -212,22 +271,84 @@ Your old work is still safe on your old branch. To look at it again, switch to t
    npm run dev
    ```
 
-5. Open <http://localhost:3000> in your browser.
-6. To stop it, click in the terminal and press `Ctrl + C` (that's `Ctrl` on Mac too, not `Cmd`).
+5. Open your web browser and go to <http://localhost:3000>.
+6. To stop it: click in the terminal and press `Ctrl + C` (that's `Ctrl` on Mac too, not `Cmd`).
 
-**Every demo and lab is its own app**, so you have to `cd` into its folder before `npm install` or `npm run dev`. If npm says *"Could not read package.json"*, you're in the wrong folder. Only one app can run at a time — stop the old one with `Ctrl + C` before starting the next. Weeks 1–3 have no npm at all: just open the `.html` file in your browser.
+Good to know:
 
-## Something went wrong
+- **Each lab is its own app.** You must `cd` into its folder first. If you see *"Could not read package.json"*, you're in the wrong folder.
+- **Only one app can run at a time.** Stop the old one with `Ctrl + C` before you start a new one.
+- **Weeks 1, 2 and 3 don't use npm.** Just double-click the `.html` file to open it in your browser.
 
-**"I can't find my copy."** In VS Code, try **File → Open Recent**. Otherwise look in `C:\Projects\mtc-ai-demos` (Windows) or `~/Projects/mtc-ai-demos` (Mac). If you cloned it somewhere else, like Downloads or the Desktop, don't clone it again — close VS Code, stop any `npm run dev`, then drag the whole `mtc-ai-demos` folder into your `Projects` folder. Git doesn't mind being moved.
+## Part 6: Look at the answers
 
-**"I have two (or three) copies."** Pick the one in your `Projects` folder and use only that one. If your work is in another copy, open that copy and do [3b and 3c](#3b--if-it-says-main-and-you-have-changes-move-them-onto-a-branch-first) to save it before you decide what to delete.
+The finished answers are on a branch called `answers`.
 
-**"Please tell me who you are."** You skipped step 5 of [Before you start](#before-you-start-one-time). Do it, then commit again.
+### Easiest way: look on the website (nothing can go wrong)
 
-**"Your local changes would be overwritten by checkout"** (or VS Code offers to *Stash & Checkout*). You tried to switch branches with unsaved work. Cancel, [commit your work](#3c--commit-your-work) first, then switch.
+Go to <https://github.com/patrickabernathy/mtc-ai-demos/tree/answers>. Click into the week and lab folders to read the answer files. You don't switch anything on your computer, so your work is perfectly safe.
 
-**`git pull` on `main` says "diverged", "merge conflict", or "need to specify how to reconcile".** You committed your own work onto `main`. This saves it to a branch and puts `main` back the way the instructor has it:
+### Or switch to the `answers` branch on your computer
+
+Do this if you want to **run** the answer app.
+
+> [!CAUTION]
+> ## COMMIT YOUR WORK FIRST!
+>
+> Before you switch to `answers`, do [Part 4, Step 4](#step-4-commit-save-your-work) to commit your work. Check that there is **no number** on the Source Control icon.
+>
+> **If you switch without committing, your work can get mixed into the answers or get lost.**
+
+**VS Code buttons:**
+
+1. Commit your work (see the box above). Make sure there's no number on the Source Control icon.
+2. Click the branch name in the **bottom-left corner**.
+3. Type `answers` in the box at the top.
+4. Click **answers**. (The first time, it may say **origin/answers** — click that.)
+5. Click the **Source Control** icon, then **`...`** (three dots), then **Pull**. Now you have the newest answers.
+
+**Or type:**
+
+```
+git switch answers
+git pull
+```
+
+**You should see:** `answers` in the bottom-left corner. Run it the same way as [Part 5](#part-5-run-the-lab).
+
+**Just look. Don't change files on `answers`.**
+
+### Go back to your own branch
+
+1. Stop the app if it's running: click in the terminal and press `Ctrl + C`.
+2. Click the branch name in the **bottom-left corner**.
+3. Click **your** branch, like `jsmith/week11-lab1`.
+
+**Or type** (with your branch name):
+
+```
+git switch jsmith/week11-lab1
+```
+
+**You should see:** your branch name in the bottom-left corner, and your work is back.
+
+**Changed something on `answers` by accident?** Throw it away before you switch back: click the **Source Control** icon, put your mouse on the word **Changes**, click the curvy arrow (**Discard All Changes**), and click **Discard**. Or type `git restore .` (with the dot). Only do this on `answers` — never on your own branch!
+
+## Help! Something went wrong
+
+**"I can't find my code."**
+
+1. In VS Code, click **File → Open Recent**. Is `mtc-ai-demos` there? Click it.
+2. Not there? Look in `C:\Projects\mtc-ai-demos` (Windows) or `~/Projects/mtc-ai-demos` (Mac).
+3. Is it in Downloads or on the Desktop instead? **Don't download it again.** Close VS Code. Stop any running app. Drag the whole `mtc-ai-demos` folder into your `Projects` folder. It still works after you move it.
+
+**"I have two or three copies."** Use only the one in your `Projects` folder. If some of your work is in another copy, open that copy and do Part 4 Steps 3 and 4 to save it first. Ask your teacher before you delete anything.
+
+**"Please tell me who you are."** You skipped Part 1, step 5. Do it now. Then commit again.
+
+**"Your local changes would be overwritten by checkout."** Or VS Code asks about *Stash* or *Migrate changes*. This means you tried to switch branches without committing. Click **Cancel**. Commit your work (Part 4, Step 4). Then switch.
+
+**Pull on `main` says "diverged" or "merge conflict" or "need to specify how to reconcile".** This means you committed work on `main` by mistake. Type these four lines (use your name). They save your work onto a new branch, then put `main` back the way the teacher has it:
 
 ```
 git switch -c jsmith/rescued-work
@@ -236,34 +357,8 @@ git reset --hard origin/main
 git pull
 ```
 
-Your work is safe on `jsmith/rescued-work`. Then carry on with [3e](#3e--make-your-branch-for-today).
+Your work is safe on `jsmith/rescued-work`. Now do [Part 4, Step 6](#step-6-make-a-new-branch-for-today).
 
-**VS Code bottom-left doesn't show a branch name.** You opened a week's folder instead of the whole repo. Use **File → Open Folder** and open `mtc-ai-demos` itself.
+**There's no branch name in the bottom-left corner.** You opened a week folder instead of the whole repo. Click **File → Open Folder** and open `mtc-ai-demos` itself.
 
-## The project board
-
-**The work lives on the [project board](../../projects), not in this README.** Issues here are the backlog: what we've decided to build, what we're building now, and what we finished.
-
-### How we use it
-
-| Column | What it means |
-|---|---|
-| **Backlog** | Raw. Somebody wants it; we haven't shaped it or agreed to it yet |
-| **To Do** | Shaped, agreed, not started |
-| **In Progress** | Somebody is actively on it |
-| **Needs Feature Validation** | Built — does it do the right thing? |
-| **Needs Approval** | Waiting on a decision |
-| **Needs Testing** | Works for the author; needs a second pair of eyes |
-| **Ready** | Done and verified, waiting to go out |
-| **Done** | Shipped |
-| **Not Doing** | Deliberately not building this. Kept so we remember we decided |
-
-Every item should say **who it's for** and **how you'd know it was finished**. If you can't write the second one, the item isn't ready to pick up yet.
-
-### Who the store is for
-
-Three people. Everything we build helps one of them, and usually costs one of the others.
-
-- **Dana** — a regular. In and out in four minutes on the way to work.
-- **Sam** — behind the register all shift. The only one who actually uses the software.
-- **Ray** — owns the place. Does the ordering on Sunday nights.
+**Still stuck?** Don't delete anything and don't download the code again. Ask your teacher.
