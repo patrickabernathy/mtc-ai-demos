@@ -27,14 +27,13 @@ Class code for the MTC AI-Enabled Full-Stack Developer program. Every demo and l
 
 ## Before you start (one time)
 
-1. **Accept the GitHub invite.** This repo is private. You should have an email (or a notification on github.com) inviting you to `patrickabernathy/mtc-ai-demos`. Click **Accept**. Until you do, GitHub will say the repo doesn't exist.
-2. **Install Git.**
+1. **Install Git.**
    - **Windows:** download it from <https://git-scm.com/download/win> and run the installer. Click **Next** on every screen — the defaults are fine.
    - **Mac:** open the **Terminal** app (press `Cmd + Space`, type `Terminal`, press Enter), type `git --version`, and press Enter. If a box pops up offering to install the "command line developer tools", click **Install** and wait for it to finish.
-3. **Install VS Code** from <https://code.visualstudio.com>.
-4. **Install Node.js** — the **LTS** version — from <https://nodejs.org>.
-5. **Close and reopen VS Code** after installing Git and Node, so it can find them.
-6. **Tell Git who you are.** Open VS Code, click the menu **Terminal → New Terminal**, and type these two lines, with your own name and email, pressing Enter after each:
+2. **Install VS Code** from <https://code.visualstudio.com>.
+3. **Install Node.js** — the **LTS** version — from <https://nodejs.org>.
+4. **Close and reopen VS Code** after installing Git and Node, so it can find them.
+5. **Tell Git who you are.** Open VS Code, click the menu **Terminal → New Terminal**, and type these two lines, with your own name and email, pressing Enter after each:
 
    ```
    git config --global user.name "Your Name"
@@ -91,16 +90,15 @@ Pick **one** of these two ways.
    https://github.com/patrickabernathy/mtc-ai-demos.git
    ```
 
-5. If VS Code asks you to sign in to GitHub, click **Allow**, sign in in the browser window that opens, then come back to VS Code.
-6. A folder picker opens. **Look at where it is before you click anything — it often starts in Downloads or Documents.**
+5. A folder picker opens. **Look at where it is before you click anything — it often starts in Downloads or Documents.**
    - **Windows:** go to **This PC → Local Disk (C:) → Projects**.
    - **Mac:** go to your home folder → **Projects** (or click **Projects** in the sidebar if you added it there).
-7. Click **Select as Repository Destination**.
-8. When VS Code asks *"Would you like to open the cloned repository?"*, click **Open**.
+6. Click **Select as Repository Destination**.
+7. When VS Code asks *"Would you like to open the cloned repository?"*, click **Open**.
 
 ### Option B — using the command line
 
-1. Open VS Code and click **Terminal → New Terminal**. (Use VS Code's terminal — it handles the GitHub sign-in for you.)
+1. Open VS Code and click **Terminal → New Terminal**.
 2. Type these lines, pressing Enter after each:
 
    **Windows:**
@@ -117,8 +115,7 @@ Pick **one** of these two ways.
    git clone https://github.com/patrickabernathy/mtc-ai-demos.git
    ```
 
-3. If a GitHub sign-in pops up, sign in.
-4. Open the folder: **File → Open Folder**, go to **Projects**, click **mtc-ai-demos** once, then click **Select Folder** (Windows) or **Open** (Mac).
+3. Open the folder: **File → Open Folder**, go to **Projects**, click **mtc-ai-demos** once, then click **Select Folder** (Windows) or **Open** (Mac).
 
 ### Check that it worked
 
@@ -132,7 +129,7 @@ The one rule that keeps Git from hurting you: **never do your own work on `main`
 
 Name your branches `yourname/week-and-lab`, lowercase, no spaces — for example `jsmith/week11-lab1`.
 
-Your branches stay on your computer. **You don't need to push or publish anything**, and if VS Code shows a **Publish Branch** button, you can ignore it.
+Your branches stay on your computer. **You don't need to push or publish anything**, and if VS Code shows a **Publish Branch** button, you can ignore it. (If you click it by accident, GitHub will refuse with a permission error. That's expected — your work is still saved on your computer.)
 
 > **Just cloned it for the first time?** You're on `main` with no changes. Skip straight to [3e — Make your branch for today](#3e--make-your-branch-for-today).
 
@@ -226,7 +223,7 @@ Your old work is still safe on your old branch. To look at it again, switch to t
 
 **"I have two (or three) copies."** Pick the one in your `Projects` folder and use only that one. If your work is in another copy, open that copy and do [3b and 3c](#3b--if-it-says-main-and-you-have-changes-move-them-onto-a-branch-first) to save it before you decide what to delete.
 
-**"Please tell me who you are."** You skipped step 6 of [Before you start](#before-you-start-one-time). Do it, then commit again.
+**"Please tell me who you are."** You skipped step 5 of [Before you start](#before-you-start-one-time). Do it, then commit again.
 
 **"Your local changes would be overwritten by checkout"** (or VS Code offers to *Stash & Checkout*). You tried to switch branches with unsaved work. Cancel, [commit your work](#3c--commit-your-work) first, then switch.
 
