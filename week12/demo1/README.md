@@ -95,7 +95,7 @@ The page doesn't know there's a database. The routes shouldn't either. Each laye
 | Service | how to ask the database about items, and the store's rules | HTTP, status codes |
 | Provider | how to connect to Neon | anything about coffee |
 
-Tuesday you moved "Snacks" into its own table so renaming it meant changing one row. This is the same move, for code: put each query in one place, so changing a rule means changing one file.
+On Tuesday, renaming Five Points on every spreadsheet row missed "5 Points" and "Five Pts", and nothing complained. The fix was to keep the shop's name in one row of `locations`, so renaming it means changing one row. This is the same move, for code: put each query in one place, so changing a rule means changing one file.
 
 ## The `states/` folder
 
