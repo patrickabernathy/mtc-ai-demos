@@ -3,7 +3,7 @@
 // until somebody writes one." One line changed. Both routes obey it.
 // (Fourteen items have a NULL description, so the menu gets a lot shorter.)
 import { and, eq, isNotNull } from "drizzle-orm";
-import { NeonProvider } from "../providers/neon";
+import { NeonDatabaseProvider } from "../providers/neon/neonDatabaseProvider";
 import { items } from "../drizzle/schema";
 
 const onSale = and(eq(items.isAvailable, true), isNotNull(items.description));
@@ -19,7 +19,7 @@ export class ItemService {
   }
 
   private getDb() {
-    return NeonProvider.getInstance().getDb();
+    return NeonDatabaseProvider.getInstance().getDb();
   }
 
   public async getAll() {

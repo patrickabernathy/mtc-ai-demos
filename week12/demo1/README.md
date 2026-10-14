@@ -1,6 +1,6 @@
 # Week 12, demo 1 — The store talks to its database
 
-A small Corner Store app with **the page already built and the API already scaffolded**, but nothing connected to a database. The page asks `/api/items` for the menu; the routes answer with an empty list. On Tuesday you built the Corner Store database in Neon with `store.sql`. Tonight the API starts reading from it, using **Drizzle**, a library that lets TypeScript write SQL for you.
+A small Corner Store app with **the page already built and the API already scaffolded**, but nothing connected to a database. The page asks `/api/items` for the menu; the routes answer with an empty list. On Tuesday you built the Corner Store database in Neon with `store.sql`. Tonight the API starts reading from it, using **Drizzle**, a library that lets TypeScript write SQL for you, and **drizzle-kit**, its command-line tool, which reads your database and writes the TypeScript description of it for you.
 
 The bigger idea is where that database code lives. Every query goes in **one place** (a *service*), and the routes only ever call the service. When the store's rules change, you change one file.
 
@@ -55,51 +55,101 @@ Only one project can hold port 3000, so stop any other `npm run dev` first. Keep
 
 ## What to do
 
-### 1. Install Drizzle and the Neon driver
+### 1. Install Drizzle, drizzle-kit, and the Neon driver
 
 ```
 npm install drizzle-orm @neondatabase/serverless
+npm install -D drizzle-kit dotenv
 ```
 
-`drizzle-orm` writes the SQL. `@neondatabase/serverless` is how it reaches Neon over the internet.
+- `drizzle-orm` is the part your app uses: it turns TypeScript like `db.select().from(items)` into SQL.
+- `@neondatabase/serverless` is the driver: how the SQL actually reaches Neon over the internet.
+- `drizzle-kit` is the command-line half of Drizzle. Tonight it reads your database and writes the schema file for you.
+- `dotenv` lets `drizzle-kit` read `.env.local`. (Next reads that file by itself; `drizzle-kit` doesn't.)
+
+`-D` means "only needed while developing," so those two go under `devDependencies` in `package.json`.
 
 ### 2. Put your connection string where git can't see it
 
-Copy `.env.example` to a new file called `.env.local` (same folder). In Neon, open your project and click **Connect**. **Change the database dropdown to `store`** before you copy. Paste the string after `NEON_DATABASE_URL=`.
+Copy `.env.example` to a new file called `.env.local` (same folder). Make it in VS Code, not Notepad, so it doesn't secretly become `.env.local.txt`. In Neon, open your project and click **Connect**. **Change the database dropdown to `store`** before you copy. Paste the string after `NEON_DATABASE_URL=`.
 
 Run `git status`. `.env.local` should **not** be listed. If it is, stop and ask; that string is a password.
 
 Restart `npm run dev` after creating or changing `.env.local`. Next only reads it when it starts.
 
-### 3. Describe the tables in TypeScript
+### 3. Tell drizzle-kit where things are: `drizzle.config.ts`
 
-Make `drizzle/schema.ts` and describe the `categories` and `items` tables. Open `store.sql` from Tuesday next to it and copy the columns across one at a time. Each column looks like this:
+Make `drizzle.config.ts` next to `package.json`:
 
 ```ts
-name: text("name").notNull().unique(),
+import { defineConfig } from "drizzle-kit";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
+
+export default defineConfig({
+  dialect: "postgresql",             // which kind of database
+  schema: "./drizzle/schema.ts",     // where our tables are described
+  out: "./drizzle",                  // where drizzle-kit writes what it generates
+  dbCredentials: { url: process.env.NEON_DATABASE_URL || "" },
+});
 ```
 
-The word on the left is what your code calls it. The word in quotes is the column's real name in Postgres. So `is_available` in the database becomes `isAvailable: boolean("is_available")` in TypeScript.
+Then add one line to the `"scripts"` in `package.json`, so you don't have to remember the command:
 
-### 4. Make `GET /api/items` read the database
+```json
+"db:pull": "drizzle-kit pull"
+```
 
-Make the route connect, select every row from `items`, and return them. Open <http://localhost:3000/api/items> first and check you get rows. Then open the page, and answer these in order:
+### 4. Pull: let drizzle-kit write the schema
+
+```
+npm run db:pull
+```
+
+`drizzle-kit` connects to your database, reads every table, column, key and rule that `store.sql` made on Tuesday, and writes them out as TypeScript. You should see `10 tables fetched`, and a new `drizzle/` folder:
+
+| File | What it is |
+|---|---|
+| `drizzle/schema.ts` | **The one you use.** Every table, described in TypeScript. |
+| `drizzle/relations.ts` | Which tables point at which. Not needed tonight. |
+| `drizzle/0000_<random words>.sql` | The SQL that would rebuild these tables, commented out. Your file's name will be different. |
+| `drizzle/meta/` | drizzle-kit's own notes. Leave it alone. |
+
+Open `drizzle/schema.ts` next to `store.sql` and find `items`. Every line matches something you wrote on Tuesday. The name on the left of each line is what your code calls the column (`isAvailable`); the one in quotes is its real name in Postgres (`is_available`).
+
+**Saw `1 tables fetched`, or `0`?** Your string points at the wrong database (`neondb` instead of `store`). Delete the whole `drizzle/` folder, fix the end of the string in `.env.local`, and pull again.
+
+### 5. Make the Neon provider
+
+Make `providers/neon/neonDatabaseProvider.ts`. This is the **only** file in the app that reads `NEON_DATABASE_URL` and connects. Everything else asks it for the connection. Copy it from `states/03-neon-provider/` and read the comments; it's short.
+
+### 6. Make `GET /api/items` read the database
+
+Make the route ask the provider for the connection, select every row from `items`, and return them:
+
+```ts
+const db = NeonDatabaseProvider.getInstance().getDb();
+const rows = await db.select().from(items).orderBy(items.id);
+```
+
+Open <http://localhost:3000/api/items> first and check you get rows. Then open the page, and answer these in order:
 
 - Did the page crash? Look at `/api/items` again. Is `price` a number or text? Look for the quotes.
-- What does Postgres send back for a `numeric` column, and why might it do that for money? Fix it in the schema, not in the page.
+- What does Postgres send back for a `numeric` column, and why might it do that for money? Fix it in `drizzle/schema.ts`, not in the page. (Pulling again would undo your fix, so from now on the file is yours.)
 - The Gingerbread Latte is marked sold out. The owner says customers should never see it. Hide it from the list, then open <http://localhost:3000/api/items/8>. Can you still buy it?
 
-### 5. Move every query into one place
+### 7. Move every query into one place
 
 If you answered the last question honestly, you found the problem tonight is about. Fix it so that:
 
-- **one file** (`providers/neon.ts`) is the only place that reads `NEON_DATABASE_URL` and connects,
+- **one file** (`providers/neon/neonDatabaseProvider.ts`) is the only place that connects,
 - **one file** (`services/itemService.ts`) is the only place that writes a query about items,
-- and the route files import neither `drizzle-orm` nor the connection. They call the service and pick a status code.
+- and the route files import neither `drizzle-orm` nor the schema. They call the service and pick a status code.
 
 You're done when the "never show sold-out items" rule is written **once** and both `/api/items` and `/api/items/8` obey it.
 
-### 6. If you finish
+### 8. If you finish
 
 - Build `POST /api/items` and `PATCH /api/items/[id]` (change the price) through the service. The checks on the body stay in the route, like week 11. The `insert` and `update` go in the service.
 - Add `/api/categories/[id]/items`: every item in one category. Add a method to the service; the new route just calls it.
@@ -111,7 +161,7 @@ The page doesn't know there's a database. The routes shouldn't either. Each laye
 | Layer | Knows | Doesn't know |
 |---|---|---|
 | Page | the address `/api/items` | how the API gets its data |
-| Route | HTTP: the request, the body, the status code | SQL, Drizzle, the connection |
+| Route | HTTP: the request, the body, the status code | SQL, Drizzle, the schema |
 | Service | how to ask the database about items, and the store's rules | HTTP, status codes |
 | Provider | how to connect to Neon | anything about coffee |
 
@@ -123,12 +173,13 @@ The code at each checkpoint of the live demo. If your typing goes sideways, copy
 
 | State | What it shows |
 |---|---|
-| `01-schema-price-as-text` | The two tables in Drizzle, with `price` the way Postgres sends it: as text. The page crashes. |
-| `02-query-in-the-route` | The list route connects and queries by itself. It works. |
-| `03-schema-price-as-number` | `mode: "number"` fixes the crash. |
-| `04-copied-to-one-item` | The one-item route, copied from the list route. Two files now connect and query. |
-| `05-rule-in-one-route` | "Hide sold-out items" added to the list route only. `/api/items/8` still sells it. |
-| `06-provider` | One file that connects, and checks the secret is really there. |
-| `07-service` | One file that queries, with the sold-out rule written once. |
-| `08-routes-call-the-service` | Both routes, now a few lines each. |
-| `09-change-it-once` | A new rule (hide items with no description), one line in one file, both routes obey. |
+| `01-drizzle-config` | `drizzle.config.ts`: where the schema goes, and how drizzle-kit finds your connection string. |
+| `02-pulled-schema` | Exactly what `npm run db:pull` writes from the store. If your pull won't run, copy this in. |
+| `03-neon-provider` | The one file that connects, and checks the secret is really there. |
+| `04-query-in-the-route` | The list route gets the connection from the provider and writes its own query. It works. |
+| `05-price-as-number` | The pulled schema with one edit, `mode: "number"` on `price`, which fixes the crash. |
+| `06-copied-to-one-item` | The one-item route, copied from the list route. Two routes now write queries. |
+| `07-rule-in-one-route` | "Hide sold-out items" added to the list route only. `/api/items/8` still sells it. |
+| `08-service` | One file that queries, with the sold-out rule written once. |
+| `09-routes-call-the-service` | Both routes, now a few lines each. |
+| `10-change-it-once` | A new rule (hide items with no description), one line in one file, both routes obey. |

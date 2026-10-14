@@ -1,9 +1,8 @@
 // Goes in: app/api/items/[id]/route.ts
-// Copied from the list route and changed a little. Now two files open
-// their own connection and know how to ask about items.
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+// Copied from the list route and changed a little. Now two routes
+// import the schema and write their own query about items.
 import { eq } from "drizzle-orm";
+import { NeonDatabaseProvider } from "../../../../providers/neon/neonDatabaseProvider";
 import { items } from "../../../../drizzle/schema";
 
 export async function GET(
@@ -11,7 +10,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const db = drizzle(neon(process.env.NEON_DATABASE_URL!));
+  const db = NeonDatabaseProvider.getInstance().getDb();
   const [item] = await db.select().from(items).where(eq(items.id, Number(id)));
   if (!item) {
     return Response.json({ error: `No item with id ${id}` }, { status: 404 });

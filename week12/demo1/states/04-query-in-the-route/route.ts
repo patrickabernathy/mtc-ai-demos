@@ -1,13 +1,11 @@
 // Goes in: app/api/items/route.ts
-// It works. The route opens its own connection and writes its own query.
-// Keep an eye on how many files end up doing this.
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+// It works. The provider hands over the connection, and the route writes
+// its own query. Keep an eye on how many routes end up doing this.
+import { NeonDatabaseProvider } from "../../../providers/neon/neonDatabaseProvider";
 import { items } from "../../../drizzle/schema";
 
 export async function GET() {
-  // The ! means "trust me, this is set". Nothing actually checks.
-  const db = drizzle(neon(process.env.NEON_DATABASE_URL!));
+  const db = NeonDatabaseProvider.getInstance().getDb();
   const rows = await db.select().from(items).orderBy(items.id);
   return Response.json(rows);
 }
