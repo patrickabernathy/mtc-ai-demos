@@ -2,13 +2,12 @@
 // The owner: "Stop selling anything that's not available."
 // Fixed here. The list hides the Gingerbread Latte now.
 // Open /api/items/8 before you celebrate.
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
 import { eq } from "drizzle-orm";
+import { NeonDatabaseProvider } from "../../../providers/neon/neonDatabaseProvider";
 import { items } from "../../../drizzle/schema";
 
 export async function GET() {
-  const db = drizzle(neon(process.env.NEON_DATABASE_URL!));
+  const db = NeonDatabaseProvider.getInstance().getDb();
   const rows = await db
     .select()
     .from(items)

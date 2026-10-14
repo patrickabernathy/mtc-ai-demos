@@ -2,7 +2,7 @@
 // The ONE file that knows how to ask the database about items.
 // Routes call these methods. Routes never write a query themselves.
 import { and, eq } from "drizzle-orm";
-import { NeonProvider } from "../providers/neon";
+import { NeonDatabaseProvider } from "../providers/neon/neonDatabaseProvider";
 import { items } from "../drizzle/schema";
 
 // The store's rule about what a customer can see, written once.
@@ -20,7 +20,7 @@ export class ItemService {
   }
 
   private getDb() {
-    return NeonProvider.getInstance().getDb();
+    return NeonDatabaseProvider.getInstance().getDb();
   }
 
   public async getAll() {

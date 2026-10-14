@@ -1,5 +1,5 @@
 // Goes in: app/api/items/route.ts  (rename to route.ts)
-// No connection, no query, no import from drizzle. Ask the service, answer.
+// No query, no schema, no import from drizzle. Ask the service, answer.
 import { ItemService } from "../../../services/itemService";
 
 export async function GET() {
