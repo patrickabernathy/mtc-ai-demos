@@ -4,7 +4,27 @@ A small Corner Store app with **the page already built and the API already scaff
 
 The bigger idea is where that database code lives. Every query goes in **one place** (a *service*), and the routes only ever call the service. When the store's rules change, you change one file.
 
-This is the "before" state. Clone it, run it, and you get the app exactly as class starts.
+**This is the `answers` branch: the finished version.** The steps under "What to do" are the exercise as it was set on `main`; "The finished version" below shows where it ends up. To run it you still need your own `.env.local` (step 2) and `npm install`.
+
+## The finished version
+
+| File | What it does |
+|---|---|
+| `providers/neon.ts` | `NeonProvider`. The only file that reads `NEON_DATABASE_URL` and connects. If the secret is missing it throws a sentence that says so. |
+| `drizzle/schema.ts` | `categories` and `items`, copied from `store.sql`. `price` uses `mode: "number"`. |
+| `services/itemService.ts` | `ItemService`. Every query about items: `getAll`, `getById`, `getByCategory`, `create`, `updatePrice`, `retire`. The sold-out rule (`onSale`) is written once at the top. |
+| `app/api/items/route.ts` | `GET` the menu, `POST` a new item (checks the body, then calls `create`). |
+| `app/api/items/[id]/route.ts` | `GET` one item, `PATCH` its price, `DELETE` it. |
+| `app/api/categories/[id]/items/route.ts` | `GET` every item in one category. |
+
+Things worth trying in Postman once it runs:
+
+- `GET /api/items/8`: the Gingerbread Latte is sold out, so it's a **404**, the same as the list hiding it.
+- `POST /api/items` with `{"name": "Latte", "price": 4, "categoryId": 1}`: there's already a Latte, and Tuesday made `name` unique. Read the terminal.
+- `DELETE /api/items/3`: Tuesday showed Postgres refusing to delete an item that's on old receipts. So `retire` doesn't delete; it marks the item unavailable and the receipts keep their history. Ask for `/api/items/3` afterwards.
+- To put everything back the way it started, run `store.sql` again in Neon.
+
+The routes never import `drizzle-orm`, the schema, or the provider. Only the service does. That rule is what makes "change it in one place" true.
 
 ## Before you start
 
