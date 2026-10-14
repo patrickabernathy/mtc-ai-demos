@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db:pull": "drizzle-kit pull"
   },
   "dependencies": {
     "@neondatabase/serverless": "1.2.0",
@@ -17,6 +18,8 @@
     "@types/node": "22.15.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5",
+    "dotenv": "17.4.2",
+    "drizzle-kit": "0.31.11",
     "typescript": "5.9.3"
   }
 }

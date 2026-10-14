@@ -3,22 +3,22 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
 
-export class NeonProvider {
+export class NeonDatabaseProvider {
   // One copy for the whole app, made the first time somebody asks.
-  private static instance: NeonProvider;
+  private static instance: NeonDatabaseProvider;
   private db: NeonHttpDatabase | undefined;
 
-  public static getInstance(): NeonProvider {
-    if (!NeonProvider.instance) {
-      NeonProvider.instance = new NeonProvider();
+  public static getInstance(): NeonDatabaseProvider {
+    if (!NeonDatabaseProvider.instance) {
+      NeonDatabaseProvider.instance = new NeonDatabaseProvider();
     }
-    return NeonProvider.instance;
+    return NeonDatabaseProvider.instance;
   }
 
   public getDb(): NeonHttpDatabase {
     if (!this.db) {
-      // A real check instead of the ! we were using: if the secret is
-      // missing, say so in plain words instead of failing somewhere weird.
+      // If the secret is missing, say so in plain words here,
+      // instead of failing somewhere weird later.
       const url = process.env.NEON_DATABASE_URL;
       if (!url) {
         throw new Error(

@@ -10,8 +10,9 @@ The bigger idea is where that database code lives. Every query goes in **one pla
 
 | File | What it does |
 |---|---|
-| `providers/neon.ts` | `NeonProvider`. The only file that reads `NEON_DATABASE_URL` and connects. If the secret is missing it throws a sentence that says so. |
-| `drizzle/schema.ts` | `categories` and `items`, copied from `store.sql`. `price` uses `mode: "number"`. |
+| `drizzle.config.ts` | Tells drizzle-kit where the schema lives and loads `.env.local` with dotenv. `npm run db:pull` uses it. |
+| `drizzle/schema.ts` | All ten tables, written by `npm run db:pull`, with one edit: `items.price` uses `mode: "number"`. `relations.ts`, the `0000_*.sql` file and `meta/` came from the same pull. |
+| `providers/neon/neonDatabaseProvider.ts` | `NeonDatabaseProvider`. The only file that reads `NEON_DATABASE_URL` and connects. If the secret is missing it throws a sentence that says so. |
 | `services/itemService.ts` | `ItemService`. Every query about items: `getAll`, `getById`, `getByCategory`, `create`, `updatePrice`, `retire`. The sold-out rule (`onSale`) is written once at the top. |
 | `app/api/items/route.ts` | `GET` the menu, `POST` a new item (checks the body, then calls `create`). |
 | `app/api/items/[id]/route.ts` | `GET` one item, `PATCH` its price, `DELETE` it. |
