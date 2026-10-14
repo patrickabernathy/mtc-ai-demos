@@ -46,7 +46,7 @@ Do not merge `answers` into `main` — that would hand students the solution. Wh
 
 ### Commit straight to `main` — no feature branches, no PRs
 
-**This is a private, solo repo. Never create a `pa/...` branch or open a pull request here.** This overrides the global "default to a branch + PR" rule; it is the repo-specific instruction that rule defers to. Branches here only leave behind work that has to be found and merged by hand later, and there is no reviewer for a PR to wait on.
+**This is a solo repo — public so students can clone it, with no collaborators, so nobody else can push. Never create a `pa/...` branch or open a pull request here.** This overrides the global "default to a branch + PR" rule; it is the repo-specific instruction that rule defers to. Branches here only leave behind work that has to be found and merged by hand later, and there is no reviewer for a PR to wait on.
 
 Adding or changing a lab or demo always goes in this order:
 
