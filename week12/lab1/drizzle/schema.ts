@@ -1,5 +1,5 @@
 // What `npm run db:pull` wrote, with ONE edit: items.price gets mode: "number".
-// Pulling again would overwrite this edit, so after this the file is ours.
+// Every pull overwrites this edit. Redo it after each one (README: After every npm run db:pull).
 import { pgTable, unique, serial, text, date, boolean, timestamp, foreignKey, check, integer, numeric, primaryKey } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
