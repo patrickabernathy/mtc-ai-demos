@@ -44,7 +44,7 @@ Every 501 says which step builds it.
 | 1 | Install Drizzle, drizzle-kit, the Neon driver, dotenv | The ORM your app uses, and the tool you run from the terminal |
 | 2 | `.env.local` with `NEON_DATABASE_URL` | The connection string is a password: out of Git, pointed at `store` |
 | 3 | `drizzle.config.ts` and a `db:pull` script | Tell drizzle-kit where the database is and where to write |
-| 4 | `npm run db:pull`, then `mode: "number"` on price | drizzle-kit writes the schema; after that the file is yours |
+| 4 | `npm run db:pull`, then `mode: "number"` on price | drizzle-kit writes the schema; every pull means redoing your edits |
 | 5 | `providers/neon/neonDatabaseProvider.ts` | The one file that connects |
 | 6 | `services/itemService.ts` and `GET /api/coffees` | The one file that queries; the "is a coffee" rule written once |
 | 7 | `GET /api/coffees/[id]` | One row, or a 404 you choose |
@@ -69,7 +69,13 @@ The pages don't know there's a database. The routes shouldn't either. Each layer
 
 - **The wrong database.** Neon's Connect box starts on `neondb`. Change the dropdown to `store` before you copy. A pull that says `1 tables fetched` or `0` is the tell.
 - **Restart after changing `.env.local`.** Next only reads it when it starts.
-- **Pulling again erases your edit** to `drizzle/schema.ts`. Pull once, then the file is yours.
+- **Every pull erases your edit** to `drizzle/schema.ts`. Keep pulling when the database changes; just redo the list below each time.
+
+## After every `npm run db:pull`
+
+`db:pull` rewrites `drizzle/schema.ts` from scratch. Redo these edits every time, then `npm run build` to check:
+
+1. `items.price`: add `mode: "number"`, so it reads `numeric({ precision: 6, scale: 2, mode: "number" })`. Without it the page crashes with `toFixed is not a function`.
 - **A forgotten `await`** sends back `{}` instead of your coffees.
 - **Changes are real now.** What you add, change and delete stays in your database. Run `db/0001_store.sql` again any time you want the store back the way it started.
 - **The first `npm run dev` writes `AGENTS.md`.** It's notes from Next for AI coding tools. Leave it.
