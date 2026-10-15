@@ -1,0 +1,1496 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W12 - The Corner Store coffee bar</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+    --ai-soft: #eef0fb;
+    --ai-edge: #5a5ec2;
+    --bad: #b3412f;
+  }
+  @media screen and (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+      --ai-soft: #1b1d33;
+      --ai-edge: #8b8ff0;
+      --bad: #e0806f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0 auto; padding: 0 22px 80px; max-width: 800px; background: var(--paper); color: var(--ink); font: 16px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif; }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 26px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 62ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 44px 0 12px; font-size: 23px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h2 .step { display: inline-block; min-width: 2.2em; color: var(--accent); }
+  h3 { margin: 24px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 70ch; }
+  ul, ol { max-width: 70ch; padding-left: 22px; }
+  li { margin-bottom: 5px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 12px 14px; overflow-x: auto; font: 13px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; margin: 0 0 14px; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  pre { tab-size: 4; }
+  /* Cascadia Code turns !== and -> into single symbols; students need to see the real characters. */
+  code, pre { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+  pre.term { border-left-color: var(--ink-3); color: var(--ink-2); }
+  pre.bad { border-left-color: var(--bad); }
+  .file { margin: 14px 0 4px; font: 12px/1.4 "Cascadia Code", Consolas, monospace; color: var(--ink-3); }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 14.5px; }
+  th, td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  td code { font-size: 12.5px; overflow-wrap: break-word; }
+  td:first-child code { white-space: nowrap; }
+  td.status { font-weight: 700; white-space: nowrap; }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .callout h4 { margin: 0 0 8px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .warn h4 { color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .check h4 { color: var(--check-edge); }
+  .ai { background: var(--ai-soft); border-color: var(--ai-edge); }
+  .ai h4 { color: var(--ai-edge); }
+  .ai .prompt { font-style: italic; border-left: 2px solid var(--ai-edge); padding-left: 10px; margin-left: 2px; }
+  .stuck { font-size: 14.5px; color: var(--ink-2); }
+  .back { font-size: 13px; margin: -4px 0 8px; }
+  .toc { columns: 2; column-gap: 32px; font-size: 15px; padding-left: 20px; }
+  .toc li { break-inside: avoid; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+
+  @page { size: Letter; margin: 15mm 14mm; }
+  @media print {
+    body { max-width: none; padding: 0; font-size: 10pt; line-height: 1.45; background: #fff; }
+    /* Appendix code is long; let it flow across pages instead of leaving orphans. */
+    h2#code ~ pre { break-inside: auto; }
+    p { margin-bottom: 9px; }
+    header.top { padding-top: 0; }
+    pre { white-space: pre-wrap; break-inside: avoid; font-size: 8.4pt; }
+    /* Big test-table boxes may split between rows; keeping them whole left half-empty pages. */
+    tr, .callout p, .callout h4, .file { break-inside: avoid; }
+    .callout h4 { break-after: avoid; }
+    h2, h3, .file { break-after: avoid; }
+    h2 { margin-top: 30px; }
+    .appendix-start { break-before: page; }
+    a { text-decoration: none; }
+  }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W12 &middot; one lab, twelve steps, each one builds on the last</p>
+  <h1>The coffee bar: a menu editor that remembers</h1>
+  <p class="lede">The Corner Store owner wants one screen to manage the coffees on the menu: see them all, add a new one, change one, delete one, and search them. The pages are built. The routes already check every request. Tonight you connect it all to the real database from Tuesday, the way Wednesday's demo did, so that every change is still there tomorrow.</p>
+</header>
+
+<p>This lab is meant to stretch you. Every step tells you what to build and how to check it. If you get stuck, every step also links to the full code for that step in the <a href="#code">Code reference</a> at the back. Try it yourself first, then look.</p>
+
+<h3>Contents</h3>
+<ol class="toc" start="0">
+  <li><a href="#step0">Run it and meet the starting point</a></li>
+  <li><a href="#step1">Install Drizzle and drizzle-kit</a></li>
+  <li><a href="#step2">The connection string in <code>.env.local</code></a></li>
+  <li><a href="#step3"><code>drizzle.config.ts</code> and a script</a></li>
+  <li><a href="#step4">Pull: let drizzle-kit write the schema</a></li>
+  <li><a href="#step5">The Neon provider</a></li>
+  <li><a href="#step6">The item service, and the list of coffees</a></li>
+  <li><a href="#step7">One coffee</a></li>
+  <li><a href="#step8">Create: a new coffee</a></li>
+  <li><a href="#step9">Edit: change a coffee</a></li>
+  <li><a href="#step10">Delete, and Tuesday's foreign key</a></li>
+  <li><a href="#step11">Search by name: <code>?search=</code></a></li>
+  <li><a href="#step12">A second parameter: <code>?maxPrice=</code></a></li>
+</ol>
+<p><a href="#done">What "done" looks like</a> &middot; <a href="#further">Going further</a> &middot; <a href="#bite">Things that will bite you</a> &middot; <a href="#code">Code reference</a></p>
+
+<h3>What you'll have at the end</h3>
+<table>
+  <tr><th>Address</th><th>Verb</th><th>Calls the service's</th><th>What it does</th></tr>
+  <tr><td><code>/api/coffees</code></td><td>GET</td><td><code>getCoffees</code></td><td>Every coffee, or the ones matching <code>?search=</code> and <code>?maxPrice=</code></td></tr>
+  <tr><td><code>/api/coffees</code></td><td>POST</td><td><code>createCoffee</code></td><td>Add a coffee</td></tr>
+  <tr><td><code>/api/coffees/3</code></td><td>GET</td><td><code>getCoffee</code></td><td>One coffee</td></tr>
+  <tr><td><code>/api/coffees/3</code></td><td>PUT</td><td><code>updateCoffee</code></td><td>Change a coffee</td></tr>
+  <tr><td><code>/api/coffees/3</code></td><td>DELETE</td><td><code>hasBeenSold</code>, <code>deleteCoffee</code></td><td>Delete a coffee nobody has bought yet</td></tr>
+</table>
+
+<p>And the files behind them, one job each:</p>
+<table>
+  <tr><th>Layer</th><th>File</th><th>Knows</th><th>Doesn't know</th></tr>
+  <tr><td>Page</td><td><code>app/page.tsx</code> and friends (done)</td><td>the addresses under <code>/api/coffees</code></td><td>how the API gets its answers</td></tr>
+  <tr><td>Route</td><td><code>app/api/coffees/.../route.ts</code></td><td>HTTP: the request, the body, the status code</td><td>SQL, Drizzle, the schema</td></tr>
+  <tr><td>Service</td><td><code>services/itemService.ts</code></td><td>every query about items, and the store's rules</td><td>HTTP, status codes</td></tr>
+  <tr><td>Provider</td><td><code>providers/neon/neonDatabaseProvider.ts</code></td><td>how to connect to Neon</td><td>anything about coffee</td></tr>
+</table>
+
+<div class="callout ai">
+  <h4>Using Claude in this lab</h4>
+  <p>You have Claude chat open, so use it, but use it to <b>understand</b>, not to paste. Start every new chat by pasting this, so it knows exactly what you're working with:</p>
+  <p class="prompt">"I'm a beginner in a full-stack class. I'm building a Next.js 16 app (App Router, TypeScript). API routes are files at app/api/.../route.ts that export functions named GET, POST, PUT and DELETE. My database is Postgres on Neon. I use Drizzle ORM (drizzle-orm with the neon-http driver from @neondatabase/serverless), and drizzle-kit wrote drizzle/schema.ts by pulling my existing database. My code has three layers: a Neon provider class (providers/neon/neonDatabaseProvider.ts) that is the only file that connects, an ItemService class (services/itemService.ts) that holds every query, and routes that only check the request, call the service and pick a status code. No Prisma, no pg, no SQL strings in the routes, no extra libraries. When I ask for help, explain the idea and give me a hint or a small piece first, not a whole finished file, unless I say I'm completely stuck."</p>
+  <p>When something breaks, give it three things: <b>the file</b>, <b>what the terminal printed</b>, and <b>what you expected vs. what you saw</b> (on the page, or the status and body in Postman). "It doesn't work" gets you a guess. Those three get you an answer.</p>
+  <p>If Claude suggests Prisma, <code>pg</code> or <code>Pool</code>, <code>db.query("SELECT ...")</code>, <code>drizzle-kit push</code>, or writing the query straight into the route, it's describing a different setup. Remind it: Drizzle on neon-http, and every query goes in the service.</p>
+  <p><b>Never paste your connection string or <code>.env.local</code> into a chat.</b> It's the password to your whole database. If Claude needs to see it, replace the part between <code>:</code> and <code>@</code> with <code>****</code> first.</p>
+</div>
+
+<!-- ============================================================ STEP 0 -->
+<h2 id="step0"><span class="step">0</span>Run it and meet the starting point</h2>
+
+<pre><code>cd mtc-ai-demos/week12/lab1
+npm install
+npm run dev</code></pre>
+
+<p>Keep that terminal where you can see it for the whole lab. When something goes wrong, the page often just says "The API answered 500," and the reason is printed in the terminal.</p>
+
+<p>Open <a href="http://localhost:3000">http://localhost:3000</a>. The pages are finished, and you won't change them tonight. Click around:</p>
+<ul>
+  <li>The list says <b>"No coffees found."</b> Under the search box it shows the address it asked: <code>/api/coffees</code>.</li>
+  <li>Click <b>+ New coffee</b>, type anything, and press <b>Save</b>. The form shows <b>"Not built yet. That's Step 8."</b> That's the API's answer, a 501, shown on the page.</li>
+</ul>
+
+<p>Now read the two route files. They already do the week 11 part: <code>POST</code> and <code>PUT</code> read the body inside a <code>try</code>/<code>catch</code> and check every field, with a 400 for each problem. Where the database belongs, each one has a <code>TODO</code> that says which step fills it in:</p>
+<pre><code>// TODO (Step 8): save it through the service, then answer 201 with the new coffee.
+return Response.json({ error: "Not built yet. That's Step 8." }, { status: 501 });</code></pre>
+
+<h3>The <code>db/</code> folder</h3>
+<p><code>db/0001_store.sql</code> is Tuesday's <code>store.sql</code>, the SQL that builds the whole Corner Store database. Real projects keep the SQL that builds their database in a <code>db/</code> folder, committed with the code, so anyone can rebuild it. The files are numbered (<code>0001</code>, <code>0002</code>, ...) so they run in order: each later change to the database is a new numbered file. Tonight there's only one.</p>
+<p>You need a database called <code>store</code> in your Neon project with this file run in it. If you did Tuesday, you have it. If not, or if you want to start over at any point tonight: Neon &rarr; <b>SQL Editor</b> &rarr; pick <b><code>store</code></b> in the database dropdown &rarr; paste the whole file &rarr; <b>Run</b>. It takes about a minute, and it puts every table back exactly the way it started.</p>
+
+<div class="callout check">
+  <h4>Check it</h4>
+  <table>
+    <tr><th>Do</th><th>Expect</th><th>You see</th></tr>
+    <tr><td>Open <code>localhost:3000</code></td><td class="status">page</td><td>"No coffees found." and "Asked: /api/coffees"</td></tr>
+    <tr><td>Open <code>localhost:3000/api/coffees</code></td><td class="status">200</td><td><code>[]</code></td></tr>
+    <tr><td>Open <code>localhost:3000/api/coffees/3</code></td><td class="status">501</td><td><code>{"error": "Not built yet. That's Step 7. (You asked for 3.)"}</code></td></tr>
+    <tr><td>Neon SQL Editor, database <code>store</code>: <code>SELECT * FROM items WHERE category_id = 1;</code></td><td class="status">8 rows</td><td>Espresso through Gingerbread Latte. These are the coffees. Gingerbread Latte has <code>is_available</code> false.</td></tr>
+  </table>
+</div>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"In a web app, what's the difference between the page, the API route, and the database? If my page fetches /api/coffees, which of those three ever talks to the database, and why not the page?"</p>
+</div>
+
+<!-- ============================================================ STEP 1 -->
+<h2 id="step1"><span class="step">1</span>Install Drizzle and drizzle-kit</h2>
+
+<p>Stop the server (<code>Ctrl</code>+<code>C</code>) and install four packages, in two lines:</p>
+<pre><code>npm install drizzle-orm @neondatabase/serverless
+npm install -D drizzle-kit dotenv</code></pre>
+
+<ul>
+  <li><b><code>drizzle-orm</code></b> is the part your app uses while it runs. You write <code>db.select().from(items)</code>, and it turns that into SQL, sends it, and hands the rows back as JavaScript objects.</li>
+  <li><b><code>@neondatabase/serverless</code></b> is the driver: how the SQL actually travels to Neon over the internet.</li>
+  <li><b><code>drizzle-kit</code></b> is the half you run from the terminal. Tonight it does one job: read your database and write the TypeScript description of it for you.</li>
+  <li><b><code>dotenv</code></b> lets drizzle-kit read <code>.env.local</code>. Next reads that file by itself; drizzle-kit is a separate program, so it doesn't.</li>
+</ul>
+<p><code>-D</code> means "only needed while building," so those two land under <code>devDependencies</code> in <code>package.json</code>.</p>
+
+<div class="callout check">
+  <h4>Check it</h4>
+  <p>Open <code>package.json</code>. <code>drizzle-orm</code> and <code>@neondatabase/serverless</code> are under <code>dependencies</code>; <code>drizzle-kit</code> and <code>dotenv</code> are under <code>devDependencies</code>.</p>
+</div>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"What's an ORM? Explain what drizzle-orm does with a line like db.select().from(items), and why a team might use it instead of writing SQL text by hand."</p>
+  <p class="prompt">"What's the difference between dependencies and devDependencies in package.json? Why would drizzle-kit be a dev dependency but drizzle-orm not?"</p>
+</div>
+
+<!-- ============================================================ STEP 2 -->
+<h2 id="step2"><span class="step">2</span>The connection string in <code>.env.local</code></h2>
+
+<p>The connection string is the address <b>and</b> the password of your database in one line. It's a secret, so it goes in <code>.env.local</code>, which never gets committed. (Same rule as last week's token.)</p>
+
+<ol>
+  <li>Open <code>.gitignore</code> in this folder and find the <code>.env*.local</code> line. That's what keeps the file out of Git.</li>
+  <li>Make a new file called <code>.env.local</code> next to <code>package.json</code>. Make it <b>in VS Code</b>, not Notepad, so it doesn't secretly become <code>.env.local.txt</code>. Copy the one line from <code>.env.example</code> into it.</li>
+  <li>In Neon, open your project and click <b>Connect</b>. <b>Change the database dropdown to <code>store</code></b> before you copy. It starts on <code>neondb</code>, which is the wrong one.</li>
+  <li>Paste the string after the <code>=</code>. No quotes, no spaces:</li>
+</ol>
+<pre><code>NEON_DATABASE_URL=postgresql://neondb_owner:****@ep-something.neon.tech/store?sslmode=require</code></pre>
+<p>Look at the end of yours: it should say <code>/store?</code>, not <code>/neondb?</code>.</p>
+
+<div class="callout check">
+  <h4>Check it</h4>
+  <p>Run <code>git status</code>. <code>.env.local</code> must <b>not</b> be listed. If it is, stop and ask: that string is a password, and this repo is public.</p>
+</div>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"Here's the shape of a Postgres connection string with the password hidden: postgresql://user:****@host/store?sslmode=require. Explain each part. Which part picks the database, and what does sslmode=require do?"</p>
+</div>
+
+<!-- ============================================================ STEP 3 -->
+<h2 id="step3"><span class="step">3</span><code>drizzle.config.ts</code> and a script</h2>
+
+<p>drizzle-kit needs to know four things, and a file called <code>drizzle.config.ts</code> tells it. Make it next to <code>package.json</code>:</p>
+
+<pre><code>import { defineConfig } from "drizzle-kit";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
+
+export default defineConfig({
+  dialect: "postgresql",             // which kind of database
+  schema: "./drizzle/schema.ts",     // where our tables are described
+  out: "./drizzle",                  // where drizzle-kit writes what it generates
+  dbCredentials: { url: process.env.NEON_DATABASE_URL || "" },
+});</code></pre>
+
+<ul>
+  <li><code>dialect</code>: which kind of database. Postgres.</li>
+  <li><code>schema</code>: the file where your tables are described in TypeScript. It doesn't exist yet; the pull in Step 4 writes it.</li>
+  <li><code>out</code>: the folder drizzle-kit writes into.</li>
+  <li><code>dbCredentials.url</code>: how to reach the database. That only works because of the <code>dotenv.config(...)</code> line at the top, which loads <code>.env.local</code> into <code>process.env</code> first. The <code>|| ""</code> just keeps TypeScript happy if it's missing.</li>
+</ul>
+
+<p>Then add one line to the <code>"scripts"</code> in <code>package.json</code>, so the command has a name you can remember. Don't forget the comma at the end of the line above it:</p>
+<pre><code>"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "db:pull": "drizzle-kit pull"
+},</code></pre>
+
+<p class="stuck">Stuck? <a href="#c1">Code C1: the config and the script</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"Next.js reads .env.local by itself, so why does my drizzle.config.ts need dotenv.config({ path: '.env.local' })? What would process.env.NEON_DATABASE_URL be without that line?"</p>
+</div>
+
+<!-- ============================================================ STEP 4 -->
+<h2 id="step4"><span class="step">4</span>Pull: let drizzle-kit write the schema</h2>
+
+<pre><code>npm run db:pull</code></pre>
+
+<p>drizzle-kit connects to your database, reads every table, column, key and rule that <code>store.sql</code> made on Tuesday, and writes them out as TypeScript. It never changes the database; pulling only reads.</p>
+
+<div class="callout check">
+  <h4>What you should see</h4>
+<pre class="term"><code>[✓] 10 tables fetched
+[✓] 51 columns fetched
+...
+[✓] 10 foreign keys fetched
+...
+[✓] Your SQL migration file ➜ drizzle\0000_&lt;random words&gt;.sql 🚀
+[✓] Your schema file is ready ➜ drizzle\schema.ts 🚀
+[✓] Your relations file is ready ➜ drizzle\relations.ts 🚀</code></pre>
+  <p>And a new <code>drizzle/</code> folder:</p>
+  <table>
+    <tr><th>File</th><th>What it is</th></tr>
+    <tr><td><code>drizzle/schema.ts</code></td><td><b>The one you use.</b> Every table, described in TypeScript.</td></tr>
+    <tr><td><code>drizzle/relations.ts</code></td><td>Which tables point at which. Not needed tonight.</td></tr>
+    <tr><td><code>drizzle/0000_&lt;random words&gt;.sql</code></td><td>The SQL that would rebuild these tables, commented out. Your <code>db/0001_store.sql</code> is the real one.</td></tr>
+    <tr><td><code>drizzle/meta/</code></td><td>drizzle-kit's own notes. Leave it alone.</td></tr>
+  </table>
+</div>
+
+<div class="callout warn">
+  <h4><code>1 tables fetched</code>, or <code>0</code>?</h4>
+  <p>Your string points at <code>neondb</code>, not <code>store</code>. <b>Delete the whole <code>drizzle/</code> folder</b> (pulling again leaves the wrong first files behind), fix the end of the string in <code>.env.local</code>, and pull again. An error about the URL instead? The <code>dotenv</code> line is missing from the config, or the file is really called <code>.env.local.txt</code>.</p>
+</div>
+
+<h3>4b. Read it, then make one edit</h3>
+<p>Open <code>drizzle/schema.ts</code>, find <code>export const items</code>, and put <code>db/0001_store.sql</code>'s <code>CREATE TABLE items</code> next to it. Every line matches. The name on the left is what <b>your code</b> calls the column (<code>isAvailable</code>); the one in quotes is its real name in Postgres (<code>is_available</code>).</p>
+<p>Now the one edit. Postgres sends a <code>numeric</code> column back as <b>text</b> (<code>"2.50"</code>), because turning money into a JavaScript number can lose a fraction of a penny. The page calls <code>coffee.price.toFixed(2)</code>, which only works on a number, so tell Drizzle to turn it into one. Change the <code>price</code> line in <code>items</code>:</p>
+<pre><code>price: numeric({ precision: 6, scale: 2, mode: "number" }).notNull(),</code></pre>
+
+<div class="callout warn">
+  <h4>From now on, the file is yours</h4>
+  <p>Pulling again rewrites <code>schema.ts</code> from scratch, and your edit is gone. Pull once to get started; after that, when the database changes, change the file by hand.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c2">Code C2: the items table after the edit</a>. If your pull won't run at all, ask your instructor for <code>week12/demo1/states/02-pulled-schema/schema.ts</code>: the same database, so the same file.</p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"Here's one table from my Drizzle schema.ts: [paste the items table]. Walk me through each line. What do .notNull(), .default(true) and serial().primaryKey() mean, and which SQL keywords in CREATE TABLE do they match?"</p>
+  <p class="prompt">"Why does Postgres send a numeric(6,2) column back as text like "2.50" instead of a number? What could go wrong with money stored as a JavaScript number?"</p>
+</div>
+
+<!-- ============================================================ STEP 5 -->
+<h2 id="step5"><span class="step">5</span>The Neon provider</h2>
+
+<p>A <b>provider</b> wraps one thing outside your app, here Neon, and is the <b>only</b> file that reads its secret and connects. Everything else asks the provider for the connection. If the connection ever changes, you change one file.</p>
+
+<p>Make a folder <code>providers</code>, inside it a folder <code>neon</code>, and inside that <code>neonDatabaseProvider.ts</code>:</p>
+
+<pre><code>// The ONE file that knows how to reach the database.
+// A provider wraps something outside our app: here, Neon.
+import { neon } from "@neondatabase/serverless";
+import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
+
+export class NeonDatabaseProvider {
+  // One copy for the whole app, made the first time somebody asks.
+  private static instance: NeonDatabaseProvider;
+  private db: NeonHttpDatabase | undefined;
+
+  public static getInstance(): NeonDatabaseProvider {
+    if (!NeonDatabaseProvider.instance) {
+      NeonDatabaseProvider.instance = new NeonDatabaseProvider();
+    }
+    return NeonDatabaseProvider.instance;
+  }
+
+  public getDb(): NeonHttpDatabase {
+    // ...you write this part
+  }
+}</code></pre>
+
+<div class="callout">
+  <h4>The class, in three lines you copy</h4>
+  <p>Wednesday's frame: <code>instance</code> is <code>static</code>, so there's one of it for the whole app. <code>getInstance()</code> makes it the first time anyone asks and hands back the same one every time after. So every route that says <code>NeonDatabaseProvider.getInstance()</code> gets the <b>same</b> provider, and the app connects once instead of once per request. You'll write the same three lines for the service in Step 6.</p>
+</div>
+
+<p>Now write <code>getDb()</code>. The first time it's called (<code>this.db</code> is still <code>undefined</code>):</p>
+<ol>
+  <li>Read <code>process.env.NEON_DATABASE_URL</code>.</li>
+  <li>If it's missing, <code>throw new Error(...)</code> with a sentence that says exactly what to do: <code>"NEON_DATABASE_URL is not set. Copy .env.example to .env.local and fill it in."</code> Failing loudly here, in plain words, beats a confusing crash somewhere else later.</li>
+  <li>Otherwise connect: <code>this.db = drizzle(neon(url));</code></li>
+</ol>
+<p>Every time, at the end: <code>return this.db;</code></p>
+
+<div class="callout check">
+  <h4>Nothing to test yet</h4>
+  <p>Nothing calls the provider until Step 6, so there's nothing to see. VS Code shouldn't show any red underlines in the file.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c3">Code C3: the Neon provider</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"Explain this TypeScript class to a beginner: [paste your provider]. What does static mean on the instance field, what does private mean, and why would getInstance() hand back the same object every time? What's this pattern called?"</p>
+  <p class="prompt">"Why is it better for the provider to throw a clear error when NEON_DATABASE_URL is missing, instead of letting neon(undefined) fail somewhere later?"</p>
+</div>
+
+<!-- ============================================================ STEP 6 -->
+<h2 id="step6"><span class="step">6</span>The item service, and the list of coffees</h2>
+
+<p>The <b>service</b> is the one file that asks the database about items. Every query lives here, and so does every rule about the store. Routes call the service and never write a query themselves.</p>
+
+<h3>6a. The service</h3>
+<p>Make a folder <code>services</code> next to <code>providers</code>, and in it <code>itemService.ts</code>. Start with the imports, and the store's first rule: this screen is for <b>coffees</b> only, and coffee is category 1 in <code>store.sql</code>.</p>
+<pre><code>// The ONE file that knows how to ask the database about items.
+// Routes call these methods. Routes never write a query themselves.
+import { eq } from "drizzle-orm";
+import { NeonDatabaseProvider } from "../providers/neon/neonDatabaseProvider";
+import { items } from "../drizzle/schema";
+
+// Coffee is category 1 in store.sql. This app only ever works on coffees,
+// so every query below uses this rule, written once.
+const coffeeCategoryId = 1;
+const isCoffee = eq(items.categoryId, coffeeCategoryId);</code></pre>
+
+<p><code>eq(items.categoryId, 1)</code> is Drizzle for the SQL <code>category_id = 1</code>. You're making it once, at the top, so every method below can use the same rule.</p>
+
+<p>Then the class: the same three "one shared copy" lines as the provider (with <code>ItemService</code> instead of <code>NeonDatabaseProvider</code>), a small private helper that asks the provider for the connection, and your first query:</p>
+<pre><code>export class ItemService {
+  // ...instance and getInstance(), like the provider
+
+  private getDb() {
+    return NeonDatabaseProvider.getInstance().getDb();
+  }
+
+  public async getCoffees() {
+    return this.getDb().select().from(items).where(isCoffee).orderBy(items.id);
+  }
+}</code></pre>
+<p>Read that last line as SQL: <code>SELECT * FROM items WHERE category_id = 1 ORDER BY id</code>.</p>
+
+<h3>6b. The route calls it</h3>
+<p>In <code>app/api/coffees/route.ts</code>, import the service at the top. Count the folders: from <code>app/api/coffees/</code> it's three <code>../</code> back to the project folder:</p>
+<pre><code>import { ItemService } from "../../../services/itemService";</code></pre>
+<p>Then replace the <code>TODO (Step 6)</code> line and the <code>return Response.json([]);</code> under it with two lines: ask the service, send what it gives you. Leave the Steps 11 and 12 <code>TODO</code> where it is.</p>
+<pre><code>const coffees = await ItemService.getInstance().getCoffees();
+return Response.json(coffees);</code></pre>
+
+<div class="callout warn">
+  <h4>Don't forget <code>await</code></h4>
+  <p>Talking to the database takes time, so <code>getCoffees()</code> gives back a <b>Promise</b> of rows, not the rows. Without <code>await</code>, <code>Response.json</code> gets the Promise, and a Promise turned into JSON is <code>{}</code>. The page then says "No coffees found." and nothing errors.</p>
+</div>
+
+<div class="callout check">
+  <h4>Check it</h4>
+  <p>Start the server again (<code>npm run dev</code>). Next only reads <code>.env.local</code> when it starts.</p>
+  <table>
+    <tr><th>Do</th><th>Expect</th><th>You see</th></tr>
+    <tr><td>Open <code>localhost:3000/api/coffees</code></td><td class="status">200</td><td>8 coffees. <code>"price": 2.5</code> with <b>no quotes</b>: a number. Gingerbread Latte has <code>"isAvailable": false</code>.</td></tr>
+    <tr><td>Open <code>localhost:3000</code></td><td class="status">page</td><td>8 cards, Espresso to Gingerbread Latte, which says <b>Sold out</b>. No Cold Brew, no Chai Latte: they aren't coffees.</td></tr>
+  </table>
+  <p><b>Error overlay: <code>coffee.price.toFixed is not a function</code>?</b> The price came back as text. You skipped the edit in Step 4b.</p>
+  <p><b>500 and <code>relation "items" does not exist</code> in the terminal?</b> The string points at <code>neondb</code>. Fix <code>.env.local</code> and restart.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c4">Code C4: the first service</a> &middot; <a href="#c5">C5: the list route calling it</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"Here's my Drizzle query: this.getDb().select().from(items).where(isCoffee).orderBy(items.id), where isCoffee is eq(items.categoryId, 1). Write the SQL it turns into, and explain each piece."</p>
+  <p class="prompt">"What's the difference between returning a Promise and returning the value inside it? What happens if I pass a Promise to Response.json without await?"</p>
+</div>
+
+<!-- ============================================================ STEP 7 -->
+<h2 id="step7"><span class="step">7</span>One coffee</h2>
+
+<p>The edit page fills its form from <code>GET /api/coffees/3</code>. Two parts, the same as Step 6: a method on the service, then the route calls it.</p>
+
+<h3>7a. <code>getCoffee(id)</code> in the service</h3>
+<p>This query needs <b>two</b> rules at once: the id matches, <b>and</b> it's a coffee. Drizzle's <code>and(...)</code> joins them, like <code>AND</code> in SQL. Add <code>and</code> to the import from <code>drizzle-orm</code>:</p>
+<pre><code>import { and, eq } from "drizzle-orm";</code></pre>
+<p>Then add the method inside the class:</p>
+<pre><code>// Gives back undefined when there's no such coffee.
+public async getCoffee(id: number) {
+  const [coffee] = await this.getDb()
+    .select()
+    .from(items)
+    .where(and(eq(items.id, id), isCoffee));
+  return coffee;
+}</code></pre>
+<p>A <code>select</code> always gives back a list, even when it can only find one row. <code>const [coffee] = ...</code> takes the first thing in the list. If the list is empty, <code>coffee</code> is <code>undefined</code>.</p>
+
+<h3>7b. The route</h3>
+<p>In <code>app/api/coffees/[id]/route.ts</code>, import the service. This file is one folder deeper, so it's <b>four</b> <code>../</code>. In <code>GET</code>, replace the <code>TODO</code> and the 501: ask the service for <code>Number(id)</code> (the id in the address is text), answer <b>404</b> with <code>{"error": "No coffee with id ..."}</code> if it gave back nothing, otherwise send the coffee.</p>
+
+<div class="callout check">
+  <h4>Check it</h4>
+  <table>
+    <tr><th>Do</th><th>Expect</th><th>You see</th></tr>
+    <tr><td>Open <code>/api/coffees/3</code></td><td class="status">200</td><td><code>{"id": 3, "name": "Latte", ..., "price": 4, ...}</code></td></tr>
+    <tr><td>Open <code>/api/coffees/8</code></td><td class="status">200</td><td>Gingerbread Latte. Sold out, but it's still a coffee.</td></tr>
+    <tr><td>Open <code>/api/coffees/13</code></td><td class="status">404</td><td><code>{"error": "No coffee with id 13"}</code>. Item 13 is Cold Brew. It's in the table, but it's not a coffee, and <code>isCoffee</code> says so.</td></tr>
+    <tr><td>Open <code>/api/coffees/99</code></td><td class="status">404</td><td><code>{"error": "No coffee with id 99"}</code></td></tr>
+    <tr><td>On the list, click <b>Edit</b> on Latte</td><td class="status">page</td><td>The form, filled in: Latte, "Espresso and steamed milk.", 4. <b>Save</b> says "Not built yet. That's Step 9."</td></tr>
+  </table>
+  <p>Look at <code>/api/coffees/13</code> again. You didn't write anything about Cold Brew. The rule you wrote once in Step 6 kept it out of the list <b>and</b> out of this route. That's the point of the service.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c6">Code C6: getCoffee and the one-coffee route</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"In TypeScript, what does const [coffee] = await someList do? What is coffee if the list is empty? Why would a database select give back a list even when I'm looking up one id?"</p>
+</div>
+
+<!-- ============================================================ STEP 8 -->
+<h2 id="step8"><span class="step">8</span>Create: a new coffee</h2>
+
+<h3>8a. The shape of a coffee coming in</h3>
+<p>Adding and changing a coffee both need the same four things from the route. Give that shape a name, at the top of the service under <code>isCoffee</code>, and <code>export</code> it:</p>
+<pre><code>// What a route hands over to add or change a coffee. The route checks it first.
+export type CoffeeInput = {
+  name: string;
+  description: string | null;
+  price: number;
+  isAvailable: boolean;
+};</code></pre>
+
+<h3>8b. <code>createCoffee(input)</code></h3>
+<pre><code>// .returning() hands back the row Postgres saved, new id included.
+// categoryId is added here, so a new coffee is always a coffee.
+public async createCoffee(input: CoffeeInput) {
+  const [coffee] = await this.getDb()
+    .insert(items)
+    .values({ ...input, categoryId: coffeeCategoryId })
+    .returning();
+  return coffee;
+}</code></pre>
+<p>Two things worth noticing. You don't send an <code>id</code>: the table's <code>serial</code> column picks the next one. And without <code>.returning()</code> an insert gives back nothing, so you'd never learn the id Postgres chose. <code>{ ...input, categoryId: coffeeCategoryId }</code> means "everything in <code>input</code>, plus <code>categoryId</code>." The route never chooses the category; the service does, using the same number as the rule.</p>
+
+<h3>8c. The route</h3>
+<p>In <code>POST</code> in <code>app/api/coffees/route.ts</code>, replace the <code>TODO</code> and the 501. Build the input from the body that was already checked, and answer <b>201</b> with the new coffee:</p>
+<ul>
+  <li><code>description: body.description || null</code>. An empty box (or no description at all) becomes <code>NULL</code>, which is how <code>store.sql</code> says "nobody wrote one."</li>
+  <li><code>isAvailable: true</code>. A new coffee starts on sale.</li>
+</ul>
+
+<div class="callout check">
+  <h4>Check it in the browser</h4>
+  <table>
+    <tr><th>Do</th><th>Expect</th><th>You see</th></tr>
+    <tr><td><b>+ New coffee</b>: <code>Cortado</code>, <code>Equal parts espresso and warm milk.</code>, <code>3.75</code>, Save</td><td class="status">201</td><td>Back on the list: 9 cards, Cortado on the end.</td></tr>
+    <tr><td>Open <code>/api/coffees</code></td><td class="status">200</td><td>Cortado is there with <code>"id": 31</code> (if your store was fresh; the id is just the next number).</td></tr>
+    <tr><td><b>+ New coffee</b> with an empty name, Save</td><td class="status">400</td><td>The form shows <b>name is required</b>. That's the route's check, shown by the page.</td></tr>
+  </table>
+</div>
+
+<div class="callout check">
+  <h4>Check it in Postman</h4>
+  <p>Postman desktop app, <b>Body</b> tab, <b>raw</b>, <b>JSON</b>. Save the requests in a <b>Coffee bar</b> collection; you'll re-run them.</p>
+  <table>
+    <tr><th>Send</th><th>Body</th><th>Expect</th><th>Body back</th></tr>
+    <tr><td><code>POST /api/coffees</code></td><td><code>{"name": "Macchiato", "price": 3.25}</code></td><td class="status">201</td><td>Macchiato, <code>"description": null</code>, <code>"isAvailable": true</code>, the next id</td></tr>
+    <tr><td><code>POST /api/coffees</code></td><td><code>{"name": "Macchiato", "price": "3.25"}</code></td><td class="status">400</td><td><code>{"error": "price must be a number above 0"}</code></td></tr>
+    <tr><td><code>POST /api/coffees</code></td><td><code>null</code></td><td class="status">400</td><td><code>{"error": "The body must be a JSON object with name, description and price"}</code></td></tr>
+  </table>
+</div>
+
+<div class="callout check">
+  <h4>Now the moment the whole week was for</h4>
+  <p>Stop the server (<code>Ctrl</code>+<code>C</code>), start it again, and refresh the list. <b>Cortado and Macchiato are still there.</b> Last week a restart wiped every pet you added. Now the data lives in Postgres, not in your server's memory.</p>
+  <p>Prove it from the other side: Neon SQL Editor, <code>store</code>, <code>SELECT * FROM items WHERE category_id = 1;</code>. Ten rows, and yours are on the end.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c7">Code C7: CoffeeInput, createCoffee and POST</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"In Drizzle, what does .returning() do on an insert, and what would I get back without it? Where does the new row's id come from when I never send one?"</p>
+  <p class="prompt">"What does { ...input, categoryId: 1 } do in JavaScript? Show me the object it makes if input is { name: 'Cortado', price: 3.75 }."</p>
+</div>
+
+<!-- ============================================================ STEP 9 -->
+<h2 id="step9"><span class="step">9</span>Edit: change a coffee</h2>
+
+<p>The edit form sends the <b>whole</b> coffee back with <code>PUT</code>: every field, even the ones you didn't touch. (PUT means "here's the whole new thing, replace the old one," the same as week 11.) The route already checks all four fields.</p>
+
+<h3>9a. <code>updateCoffee(id, input)</code></h3>
+<p>Write it yourself. It's <code>getCoffee</code> and <code>createCoffee</code> put together:</p>
+<ul>
+  <li><code>.update(items)</code> instead of <code>.insert(items)</code></li>
+  <li><code>.set(input)</code>: the new values for the columns</li>
+  <li>the <b>same</b> <code>.where(...)</code> as <code>getCoffee</code>, so only a coffee with that id changes</li>
+  <li><code>.returning()</code>, and <code>const [coffee] = ...</code>, and return it. <code>undefined</code> means no coffee had that id.</li>
+</ul>
+
+<div class="callout warn">
+  <h4>The <code>where</code> is not optional</h4>
+  <p>An <code>update</code> with no <code>where</code> changes <b>every row in the table</b>. Every item in the store would get the same name and price, and there's no undo. The <code>isCoffee</code> rule also means this route can't touch a sandwich, even if someone sends its id.</p>
+</div>
+
+<h3>9b. The route</h3>
+<p>In <code>PUT</code>, replace the <code>TODO</code> and the 501. Call <code>updateCoffee(Number(id), {...})</code> with the four fields (<code>description: body.description || null</code> again), answer <b>404</b> if it gave back nothing, otherwise send the changed coffee.</p>
+
+<div class="callout check">
+  <h4>Check it</h4>
+  <table>
+    <tr><th>Do</th><th>Expect</th><th>You see</th></tr>
+    <tr><td><b>Edit</b> Gingerbread Latte: tick <b>On sale</b>, price <code>5</code>, Save</td><td class="status">200</td><td>Back on the list: no <b>Sold out</b> tag, $5.00.</td></tr>
+    <tr><td><b>Edit</b> Macchiato: description <code>A shot with a spot of foam.</code>, Save</td><td class="status">200</td><td>The description shows on its card.</td></tr>
+    <tr><td>Postman <code>PUT /api/coffees/8</code>, body <code>{"isAvailable": false}</code></td><td class="status">400</td><td><code>{"error": "name is required"}</code>. PUT wants the whole coffee.</td></tr>
+    <tr><td>Postman <code>PUT /api/coffees/13</code>, body <code>{"name": "Cold Brew", "description": "", "price": 1, "isAvailable": true}</code></td><td class="status">404</td><td><code>{"error": "No coffee with id 13"}</code>. Cold Brew's price is safe.</td></tr>
+  </table>
+  <p>Now ask the database about the Gingerbread Latte's <b>old</b> sales: <code>SELECT unit_price, count(*) FROM receipt_items WHERE item_id = 8 GROUP BY unit_price;</code>. They still say <code>4.75</code>. You changed today's price in <code>items</code>; every receipt kept the price paid that day, in its own column. That's Tuesday's design doing its job.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c8">Code C8: updateCoffee and PUT</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"What happens if I run a SQL UPDATE with no WHERE clause? Show me with UPDATE items SET price = 5. How would I protect against that in code?"</p>
+  <p class="prompt">"My store keeps today's price in items.price and the price actually paid in receipt_items.unit_price. Why keep it twice? What would go wrong with old receipts if they only pointed at items.price?"</p>
+</div>
+
+<!-- ============================================================ STEP 10 -->
+<h2 id="step10"><span class="step">10</span>Delete, and Tuesday's foreign key</h2>
+
+<h3>10a. The obvious version</h3>
+<p>Add <code>deleteCoffee(id)</code> to the service. A delete has nothing worth giving back, so it doesn't need <code>.returning()</code>:</p>
+<pre><code>public async deleteCoffee(id: number) {
+  await this.getDb().delete(items).where(and(eq(items.id, id), isCoffee));
+}</code></pre>
+<p>Same warning as Step 9, louder: a <code>delete</code> with no <code>where</code> empties the table.</p>
+<p>In the route's <code>DELETE</code>, replace the <code>TODO</code> and the 501 with three moves: ask <code>getCoffee</code> first and answer <b>404</b> if there's no such coffee; then <code>deleteCoffee</code>; then answer <b>204</b> ("done, nothing to send back"). A 204 has no body at all:</p>
+<pre><code>return new Response(null, { status: 204 });</code></pre>
+<p>Since you call the service twice, keep it in a variable first: <code>const service = ItemService.getInstance();</code>.</p>
+
+<div class="callout check">
+  <h4>Check it, and break it</h4>
+  <table>
+    <tr><th>Do</th><th>Expect</th><th>You see</th></tr>
+    <tr><td><b>Delete</b> on Macchiato, OK</td><td class="status">204</td><td>It's gone from the list. Refresh: still gone.</td></tr>
+    <tr><td>Postman <code>DELETE /api/coffees/</code> with Macchiato's id, again</td><td class="status">404</td><td><code>{"error": "No coffee with id ..."}</code></td></tr>
+    <tr><td><b>Delete</b> on Latte, OK</td><td class="status">500</td><td>The page says <b>"The API answered 500. Check the terminal."</b></td></tr>
+  </table>
+  <p>Check the terminal:</p>
+<pre class="term"><code>⨯ Error: Failed query: delete from "items" where ("items"."id" = $1 and "items"."category_id" = $2)
+params: 3,1
+  ...
+  [cause]: Error [NeonDbError]: update or delete on table "items" violates foreign key constraint "receipt_items_item_id_fkey" on table "receipt_items"
+  ...
+    detail: 'Key (id)=(3) is still referenced from table "receipt_items".',</code></pre>
+  <p>That's Tuesday. <code>receipt_items.item_id</code> <code>REFERENCES items (id)</code>, and thousands of old receipts have a Latte on them. If Postgres let the Latte go, those receipts would point at nothing. So it refused, and nothing was deleted. Refresh: the Latte is still there.</p>
+</div>
+
+<h3>10b. Whose fault is that 500?</h3>
+<p>Remember week 11's rule: <b>4xx is the client's fault, 500 is ours.</b> This isn't a bug in your code, and the request wasn't bad either: "delete the Latte" is a perfectly sensible thing to ask. The <b>data</b> says no. HTTP has a status for exactly that: <b>409 Conflict</b>, "your request is fine, but it conflicts with the state of things." And the owner deserves a sentence that says what to do instead.</p>
+<p>The rule "a coffee that's been sold can't be deleted" is a rule about the store, so it belongs in the <b>service</b>. Add <code>receiptItems</code> to the schema import (<code>import { items, receiptItems } from "../drizzle/schema";</code>), then:</p>
+<pre><code>// Tuesday's foreign key: receipt_items points at items, so Postgres refuses
+// to delete a coffee that's on an old receipt. Asking first lets the route
+// say why, instead of crashing.
+public async hasBeenSold(id: number) {
+  const [line] = await this.getDb()
+    .select()
+    .from(receiptItems)
+    .where(eq(receiptItems.itemId, id))
+    .limit(1);
+  return line !== undefined;
+}</code></pre>
+<p><code>.limit(1)</code> stops at the first receipt line it finds. You only need to know if there's <b>one</b>, not count all 26,000.</p>
+<p>In the route, between the 404 check and the delete: if <code>await service.hasBeenSold(coffee.id)</code>, answer <b>409</b> with <code>{"error": "Latte is on old receipts, so it can't be deleted. Mark it sold out instead."}</code> (use <code>coffee.name</code>, not the word Latte).</p>
+
+<div class="callout check">
+  <h4>Check it</h4>
+  <table>
+    <tr><th>Do</th><th>Expect</th><th>You see</th></tr>
+    <tr><td><b>Delete</b> on Latte, OK</td><td class="status">409</td><td>Above the list, in red: <b>Latte is on old receipts, so it can't be deleted. Mark it sold out instead.</b></td></tr>
+    <tr><td>Make a new coffee called <code>Test</code>, then <b>Delete</b> it</td><td class="status">204</td><td>Gone. Nobody ever bought it, so there's nothing to protect.</td></tr>
+    <tr><td>Postman <code>DELETE /api/coffees/13</code></td><td class="status">404</td><td>Cold Brew isn't a coffee, so as far as this route knows, it doesn't exist.</td></tr>
+  </table>
+</div>
+
+<p class="stuck">Stuck? <a href="#c9">Code C9: deleteCoffee, hasBeenSold and DELETE</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"What is a foreign key in Postgres, and why did DELETE FROM items WHERE id = 3 fail with 'violates foreign key constraint'? What are the options when you want to remove something that old records point at?"</p>
+  <p class="prompt">"Which status code fits each of these, and why: deleting a coffee that doesn't exist, deleting a coffee that's on old receipts, sending a price as text, and a bug in my own code."</p>
+  <p class="prompt">"A lot of real apps never really delete rows. They mark them as deleted or inactive instead. Why might a store want that?"</p>
+</div>
+
+<!-- ============================================================ STEP 11 -->
+<h2 id="step11"><span class="step">11</span>Search by name: <code>?search=</code></h2>
+
+<p>Type <code>lat</code> in the search box and press <b>Search</b>. The page shows <b>Asked: /api/coffees?search=lat</b>, and you still get every coffee. The page sent the search; the route isn't listening yet.</p>
+
+<h3>11a. Watch the SQL first</h3>
+<p>This step is about what your code sends to Postgres, so make it visible. In the provider, change the connect line to turn on Drizzle's logger:</p>
+<pre><code>// logger: true prints every query and its params in the terminal (Step 11).
+this.db = drizzle(neon(url), { logger: true });</code></pre>
+<p>Restart, refresh the list, and look at the terminal. Every query is now printed, with its values listed separately at the end:</p>
+<pre class="term"><code>Query: select "id", "category_id", "name", ... from "items" where "items"."category_id" = $1 order by "items"."id" -- params: [1]</code></pre>
+<p>See the <code>$1</code>? Drizzle never glues your values into the SQL text. It sends the SQL with numbered blanks, and the values separately, as <b>parameters</b>. Keep that in mind for 11d.</p>
+
+<h3>11b. The route reads the parameter</h3>
+<p>Everything after the <code>?</code> in an address is the <b>query string</b>: named values, joined with <code>&amp;</code>. In a route, read them like this (you saw it in week 11's "Going further"):</p>
+<pre><code>// ?search=lat -- text, and it can be missing.
+const query = new URL(request.url).searchParams;
+const search = query.get("search") ?? "";</code></pre>
+<p><code>query.get("search")</code> gives <code>"lat"</code>, or <code>null</code> if there's no <code>search</code> in the address. <code>?? ""</code> turns that <code>null</code> into an empty string. Pass <code>search</code> to <code>getCoffees(search)</code>. You can delete the Steps 11 and 12 <code>TODO</code> now.</p>
+
+<h3>11c. The service uses it</h3>
+<p>Give <code>getCoffees</code> a <code>search: string</code> input, add <code>ilike</code> to the <code>drizzle-orm</code> import, and add a second rule next to <code>isCoffee</code>:</p>
+<pre><code>.where(and(isCoffee, ilike(items.name, `%${search}%`)))</code></pre>
+<p>That's the SQL <code>name ILIKE '%lat%'</code>. <code>LIKE</code> matches a pattern, where <code>%</code> means "any characters, or none," so <code>%lat%</code> is "<code>lat</code> anywhere in the name." The <b>I</b> in <code>ILIKE</code> means it ignores capital letters. And an empty search, <code>%%</code>, matches every name, which is why "no search" still lists everything.</p>
+
+<h3>11d. Experiment</h3>
+<p>Try each of these, in the search box <b>or</b> typed straight into the browser's address bar. <b>Predict the result before you press Enter</b>, then read the <code>Query:</code> line in the terminal.</p>
+
+<div class="callout check">
+  <h4>Check it</h4>
+  <table>
+    <tr><th>Search for</th><th>You get</th><th>Why</th></tr>
+    <tr><td><code>latte</code></td><td>Latte, Gingerbread Latte</td><td>Not Chai Latte or Iced Latte: they're not coffees. Two rules, both in the <code>where</code>.</td></tr>
+    <tr><td><code>LATTE</code></td><td>The same two</td><td><code>ilike</code> ignores case. Try <code>like</code> instead of <code>ilike</code> in the service: now <code>LATTE</code> finds nothing. Put <code>ilike</code> back.</td></tr>
+    <tr><td><code>lat</code></td><td>Latte, Flat White, Gingerbread Latte</td><td>Did you predict Flat White? F-<b>lat</b>. "Anywhere in the name" means anywhere.</td></tr>
+    <tr><td><code>tea</code></td><td>Nothing</td><td>There are teas in the store. None of them are coffees.</td></tr>
+    <tr><td>(empty)</td><td>Every coffee</td><td>The terminal shows <code>params: [1, "%%"]</code>.</td></tr>
+    <tr><td><code>' OR 1=1 --</code></td><td>Nothing</td><td>See below.</td></tr>
+  </table>
+</div>
+
+<div class="callout">
+  <h4>The teaching point: parameters, not pasted text</h4>
+  <p><code>' OR 1=1 --</code> is the oldest attack on a database. If code built the SQL by pasting text together, the query would become <code>... WHERE name ILIKE '%' OR 1=1 --%'</code>: the quote ends the text early, <code>OR 1=1</code> is true for every row, and <code>--</code> turns the rest into a comment. On a login form, that's how people get in without a password. It's called <b>SQL injection</b>.</p>
+  <p>Look at your terminal:</p>
+<pre class="term"><code>... where ("items"."category_id" = $1 and "items"."name" ilike $2) ... -- params: [1, "%' OR 1=1 --%"]</code></pre>
+  <p>The SQL is exactly the same shape as for <code>latte</code>. The attack arrived as a <b>value</b> in <code>$2</code>, and Postgres went looking for a coffee with that odd name. There isn't one. Because every query goes through Drizzle, and every query lives in the service, there's no place in this app where someone's text gets pasted into SQL.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c10">Code C10: search, in the service and the route</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"What is SQL injection? Show me how "SELECT * FROM items WHERE name LIKE '%" + search + "%'" goes wrong when search is ' OR 1=1 --, and how a parameterized query with $1 stops it."</p>
+  <p class="prompt">"In a URL like /api/coffees?search=lat&amp;maxPrice=4, what's the query string? What does new URL(request.url).searchParams.get('search') give back when search is missing, and why is it null and not undefined?"</p>
+  <p class="prompt">"In SQL, what's the difference between LIKE and ILIKE, and what do % and _ mean inside the pattern?"</p>
+</div>
+
+<!-- ============================================================ STEP 12 -->
+<h2 id="step12"><span class="step">12</span>A second parameter: <code>?maxPrice=</code></h2>
+
+<p>The page has a second box, <b>Max price</b>, and sends it as <code>&amp;maxPrice=4</code>. This one is different from <code>search</code> in two ways: it has to be a <b>number</b>, and when it's missing there should be <b>no price rule at all</b> (not "a price of 0").</p>
+
+<h3>12a. The route</h3>
+<p>Under the <code>search</code> line, read <code>maxPrice</code>. If it's in the address, turn it into a number and check it, the week 11 way: <code>Number("abc")</code> is <code>NaN</code> ("not a number"), and a price of 0 or less makes no sense, so either one is a <b>400</b>. If it's not in the address, leave it <code>undefined</code>:</p>
+<pre><code>let maxPrice: number | undefined;
+const maxPriceText = query.get("maxPrice");
+if (maxPriceText !== null) {
+  maxPrice = Number(maxPriceText);
+  if (Number.isNaN(maxPrice) || maxPrice &lt;= 0) {
+    return Response.json({ error: "maxPrice must be a number above 0" }, { status: 400 });
+  }
+}</code></pre>
+<p>Then pass both: <code>getCoffees(search, maxPrice)</code>.</p>
+
+<h3>12b. The service</h3>
+<p>Give <code>getCoffees</code> a second input, <code>maxPrice?: number</code> (the <code>?</code> means it can be left out), and add <code>lte</code> ("less than or equal") to the <code>drizzle-orm</code> import. Then a third rule in the <code>and(...)</code>:</p>
+<pre><code>maxPrice === undefined ? undefined : lte(items.price, maxPrice)</code></pre>
+<p>Here's the trick: Drizzle's <code>and()</code> <b>skips</b> anything that's <code>undefined</code>. So with no <code>maxPrice</code>, that rule simply isn't part of the <code>where</code>. With one, it's <code>price &lt;= 4</code>.</p>
+
+<div class="callout check">
+  <h4>Check it: predict, then press Enter</h4>
+  <p>These assume the coffees from Steps 8&ndash;10: the original 8 (Gingerbread now $5.00) plus Cortado. Watch the <code>params:</code> in the terminal each time; count how many there are.</p>
+  <table>
+    <tr><th>Address</th><th>Expect</th><th>You get</th></tr>
+    <tr><td><code>/api/coffees?maxPrice=4</code></td><td class="status">200</td><td>Espresso, Americano, Latte, Cappuccino, Cortado. Latte is exactly $4.00, and <code>lte</code> includes it.</td></tr>
+    <tr><td><code>/api/coffees?search=latte&amp;maxPrice=4</code></td><td class="status">200</td><td>Latte only. Three rules, joined with <code>and</code>: <code>params: [1, "%latte%", 4]</code></td></tr>
+    <tr><td><code>/api/coffees?maxPrice=4.25</code></td><td class="status">200</td><td>The five, plus Flat White</td></tr>
+    <tr><td><code>/api/coffees?maxPrice=abc</code></td><td class="status">400</td><td><code>{"error": "maxPrice must be a number above 0"}</code>, and no <code>Query:</code> line. The route stopped it before the service was asked.</td></tr>
+    <tr><td><code>/api/coffees?maxPrice=0</code></td><td class="status">400</td><td>The same message</td></tr>
+    <tr><td><code>/api/coffees?maxprice=4</code></td><td class="status">200</td><td>Every coffee! Names in the query string are case-sensitive. <code>maxprice</code> isn't <code>maxPrice</code>, so the route never saw it, and unknown parameters are simply ignored.</td></tr>
+    <tr><td><code>/api/coffees?search=mocha&amp;search=latte</code></td><td class="status">200</td><td>Mocha. <code>get()</code> gives back the <b>first</b> one. (<code>getAll()</code> would give you both.)</td></tr>
+  </table>
+  <p>Then use the boxes on the page: <code>lat</code> and <code>4.5</code> gives Latte and Flat White, and the page shows the exact address it asked for.</p>
+</div>
+
+<p class="stuck">Stuck? <a href="#c11">Code C11: maxPrice, in the service and the route</a></p>
+
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"In TypeScript, what's the difference between a parameter written maxPrice?: number and one written maxPrice: number | undefined? When would I use each?"</p>
+  <p class="prompt">"Why does Number('abc') give NaN, and why can't I check for it with maxPrice === NaN? What does Number.isNaN do differently?"</p>
+  <p class="prompt">"Here's my getCoffees method: [paste it]. Without changing it, tell me the exact SQL WHERE clause and params it sends for: no search and no maxPrice; search 'lat' only; maxPrice 4 only; both."</p>
+</div>
+
+<!-- ============================================================ DONE -->
+<h2 id="done">What "done" looks like</h2>
+<ul>
+  <li>The list shows every coffee from your <code>store</code> database, with a <b>Sold out</b> tag where <code>is_available</code> is false, and nothing that isn't a coffee.</li>
+  <li><b>+ New coffee</b>, <b>Edit</b> and <b>Delete</b> all work, and what they change is still there after you restart the server.</li>
+  <li>Deleting a coffee that's on old receipts shows a 409 message that says what to do instead. Deleting one nobody has bought works.</li>
+  <li><code>?search=</code> and <code>?maxPrice=</code> work alone and together, and a bad <code>maxPrice</code> is a 400.</li>
+  <li><b>One</b> file connects (<code>providers/neon/neonDatabaseProvider.ts</code>). <b>One</b> file writes queries (<code>services/itemService.ts</code>). The route files import neither <code>drizzle-orm</code> nor the schema nor the provider, only the service.</li>
+  <li>The "is a coffee" rule is written <b>once</b>, and all five methods that touch <code>items</code> use it.</li>
+  <li><code>git status</code> doesn't list <code>.env.local</code>.</li>
+  <li><code>npm run build</code> finishes with no errors.</li>
+</ul>
+
+<!-- ============================================================ FURTHER -->
+<h2 id="further">Going further</h2>
+<p>Finished early? Each of these is a real hole or a real feature. Try to explain what's going on <b>before</b> you fix it, and keep the rule: checks on the request in the route, queries and store rules in the service.</p>
+<ol>
+  <li><b>The id that isn't a number.</b> Open <code>/api/coffees/abc</code>. Last week the same address on the pets API was a 404. Now it's a 500, and the terminal says <code>invalid input syntax for type integer: "NaN"</code>. Why did it change? Make it a 404 again, in the route, before the service is asked. Do all three verbs in that file need it?</li>
+  <li><b>A name that's taken.</b> Add a coffee called <code>Cortado</code> a second time. 500, and the terminal says <code>duplicate key value violates unique constraint "items_name_key"</code>. Now try a coffee called <code>Lemonade</code>. Why does that fail too, when there's no coffee called Lemonade? (Hint: Tuesday made <code>name</code> unique across every item, not just coffees.) Turn it into a 409 that says the name is taken, the way you did for delete.</li>
+  <li><b>A very expensive coffee.</b> Save a coffee with price <code>10000</code>. 500: <code>numeric field overflow</code>. Look at <code>price numeric(6,2)</code> in <code>db/0001_store.sql</code> and work out the biggest price it can hold. Then try <code>4.999</code> and read what Postgres saved. Add a check to the route so neither surprise reaches the database.</li>
+  <li><b>The safety net.</b> Week 11 Step 10 wrapped POST and PUT in an outer <code>try</code>/<code>catch</code> that answers <code>{"error": "Something went wrong on our side"}</code> and logs the real error with <code>console.error</code>. It said "next week, talking to a database" is where things really fail. Add it to every route that calls the service. Test it by breaking the password in <code>.env.local</code> and restarting. Then remove the line from <code>.env.local</code> completely and restart: whose error message do you see in the terminal now?</li>
+  <li><b>Wildcards in the search box.</b> Search for <code>%</code>, then <code>_</code>. Both give you every coffee. Why? (Hint: what do those two mean inside a <code>LIKE</code> pattern?) Is that a security hole, or just a surprise? Ask your Claude how to make them match the real characters.</li>
+  <li><b>Your own parameter.</b> Add <code>?sort=price</code> that orders the list cheapest first. Drizzle's <code>asc()</code> and <code>desc()</code> go inside <code>.orderBy(...)</code>. What should the route do with <code>?sort=banana</code>? Then add a <b>Sort by price</b> box to the page and send it. (Yes, this one changes the page.)</li>
+</ol>
+
+<!-- ============================================================ BITE -->
+<h2 id="bite">Things that will bite you</h2>
+<ul>
+  <li><b>The wrong database.</b> Neon's Connect box starts on <code>neondb</code>. The string connects fine, so the pull says <code>1 tables fetched</code> or <code>0</code>, and a route says <code>relation "items" does not exist</code>. Check the end of the string first.</li>
+  <li><b>After a wrong pull, delete <code>drizzle/</code>.</b> Pulling again rewrites <code>schema.ts</code>, but leaves the first pull's <code>0000_...sql</code> and <code>meta/</code> behind, still describing the wrong database.</li>
+  <li><b>Pulling again erases your edit.</b> <code>mode: "number"</code> is gone, and the page crashes with <code>toFixed is not a function</code>.</li>
+  <li><b>Restart after changing <code>.env.local</code>.</b> Next only reads it when it starts. drizzle-kit reads it every time you run it.</li>
+  <li><b>The pull needs Node 22 or newer.</b> Check with <code>node --version</code>.</li>
+  <li><b>Counting <code>../</code>.</b> Three from <code>app/api/coffees/route.ts</code>, four from <code>app/api/coffees/[id]/route.ts</code>, one from <code>services/itemService.ts</code>. A red underline on the import line is the tell; the error says <code>Module not found</code>.</li>
+  <li><b>A forgotten <code>await</code></b> sends <code>{}</code>, and the list says "No coffees found." with no error anywhere.</li>
+  <li><b>A 500 with no message on the page</b> means something threw. The terminal has the reason, down to the line, usually with a <code>[cause]:</code> from Postgres. Read it before you change anything.</li>
+  <li><b>Your changes are real now.</b> Every create, edit and delete stays in your database, and the expected results in later steps assume you did the earlier ones. If your store gets into a strange state, run <code>db/0001_store.sql</code> again in the SQL Editor on <code>store</code>; everything goes back to the way it started.</li>
+  <li><b>Postman on the web can't reach <code>localhost</code>.</b> Use the desktop app. Body type <b>raw</b>, <b>JSON</b>, and <code>"price": 3.25</code> (a number), not <code>"3.25"</code> (text).</li>
+  <li><b>Claude says Prisma, <code>pg</code>, or puts the query in the route.</b> Remind it: Drizzle on neon-http, every query in the service.</li>
+  <li><b>Port 3000 taken?</b> Next picks 3001 and says so in the terminal. Use whatever it says, or stop the other <code>npm run dev</code>.</li>
+</ul>
+
+<!-- ============================================================ CODE -->
+<h2 id="code" class="appendix-start">Code reference</h2>
+<p>The code at the end of each step. Try the step first; come here when you're stuck or want to compare. Each block says which file it goes in and links back to its step. C12&ndash;C15 are the four finished files, complete.</p>
+
+<h3 id="c1">C1 &middot; The config and the script</h3>
+<p class="back"><a href="#step3">&uarr; back to Step 3</a></p>
+<p class="file">drizzle.config.ts</p>
+<pre><code>// Settings for drizzle-kit, the command-line half of Drizzle.
+// Next reads .env.local by itself. drizzle-kit doesn't, so dotenv loads it here.
+import { defineConfig } from "drizzle-kit";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
+
+export default defineConfig({
+  dialect: "postgresql",             // which kind of database
+  schema: "./drizzle/schema.ts",     // where our tables are described
+  out: "./drizzle",                  // where drizzle-kit writes what it generates
+  dbCredentials: { url: process.env.NEON_DATABASE_URL || "" },
+});</code></pre>
+<p class="file">package.json (the "scripts" part)</p>
+<pre><code>"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "db:pull": "drizzle-kit pull"
+},</code></pre>
+
+<h3 id="c2">C2 &middot; The items table after the edit</h3>
+<p class="back"><a href="#step4">&uarr; back to Step 4</a></p>
+<p class="file">drizzle/schema.ts (only the items table; the pull wrote all ten)</p>
+<pre><code>export const items = pgTable("items", {
+	id: serial().primaryKey().notNull(),
+	categoryId: integer("category_id").notNull(),
+	name: text().notNull(),
+	description: text(),
+	// Postgres sends numeric back as text ("2.50") so it can't lose a penny.
+	// mode: "number" tells Drizzle to turn it into a JavaScript number for us.
+	price: numeric({ precision: 6, scale: 2, mode: "number" }).notNull(),
+	isAvailable: boolean("is_available").default(true).notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) =&gt; [
+	foreignKey({
+			columns: [table.categoryId],
+			foreignColumns: [categories.id],
+			name: "items_category_id_fkey"
+		}),
+	unique("items_name_key").on(table.name),
+	check("items_price_check", sql`price &gt;= (0)::numeric`),
+]);</code></pre>
+
+<h3 id="c3">C3 &middot; The Neon provider</h3>
+<p class="back"><a href="#step5">&uarr; back to Step 5</a></p>
+<p class="file">providers/neon/neonDatabaseProvider.ts</p>
+<pre><code>// The ONE file that knows how to reach the database.
+// A provider wraps something outside our app: here, Neon.
+import { neon } from "@neondatabase/serverless";
+import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
+
+export class NeonDatabaseProvider {
+  // One copy for the whole app, made the first time somebody asks.
+  private static instance: NeonDatabaseProvider;
+  private db: NeonHttpDatabase | undefined;
+
+  public static getInstance(): NeonDatabaseProvider {
+    if (!NeonDatabaseProvider.instance) {
+      NeonDatabaseProvider.instance = new NeonDatabaseProvider();
+    }
+    return NeonDatabaseProvider.instance;
+  }
+
+  public getDb(): NeonHttpDatabase {
+    if (!this.db) {
+      // If the secret is missing, say so in plain words here,
+      // instead of failing somewhere weird later.
+      const url = process.env.NEON_DATABASE_URL;
+      if (!url) {
+        throw new Error(
+          "NEON_DATABASE_URL is not set. Copy .env.example to .env.local and fill it in."
+        );
+      }
+      this.db = drizzle(neon(url));
+    }
+    return this.db;
+  }
+}</code></pre>
+
+<h3 id="c4">C4 &middot; The first service</h3>
+<p class="back"><a href="#step6">&uarr; back to Step 6</a></p>
+<p class="file">services/itemService.ts</p>
+<pre><code>// The ONE file that knows how to ask the database about items.
+// Routes call these methods. Routes never write a query themselves.
+import { eq } from "drizzle-orm";
+import { NeonDatabaseProvider } from "../providers/neon/neonDatabaseProvider";
+import { items } from "../drizzle/schema";
+
+// Coffee is category 1 in store.sql. This app only ever works on coffees,
+// so every query below uses this rule, written once.
+const coffeeCategoryId = 1;
+const isCoffee = eq(items.categoryId, coffeeCategoryId);
+
+export class ItemService {
+  private static instance: ItemService;
+
+  public static getInstance(): ItemService {
+    if (!ItemService.instance) {
+      ItemService.instance = new ItemService();
+    }
+    return ItemService.instance;
+  }
+
+  private getDb() {
+    return NeonDatabaseProvider.getInstance().getDb();
+  }
+
+  public async getCoffees() {
+    return this.getDb().select().from(items).where(isCoffee).orderBy(items.id);
+  }
+}</code></pre>
+
+<h3 id="c5">C5 &middot; The list route calling it</h3>
+<p class="back"><a href="#step6">&uarr; back to Step 6</a></p>
+<p class="file">app/api/coffees/route.ts (the top of the file; POST is unchanged until Step 8)</p>
+<pre><code>// /api/coffees -- every coffee, and adding a new one.
+// No connection, no query, no import from drizzle. Check the request, ask
+// the service, pick the status code.
+import { ItemService } from "../../../services/itemService";
+
+export async function GET(request: Request) {
+  // TODO (Steps 11 and 12): read ?search= and ?maxPrice= from the address.
+  const coffees = await ItemService.getInstance().getCoffees();
+  return Response.json(coffees);
+}</code></pre>
+
+<h3 id="c6">C6 &middot; getCoffee and the one-coffee route</h3>
+<p class="back"><a href="#step7">&uarr; back to Step 7</a></p>
+<p class="file">services/itemService.ts (the import, and a new method inside the class)</p>
+<pre><code>import { and, eq } from "drizzle-orm";
+
+  // Gives back undefined when there's no such coffee.
+  public async getCoffee(id: number) {
+    const [coffee] = await this.getDb()
+      .select()
+      .from(items)
+      .where(and(eq(items.id, id), isCoffee));
+    return coffee;
+  }</code></pre>
+<p class="file">app/api/coffees/[id]/route.ts (the import, and GET)</p>
+<pre><code>import { ItemService } from "../../../../services/itemService";
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+  const coffee = await ItemService.getInstance().getCoffee(Number(id));
+  if (!coffee) {
+    return Response.json({ error: `No coffee with id ${id}` }, { status: 404 });
+  }
+  return Response.json(coffee);
+}</code></pre>
+
+<h3 id="c7">C7 &middot; CoffeeInput, createCoffee and POST</h3>
+<p class="back"><a href="#step8">&uarr; back to Step 8</a></p>
+<p class="file">services/itemService.ts (the type under isCoffee, and a new method inside the class)</p>
+<pre><code>// What a route hands over to add or change a coffee. The route checks it first.
+export type CoffeeInput = {
+  name: string;
+  description: string | null;
+  price: number;
+  isAvailable: boolean;
+};
+
+  // .returning() hands back the row Postgres saved, new id included.
+  // categoryId is added here, so a new coffee is always a coffee.
+  public async createCoffee(input: CoffeeInput) {
+    const [coffee] = await this.getDb()
+      .insert(items)
+      .values({ ...input, categoryId: coffeeCategoryId })
+      .returning();
+    return coffee;
+  }</code></pre>
+<p class="file">app/api/coffees/route.ts (POST)</p>
+<pre><code>export async function POST(request: Request) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "The body must be JSON" }, { status: 400 });
+  }
+
+  if (body === null || typeof body !== "object") {
+    return Response.json(
+      { error: "The body must be a JSON object with name, description and price" },
+      { status: 400 }
+    );
+  }
+  if (typeof body.name !== "string" || body.name === "") {
+    return Response.json({ error: "name is required" }, { status: 400 });
+  }
+  // description is optional: leave it out, or send "", and the coffee has none.
+  if (body.description !== undefined &amp;&amp; typeof body.description !== "string") {
+    return Response.json({ error: "description must be text" }, { status: 400 });
+  }
+  if (typeof body.price !== "number" || body.price &lt;= 0) {
+    return Response.json({ error: "price must be a number above 0" }, { status: 400 });
+  }
+
+  const coffee = await ItemService.getInstance().createCoffee({
+    name: body.name,
+    description: body.description || null, // no description is NULL, like store.sql
+    price: body.price,
+    isAvailable: true, // a new coffee starts on sale
+  });
+  return Response.json(coffee, { status: 201 });
+}</code></pre>
+
+<h3 id="c8">C8 &middot; updateCoffee and PUT</h3>
+<p class="back"><a href="#step9">&uarr; back to Step 9</a></p>
+<p class="file">services/itemService.ts (a new method inside the class)</p>
+<pre><code>  // Gives back undefined when there's no such coffee.
+  public async updateCoffee(id: number, input: CoffeeInput) {
+    const [coffee] = await this.getDb()
+      .update(items)
+      .set(input)
+      .where(and(eq(items.id, id), isCoffee))
+      .returning();
+    return coffee;
+  }</code></pre>
+<p class="file">app/api/coffees/[id]/route.ts (PUT)</p>
+<pre><code>export async function PUT(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "The body must be JSON" }, { status: 400 });
+  }
+
+  // PUT replaces the whole coffee, so every field has to be there.
+  if (body === null || typeof body !== "object") {
+    return Response.json(
+      { error: "The body must be a JSON object with name, description, price and isAvailable" },
+      { status: 400 }
+    );
+  }
+  if (typeof body.name !== "string" || body.name === "") {
+    return Response.json({ error: "name is required" }, { status: 400 });
+  }
+  if (typeof body.description !== "string") {
+    return Response.json({ error: "description must be text (send \"\" for none)" }, { status: 400 });
+  }
+  if (typeof body.price !== "number" || body.price &lt;= 0) {
+    return Response.json({ error: "price must be a number above 0" }, { status: 400 });
+  }
+  if (typeof body.isAvailable !== "boolean") {
+    return Response.json({ error: "isAvailable must be true or false" }, { status: 400 });
+  }
+
+  const coffee = await ItemService.getInstance().updateCoffee(Number(id), {
+    name: body.name,
+    description: body.description || null, // no description is NULL, like store.sql
+    price: body.price,
+    isAvailable: body.isAvailable,
+  });
+  if (!coffee) {
+    return Response.json({ error: `No coffee with id ${id}` }, { status: 404 });
+  }
+  return Response.json(coffee);
+}</code></pre>
+
+<h3 id="c9">C9 &middot; deleteCoffee, hasBeenSold and DELETE</h3>
+<p class="back"><a href="#step10">&uarr; back to Step 10</a></p>
+<p class="file">services/itemService.ts (the schema import, and two new methods inside the class)</p>
+<pre><code>import { items, receiptItems } from "../drizzle/schema";
+
+  public async deleteCoffee(id: number) {
+    await this.getDb().delete(items).where(and(eq(items.id, id), isCoffee));
+  }
+
+  // Tuesday's foreign key: receipt_items points at items, so Postgres refuses
+  // to delete a coffee that's on an old receipt. Asking first lets the route
+  // say why, instead of crashing.
+  public async hasBeenSold(id: number) {
+    const [line] = await this.getDb()
+      .select()
+      .from(receiptItems)
+      .where(eq(receiptItems.itemId, id))
+      .limit(1);
+    return line !== undefined;
+  }</code></pre>
+<p class="file">app/api/coffees/[id]/route.ts (DELETE, with 10b's 409)</p>
+<pre><code>export async function DELETE(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+  const service = ItemService.getInstance();
+
+  const coffee = await service.getCoffee(Number(id));
+  if (!coffee) {
+    return Response.json({ error: `No coffee with id ${id}` }, { status: 404 });
+  }
+  // 409 Conflict: the request is fine, but the data says no.
+  if (await service.hasBeenSold(coffee.id)) {
+    return Response.json(
+      { error: `${coffee.name} is on old receipts, so it can't be deleted. Mark it sold out instead.` },
+      { status: 409 }
+    );
+  }
+
+  await service.deleteCoffee(coffee.id);
+  return new Response(null, { status: 204 });
+}</code></pre>
+
+<h3 id="c10">C10 &middot; Search, in the service and the route</h3>
+<p class="back"><a href="#step11">&uarr; back to Step 11</a></p>
+<p class="file">providers/neon/neonDatabaseProvider.ts (the connect line)</p>
+<pre><code>      // logger: true prints every query and its params in the terminal (Step 11).
+      this.db = drizzle(neon(url), { logger: true });</code></pre>
+<p class="file">services/itemService.ts (the import, and getCoffees replaced)</p>
+<pre><code>import { and, eq, ilike } from "drizzle-orm";
+
+  public async getCoffees(search: string) {
+    return this.getDb()
+      .select()
+      .from(items)
+      .where(and(isCoffee, ilike(items.name, `%${search}%`)))
+      .orderBy(items.id);
+  }</code></pre>
+<p class="file">app/api/coffees/route.ts (GET)</p>
+<pre><code>export async function GET(request: Request) {
+  // ?search=lat -- text, and it can be missing.
+  const query = new URL(request.url).searchParams;
+  const search = query.get("search") ?? "";
+
+  const coffees = await ItemService.getInstance().getCoffees(search);
+  return Response.json(coffees);
+}</code></pre>
+
+<h3 id="c11">C11 &middot; maxPrice, in the service and the route</h3>
+<p class="back"><a href="#step12">&uarr; back to Step 12</a></p>
+<p class="file">services/itemService.ts (the import, and getCoffees replaced)</p>
+<pre><code>import { and, eq, ilike, lte } from "drizzle-orm";
+
+  // search "" matches every name. maxPrice is optional: and() skips anything
+  // that's undefined, so with no maxPrice there's simply no price rule.
+  public async getCoffees(search: string, maxPrice?: number) {
+    return this.getDb()
+      .select()
+      .from(items)
+      .where(
+        and(
+          isCoffee,
+          ilike(items.name, `%${search}%`),
+          maxPrice === undefined ? undefined : lte(items.price, maxPrice)
+        )
+      )
+      .orderBy(items.id);
+  }</code></pre>
+<p class="file">app/api/coffees/route.ts (GET)</p>
+<pre><code>export async function GET(request: Request) {
+  // ?search=lat&amp;maxPrice=4 -- both are text, and both can be missing.
+  const query = new URL(request.url).searchParams;
+  const search = query.get("search") ?? "";
+
+  let maxPrice: number | undefined;
+  const maxPriceText = query.get("maxPrice");
+  if (maxPriceText !== null) {
+    maxPrice = Number(maxPriceText);
+    if (Number.isNaN(maxPrice) || maxPrice &lt;= 0) {
+      return Response.json({ error: "maxPrice must be a number above 0" }, { status: 400 });
+    }
+  }
+
+  const coffees = await ItemService.getInstance().getCoffees(search, maxPrice);
+  return Response.json(coffees);
+}</code></pre>
+
+<h3 id="c12">C12 &middot; The finished service</h3>
+<p class="back"><a href="#step12">&uarr; back to Step 12</a></p>
+<p class="file">services/itemService.ts</p>
+<pre><code>// The ONE file that knows how to ask the database about items.
+// Routes call these methods. Routes never write a query themselves.
+import { and, eq, ilike, lte } from "drizzle-orm";
+import { NeonDatabaseProvider } from "../providers/neon/neonDatabaseProvider";
+import { items, receiptItems } from "../drizzle/schema";
+
+// Coffee is category 1 in store.sql. This app only ever works on coffees,
+// so every query below uses this rule, written once.
+const coffeeCategoryId = 1;
+const isCoffee = eq(items.categoryId, coffeeCategoryId);
+
+// What a route hands over to add or change a coffee. The route checks it first.
+export type CoffeeInput = {
+  name: string;
+  description: string | null;
+  price: number;
+  isAvailable: boolean;
+};
+
+export class ItemService {
+  private static instance: ItemService;
+
+  public static getInstance(): ItemService {
+    if (!ItemService.instance) {
+      ItemService.instance = new ItemService();
+    }
+    return ItemService.instance;
+  }
+
+  private getDb() {
+    return NeonDatabaseProvider.getInstance().getDb();
+  }
+
+  // search "" matches every name. maxPrice is optional: and() skips anything
+  // that's undefined, so with no maxPrice there's simply no price rule.
+  public async getCoffees(search: string, maxPrice?: number) {
+    return this.getDb()
+      .select()
+      .from(items)
+      .where(
+        and(
+          isCoffee,
+          ilike(items.name, `%${search}%`),
+          maxPrice === undefined ? undefined : lte(items.price, maxPrice)
+        )
+      )
+      .orderBy(items.id);
+  }
+
+  // Gives back undefined when there's no such coffee.
+  public async getCoffee(id: number) {
+    const [coffee] = await this.getDb()
+      .select()
+      .from(items)
+      .where(and(eq(items.id, id), isCoffee));
+    return coffee;
+  }
+
+  // .returning() hands back the row Postgres saved, new id included.
+  // categoryId is added here, so a new coffee is always a coffee.
+  public async createCoffee(input: CoffeeInput) {
+    const [coffee] = await this.getDb()
+      .insert(items)
+      .values({ ...input, categoryId: coffeeCategoryId })
+      .returning();
+    return coffee;
+  }
+
+  // Gives back undefined when there's no such coffee.
+  public async updateCoffee(id: number, input: CoffeeInput) {
+    const [coffee] = await this.getDb()
+      .update(items)
+      .set(input)
+      .where(and(eq(items.id, id), isCoffee))
+      .returning();
+    return coffee;
+  }
+
+  public async deleteCoffee(id: number) {
+    await this.getDb().delete(items).where(and(eq(items.id, id), isCoffee));
+  }
+
+  // Tuesday's foreign key: receipt_items points at items, so Postgres refuses
+  // to delete a coffee that's on an old receipt. Asking first lets the route
+  // say why, instead of crashing.
+  public async hasBeenSold(id: number) {
+    const [line] = await this.getDb()
+      .select()
+      .from(receiptItems)
+      .where(eq(receiptItems.itemId, id))
+      .limit(1);
+    return line !== undefined;
+  }
+}</code></pre>
+
+<h3 id="c13">C13 &middot; The finished list route</h3>
+<p class="back"><a href="#step12">&uarr; back to Step 12</a></p>
+<p class="file">app/api/coffees/route.ts</p>
+<pre><code>// /api/coffees -- every coffee, and adding a new one.
+// No connection, no query, no import from drizzle. Check the request, ask
+// the service, pick the status code.
+import { ItemService } from "../../../services/itemService";
+
+export async function GET(request: Request) {
+  // ?search=lat&amp;maxPrice=4 -- both are text, and both can be missing.
+  const query = new URL(request.url).searchParams;
+  const search = query.get("search") ?? "";
+
+  let maxPrice: number | undefined;
+  const maxPriceText = query.get("maxPrice");
+  if (maxPriceText !== null) {
+    maxPrice = Number(maxPriceText);
+    if (Number.isNaN(maxPrice) || maxPrice &lt;= 0) {
+      return Response.json({ error: "maxPrice must be a number above 0" }, { status: 400 });
+    }
+  }
+
+  const coffees = await ItemService.getInstance().getCoffees(search, maxPrice);
+  return Response.json(coffees);
+}
+
+export async function POST(request: Request) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "The body must be JSON" }, { status: 400 });
+  }
+
+  if (body === null || typeof body !== "object") {
+    return Response.json(
+      { error: "The body must be a JSON object with name, description and price" },
+      { status: 400 }
+    );
+  }
+  if (typeof body.name !== "string" || body.name === "") {
+    return Response.json({ error: "name is required" }, { status: 400 });
+  }
+  // description is optional: leave it out, or send "", and the coffee has none.
+  if (body.description !== undefined &amp;&amp; typeof body.description !== "string") {
+    return Response.json({ error: "description must be text" }, { status: 400 });
+  }
+  if (typeof body.price !== "number" || body.price &lt;= 0) {
+    return Response.json({ error: "price must be a number above 0" }, { status: 400 });
+  }
+
+  const coffee = await ItemService.getInstance().createCoffee({
+    name: body.name,
+    description: body.description || null, // no description is NULL, like store.sql
+    price: body.price,
+    isAvailable: true, // a new coffee starts on sale
+  });
+  return Response.json(coffee, { status: 201 });
+}</code></pre>
+
+<h3 id="c14">C14 &middot; The finished one-coffee route</h3>
+<p class="back"><a href="#step10">&uarr; back to Step 10</a></p>
+<p class="file">app/api/coffees/[id]/route.ts</p>
+<pre><code>// /api/coffees/3 -- one coffee: read it, change it, delete it.
+// Same shape as the list route: ask the service, then decide the status code.
+import { ItemService } from "../../../../services/itemService";
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+  const coffee = await ItemService.getInstance().getCoffee(Number(id));
+  if (!coffee) {
+    return Response.json({ error: `No coffee with id ${id}` }, { status: 404 });
+  }
+  return Response.json(coffee);
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "The body must be JSON" }, { status: 400 });
+  }
+
+  // PUT replaces the whole coffee, so every field has to be there.
+  if (body === null || typeof body !== "object") {
+    return Response.json(
+      { error: "The body must be a JSON object with name, description, price and isAvailable" },
+      { status: 400 }
+    );
+  }
+  if (typeof body.name !== "string" || body.name === "") {
+    return Response.json({ error: "name is required" }, { status: 400 });
+  }
+  if (typeof body.description !== "string") {
+    return Response.json({ error: "description must be text (send \"\" for none)" }, { status: 400 });
+  }
+  if (typeof body.price !== "number" || body.price &lt;= 0) {
+    return Response.json({ error: "price must be a number above 0" }, { status: 400 });
+  }
+  if (typeof body.isAvailable !== "boolean") {
+    return Response.json({ error: "isAvailable must be true or false" }, { status: 400 });
+  }
+
+  const coffee = await ItemService.getInstance().updateCoffee(Number(id), {
+    name: body.name,
+    description: body.description || null, // no description is NULL, like store.sql
+    price: body.price,
+    isAvailable: body.isAvailable,
+  });
+  if (!coffee) {
+    return Response.json({ error: `No coffee with id ${id}` }, { status: 404 });
+  }
+  return Response.json(coffee);
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  const { id } = await params;
+  const service = ItemService.getInstance();
+
+  const coffee = await service.getCoffee(Number(id));
+  if (!coffee) {
+    return Response.json({ error: `No coffee with id ${id}` }, { status: 404 });
+  }
+  // 409 Conflict: the request is fine, but the data says no.
+  if (await service.hasBeenSold(coffee.id)) {
+    return Response.json(
+      { error: `${coffee.name} is on old receipts, so it can't be deleted. Mark it sold out instead.` },
+      { status: 409 }
+    );
+  }
+
+  await service.deleteCoffee(coffee.id);
+  return new Response(null, { status: 204 });
+}</code></pre>
+
+<h3 id="c15">C15 &middot; The finished provider</h3>
+<p class="back"><a href="#step11">&uarr; back to Step 11</a></p>
+<p class="file">providers/neon/neonDatabaseProvider.ts</p>
+<pre><code>// The ONE file that knows how to reach the database.
+// A provider wraps something outside our app: here, Neon.
+import { neon } from "@neondatabase/serverless";
+import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
+
+export class NeonDatabaseProvider {
+  // One copy for the whole app, made the first time somebody asks.
+  private static instance: NeonDatabaseProvider;
+  private db: NeonHttpDatabase | undefined;
+
+  public static getInstance(): NeonDatabaseProvider {
+    if (!NeonDatabaseProvider.instance) {
+      NeonDatabaseProvider.instance = new NeonDatabaseProvider();
+    }
+    return NeonDatabaseProvider.instance;
+  }
+
+  public getDb(): NeonHttpDatabase {
+    if (!this.db) {
+      // If the secret is missing, say so in plain words here,
+      // instead of failing somewhere weird later.
+      const url = process.env.NEON_DATABASE_URL;
+      if (!url) {
+        throw new Error(
+          "NEON_DATABASE_URL is not set. Copy .env.example to .env.local and fill it in."
+        );
+      }
+      // logger: true prints every query and its params in the terminal (Step 11).
+      this.db = drizzle(neon(url), { logger: true });
+    }
+    return this.db;
+  }
+}</code></pre>
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 12 lab.</p>
+</footer>
+
+</body>
+</html>
