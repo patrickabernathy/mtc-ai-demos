@@ -325,8 +325,9 @@ export default defineConfig({
 <pre><code>price: numeric({ precision: 6, scale: 2, mode: "number" }).notNull(),</code></pre>
 
 <div class="callout warn">
-  <h4>From now on, the file is yours</h4>
-  <p>Pulling again rewrites <code>schema.ts</code> from scratch, and your edit is gone. Pull once to get started; after that, when the database changes, change the file by hand.</p>
+  <h4>Every pull undoes this edit</h4>
+  <p>Pulling again rewrites <code>schema.ts</code> from scratch, and <code>mode: "number"</code> is gone. Keep pulling anyway: when you add tables or run a new SQL file from <code>db/</code>, a pull is the easy way to get <code>schema.ts</code> to match the database again. Just redo your edits after every pull.</p>
+  <p><b>Hint:</b> don't trust yourself to remember. Keep a short <b>After every <code>npm run db:pull</code></b> list in your README, one line per edit. This lab's <code>README.md</code> has one; look at it.</p>
 </div>
 
 <p class="stuck">Stuck? <a href="#c2">Code C2: the items table after the edit</a>. If your pull won't run at all, ask your instructor for <code>week12/demo1/states/02-pulled-schema/schema.ts</code>: the same database, so the same file.</p>
@@ -811,7 +812,7 @@ if (maxPriceText !== null) {
 <ul>
   <li><b>The wrong database.</b> Neon's Connect box starts on <code>neondb</code>. The string connects fine, so the pull says <code>1 tables fetched</code> or <code>0</code>, and a route says <code>relation "items" does not exist</code>. Check the end of the string first.</li>
   <li><b>After a wrong pull, delete <code>drizzle/</code>.</b> Pulling again rewrites <code>schema.ts</code>, but leaves the first pull's <code>0000_...sql</code> and <code>meta/</code> behind, still describing the wrong database.</li>
-  <li><b>Pulling again erases your edit.</b> <code>mode: "number"</code> is gone, and the page crashes with <code>toFixed is not a function</code>.</li>
+  <li><b>Every pull erases your edit.</b> <code>mode: "number"</code> is gone, and the page crashes with <code>toFixed is not a function</code>. Redo it after every pull; the list in <code>README.md</code> is there so you don't have to remember.</li>
   <li><b>Restart after changing <code>.env.local</code>.</b> Next only reads it when it starts. drizzle-kit reads it every time you run it.</li>
   <li><b>The pull needs Node 22 or newer.</b> Check with <code>node --version</code>.</li>
   <li><b>Counting <code>../</code>.</b> Three from <code>app/api/coffees/route.ts</code>, four from <code>app/api/coffees/[id]/route.ts</code>, one from <code>services/itemService.ts</code>. A red underline on the import line is the tell; the error says <code>Module not found</code>.</li>
