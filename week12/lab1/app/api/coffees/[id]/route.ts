@@ -1,14 +1,17 @@
 // /api/coffees/3 -- one coffee: read it, change it, delete it.
-// Checking the request is already done, the week 11 way. What's missing is
-// the database: each TODO is a step in instructions.pdf.
+// Same shape as the list route: ask the service, then decide the status code.
+import { ItemService } from "../../../../services/itemService";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  // TODO (Step 7): ask the service for coffee number id. None? Answer 404.
-  return Response.json({ error: `Not built yet. That's Step 7. (You asked for ${id}.)` }, { status: 501 });
+  const coffee = await ItemService.getInstance().getCoffee(Number(id));
+  if (!coffee) {
+    return Response.json({ error: `No coffee with id ${id}` }, { status: 404 });
+  }
+  return Response.json(coffee);
 }
 
 export async function PUT(
@@ -44,8 +47,16 @@ export async function PUT(
     return Response.json({ error: "isAvailable must be true or false" }, { status: 400 });
   }
 
-  // TODO (Step 9): change coffee number id through the service. None? Answer 404.
-  return Response.json({ error: `Not built yet. That's Step 9. (You asked for ${id}.)` }, { status: 501 });
+  const coffee = await ItemService.getInstance().updateCoffee(Number(id), {
+    name: body.name,
+    description: body.description || null, // no description is NULL, like store.sql
+    price: body.price,
+    isAvailable: body.isAvailable,
+  });
+  if (!coffee) {
+    return Response.json({ error: `No coffee with id ${id}` }, { status: 404 });
+  }
+  return Response.json(coffee);
 }
 
 export async function DELETE(
@@ -53,6 +64,20 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  // TODO (Step 10): delete coffee number id through the service, then answer 204.
-  return Response.json({ error: `Not built yet. That's Step 10. (You asked for ${id}.)` }, { status: 501 });
+  const service = ItemService.getInstance();
+
+  const coffee = await service.getCoffee(Number(id));
+  if (!coffee) {
+    return Response.json({ error: `No coffee with id ${id}` }, { status: 404 });
+  }
+  // 409 Conflict: the request is fine, but the data says no.
+  if (await service.hasBeenSold(coffee.id)) {
+    return Response.json(
+      { error: `${coffee.name} is on old receipts, so it can't be deleted. Mark it sold out instead.` },
+      { status: 409 }
+    );
+  }
+
+  await service.deleteCoffee(coffee.id);
+  return new Response(null, { status: 204 });
 }

@@ -1,11 +1,24 @@
 // /api/coffees -- every coffee, and adding a new one.
-// Checking the request is already done, the week 11 way. What's missing is
-// the database: each TODO is a step in instructions.pdf.
+// No connection, no query, no import from drizzle. Check the request, ask
+// the service, pick the status code.
+import { ItemService } from "../../../services/itemService";
 
 export async function GET(request: Request) {
-  // TODO (Step 6): ask the service for the coffees.
-  // TODO (Steps 11 and 12): read ?search= and ?maxPrice= from the address.
-  return Response.json([]);
+  // ?search=lat&maxPrice=4 -- both are text, and both can be missing.
+  const query = new URL(request.url).searchParams;
+  const search = query.get("search") ?? "";
+
+  let maxPrice: number | undefined;
+  const maxPriceText = query.get("maxPrice");
+  if (maxPriceText !== null) {
+    maxPrice = Number(maxPriceText);
+    if (Number.isNaN(maxPrice) || maxPrice <= 0) {
+      return Response.json({ error: "maxPrice must be a number above 0" }, { status: 400 });
+    }
+  }
+
+  const coffees = await ItemService.getInstance().getCoffees(search, maxPrice);
+  return Response.json(coffees);
 }
 
 export async function POST(request: Request) {
@@ -33,6 +46,11 @@ export async function POST(request: Request) {
     return Response.json({ error: "price must be a number above 0" }, { status: 400 });
   }
 
-  // TODO (Step 8): save it through the service, then answer 201 with the new coffee.
-  return Response.json({ error: "Not built yet. That's Step 8." }, { status: 501 });
+  const coffee = await ItemService.getInstance().createCoffee({
+    name: body.name,
+    description: body.description || null, // no description is NULL, like store.sql
+    price: body.price,
+    isAvailable: true, // a new coffee starts on sale
+  });
+  return Response.json(coffee, { status: 201 });
 }

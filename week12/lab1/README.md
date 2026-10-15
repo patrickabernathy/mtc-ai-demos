@@ -4,6 +4,8 @@ One lab that builds on itself, covering this week's lecture in one Next 16 app. 
 
 Last week the data was an array, so a restart wiped every change. Tonight every change lands in Postgres, so it's still there tomorrow.
 
+**This is the `answers` branch: the finished lab.** The steps under "What to do" are the exercise as it was set on `main`; "The finished version" below shows where it ends up. To run it you still need your own `.env.local` (Step 2) and `npm install`.
+
 ## Before you start
 
 You need the Corner Store database from Tuesday: a database called `store` in your Neon project, with `store.sql` run in it. The same file is in this folder as `db/0001_store.sql`. Running it again puts every table back the way it started (Neon → SQL Editor → pick `store` → paste the file → Run).
@@ -53,6 +55,32 @@ Every 501 says which step builds it.
 | 10 | `DELETE /api/coffees/[id]` | Tuesday's foreign key says no; a 409 that says why |
 | 11 | `?search=` | Query parameters, `ilike`, and watching the SQL and its params |
 | 12 | `?maxPrice=` | A second, optional parameter; `and()` skips what's missing |
+
+## The finished version
+
+| File | What it does |
+|---|---|
+| `drizzle.config.ts` | Tells drizzle-kit where the schema lives and loads `.env.local` with dotenv. `npm run db:pull` uses it. |
+| `drizzle/schema.ts` | All ten tables, written by `npm run db:pull`, with one edit: `items.price` uses `mode: "number"`. `relations.ts`, the `0000_*.sql` file and `meta/` came from the same pull. |
+| `providers/neon/neonDatabaseProvider.ts` | `NeonDatabaseProvider`. The only file that reads `NEON_DATABASE_URL` and connects, with Drizzle's logger on so every query and its params print in the terminal. |
+| `services/itemService.ts` | `ItemService`. Every query: `getCoffees(search, maxPrice)`, `getCoffee`, `createCoffee`, `updateCoffee`, `deleteCoffee`, `hasBeenSold`. The "is a coffee" rule (`isCoffee`) is written once at the top and every method uses it. |
+| `app/api/coffees/route.ts` | `GET` reads `?search=` and `?maxPrice=` (400 for a bad price) and calls `getCoffees`; `POST` checks the body and calls `createCoffee`, 201. |
+| `app/api/coffees/[id]/route.ts` | `GET` one coffee or 404; `PUT` the whole coffee or 404; `DELETE` is 404 if it's not a coffee, **409** if it's on old receipts, otherwise 204. |
+
+Two of the queries carry the night's lessons:
+
+```ts
+// and() skips undefined, so a missing maxPrice is simply no price rule.
+.where(and(isCoffee, ilike(items.name, `%${search}%`), maxPrice === undefined ? undefined : lte(items.price, maxPrice)))
+
+// Postgres refuses to delete an item on old receipts (Tuesday's foreign key),
+// so the service asks first and the route answers 409 instead of crashing.
+public async hasBeenSold(id: number) { ... .from(receiptItems).where(eq(receiptItems.itemId, id)).limit(1) ... }
+```
+
+Search for `' OR 1=1 --` and read the terminal: the logger shows it arriving as a parameter (`params: [1, "%' OR 1=1 --%"]`), never pasted into the SQL. The routes never import `drizzle-orm`, the schema, or the provider; only the service does.
+
+The "Going further" list in the handout is left unsolved on purpose: `/api/coffees/abc`, a duplicate name and a price of 10000 are all still 500s here. To put the database back the way it started, run `db/0001_store.sql` again in Neon.
 
 ## The teaching point
 
