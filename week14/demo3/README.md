@@ -87,6 +87,13 @@ Better Auth logs people in perfectly. Did that stop either of these?
 
 **Fix it** in `app/api/items/route.ts` (`POST`) and `app/api/items/[id]/route.ts` (`DELETE`): copy the two checks from the top of `PATCH` (logged in? a manager?) into each one. Then try both again with no cookie (`401`), logged in as Jennifer (`403`), and logged in as Priya (works).
 
+**On this branch, both are fixed.** `POST /api/items` and `DELETE /api/items/[id]` now start with the same two questions as `PATCH`: Better Auth says who it is, and our `hasRole` says whether a manager is asking. Nothing in `lib/auth.ts` changed to close them, because closing them was never Better Auth's job.
+
+| Request | No cookie | Jennifer (customer) | Priya (manager) |
+|---|---|---|---|
+| `POST /api/items` | `401` | `403` | `201` |
+| `DELETE /api/items/3` | `401` | `403` | `204` |
+
 ## A Postman trap
 
 Once Postman holds the login cookie, Better Auth refuses any `POST` to `/api/auth/...` that has no `Origin` header, with `403 Missing or null Origin`. A browser always sends one; Postman doesn't. It's Better Auth protecting you from another website quietly sending requests with your cookie (the same worry as `sameSite` on Tuesday). In Postman, add a header `Origin` with the value `http://localhost:3000`, or log out in the browser instead.

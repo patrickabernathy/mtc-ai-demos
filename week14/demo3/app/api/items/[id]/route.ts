@@ -51,6 +51,15 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Better Auth tells us WHO this is. Whether they may do it is our call.
+  const user = await AuthService.getInstance().getCurrentUser();
+  if (!user) {
+    return Response.json({ error: "Log in first" }, { status: 401 });
+  }
+  if (!(await AuthService.getInstance().hasRole(user.id, "manager"))) {
+    return Response.json({ error: "Only a manager can take items off the menu" }, { status: 403 });
+  }
+
   const { id } = await params;
   const item = await ItemService.getInstance().retire(Number(id));
   if (!item) {

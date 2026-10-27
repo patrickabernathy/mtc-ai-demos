@@ -1,6 +1,7 @@
 // /api/items -- the whole menu, and adding to it.
 // No connection, no query, no import from drizzle. Check the request, ask
 // the service, pick the status code.
+import { AuthService } from "../../../services/authService";
 import { ItemService } from "../../../services/itemService";
 
 export async function GET() {
@@ -9,6 +10,15 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  // Better Auth tells us WHO this is. Whether they may do it is our call.
+  const user = await AuthService.getInstance().getCurrentUser();
+  if (!user) {
+    return Response.json({ error: "Log in first" }, { status: 401 });
+  }
+  if (!(await AuthService.getInstance().hasRole(user.id, "manager"))) {
+    return Response.json({ error: "Only a manager can add items" }, { status: 403 });
+  }
+
   let body;
   try {
     body = await request.json();
