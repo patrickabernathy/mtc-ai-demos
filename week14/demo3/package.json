@@ -1,0 +1,26 @@
+{
+  "name": "mtc-week14-corner-store-better-auth",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:pull": "drizzle-kit pull"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "1.2.0",
+    "better-auth": "1.7.14",
+    "drizzle-orm": "0.45.4",
+    "next": "16.4.3",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
+    "dotenv": "17.4.2",
+    "drizzle-kit": "0.31.11",
+    "typescript": "5.9.3"
+  }
+}
