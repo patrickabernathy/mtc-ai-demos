@@ -1,8 +1,8 @@
 // The ONE file that knows who is logged in.
 // Routes ask it "who is this?" -- they never read the cookie themselves.
-import { randomBytes } from "crypto";
+import { randomBytes, scryptSync } from "crypto";
 import { cookies } from "next/headers";
-import { and, eq } from "drizzle-orm";
+import { and, eq, gt, sql } from "drizzle-orm";
 import { NeonDatabaseProvider } from "../providers/neon/neonDatabaseProvider";
 import { roles, sessions, userRoles, users } from "../drizzle/schema";
 
@@ -13,6 +13,22 @@ export type NewUser = {
   firstName: string;
   lastName: string;
 };
+
+// Turn a password into a hash: a scramble that can't be turned back.
+// The salt is random per password, so two people with the same
+// password still get different hashes. We store "salt:hash".
+function hashPassword(password: string) {
+  const salt = randomBytes(16).toString("hex");
+  const hash = scryptSync(password, salt, 64).toString("hex");
+  return salt + ":" + hash;
+}
+
+// To check a login, scramble what they typed with the SAME salt
+// and see if it comes out the same. We never un-scramble anything.
+function checkPassword(password: string, stored: string) {
+  const [salt, hash] = stored.split(":");
+  return scryptSync(password, salt, 64).toString("hex") === hash;
+}
 
 export class AuthService {
   private static instance: AuthService;
@@ -35,7 +51,7 @@ export class AuthService {
         email: input.email,
         firstName: input.firstName,
         lastName: input.lastName,
-        password: input.password,
+        passwordHash: hashPassword(input.password),
       })
       .returning({ id: users.id, email: users.email });
     return user;
@@ -45,20 +61,25 @@ export class AuthService {
   // and hands the browser a cookie with its id. Gives back true or false.
   public async logIn(email: string, password: string) {
     const [user] = await this.getDb().select().from(users).where(eq(users.email, email));
-    if (!user || user.password !== password) {
+    if (!user || !user.passwordHash || !checkPassword(password, user.passwordHash)) {
       return false;
     }
 
     // 64 random characters. Nobody can guess it, so it can stand in
     // for "this person already proved who they are".
     const sessionId = randomBytes(32).toString("hex");
-    await this.getDb().insert(sessions).values({ id: sessionId, userId: user.id });
+    await this.getDb().insert(sessions).values({
+      id: sessionId,
+      userId: user.id,
+      expiresAt: sql`now() + interval '7 days'`,
+    });
 
     const cookieStore = await cookies();
     cookieStore.set("session", sessionId, {
       httpOnly: true, // the page's JavaScript can't read it
       sameSite: "lax", // other websites can't send it for you
       path: "/",
+      maxAge: 60 * 60 * 24 * 7, // the browser forgets it after 7 days too
     });
     return true;
   }
@@ -76,7 +97,8 @@ export class AuthService {
       .select({ id: users.id, email: users.email, firstName: users.firstName })
       .from(sessions)
       .innerJoin(users, eq(sessions.userId, users.id))
-      .where(eq(sessions.id, sessionId));
+      // The server decides when a session is over, not the browser.
+      .where(and(eq(sessions.id, sessionId), gt(sessions.expiresAt, sql`now()`)));
     return user;
   }
 
@@ -90,8 +112,14 @@ export class AuthService {
     return rows.length > 0;
   }
 
+  // Logging out has to end the session ON THE SERVER.
+  // Deleting the cookie only makes this browser forget it.
   public async logOut() {
     const cookieStore = await cookies();
+    const sessionId = cookieStore.get("session")?.value;
+    if (sessionId) {
+      await this.getDb().delete(sessions).where(eq(sessions.id, sessionId));
+    }
     cookieStore.delete("session");
   }
 }

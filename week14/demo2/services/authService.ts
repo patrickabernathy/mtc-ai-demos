@@ -58,15 +58,11 @@ export class AuthService {
   }
 
   // Checks the email and password. If they match, makes a session
-  // and hands the browser a cookie with its id.
-  // A teammate's change: say exactly what went wrong, to be helpful.
+  // and hands the browser a cookie with its id. Gives back true or false.
   public async logIn(email: string, password: string) {
     const [user] = await this.getDb().select().from(users).where(eq(users.email, email));
-    if (!user || !user.passwordHash) {
-      throw new Error(`No account with the email ${email}`);
-    }
-    if (!checkPassword(password, user.passwordHash)) {
-      throw new Error("Wrong password");
+    if (!user || !user.passwordHash || !checkPassword(password, user.passwordHash)) {
+      return false;
     }
 
     // 64 random characters. Nobody can guess it, so it can stand in
@@ -85,6 +81,7 @@ export class AuthService {
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // the browser forgets it after 7 days too
     });
+    return true;
   }
 
   // Who sent this request? Reads the cookie, looks up the session.

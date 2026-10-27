@@ -1,5 +1,6 @@
 // /api/items/3 -- one item: read it, change its price, take it off the menu.
 // Same shape as the list route: ask the service, then decide the status code.
+import { AuthService } from "../../../../services/authService";
 import { ItemService } from "../../../../services/itemService";
 
 export async function GET(
@@ -18,6 +19,15 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Who are you? Then: are you allowed?
+  const user = await AuthService.getInstance().getCurrentUser();
+  if (!user) {
+    return Response.json({ error: "Log in first" }, { status: 401 });
+  }
+  if (!(await AuthService.getInstance().hasRole(user.id, "manager"))) {
+    return Response.json({ error: "Only a manager can change prices" }, { status: 403 });
+  }
+
   const { id } = await params;
 
   let body;

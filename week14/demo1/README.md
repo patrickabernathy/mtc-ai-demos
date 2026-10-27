@@ -10,6 +10,24 @@ It works. That's the point. Tonight's three demos are all cases where the login 
 
 Two questions run through all of it. **Authentication**: who are you? (Logging in.) **Authorization**: now that I know who you are, are you allowed to do *this*, to *this* thing? Most bugs here come from answering the first and forgetting the second.
 
+**This is the `answers` branch: the finished version.** The steps under "What to do" are the exercise as it was set on `main`; "The finished version" below shows where it ends up. You still need the database setup and your own `.env.local`, and because the passwords are now hashed, run `db/hash.sql` after `db/auth.sql`.
+
+## The finished version
+
+| File | What changed |
+|---|---|
+| `app/api/receipts/[id]/route.ts` | Checks the receipt belongs to you. Someone else's receipt is a `404`, exactly like one that doesn't exist (`states/01-owner-check`) |
+| `app/api/items/[id]/route.ts` | `PATCH` needs a logged-in manager: `401` if nobody is logged in, `403` if you're logged in but not a manager (`states/02-managers-only`) |
+| `services/authService.ts` | Passwords stored as `salt:hash` and checked by hashing again; every session gets an `expiresAt` and only unexpired ones count; `logOut` deletes the session row (`states/04-expires`, which includes `03-hashed`) |
+
+Things worth trying once it runs:
+
+- As Jennifer, open `/api/receipts`, then change the address to a receipt id that isn't in your list. `404`.
+- As Jennifer in Postman, `PATCH /api/items/1` with `{"price": 0.01}`: `403`. Log in as Priya and it works.
+- Copy the `session` cookie, log out, and replay it with `curl.exe`: `401`.
+
+Still open on purpose: `POST /api/items` and `DELETE /api/items/[id]` check nothing. Wednesday's demo starts from that.
+
 ## Before you start
 
 You need the Corner Store database from week 12: a database called `store` in your Neon project, with `store.sql` run in it.

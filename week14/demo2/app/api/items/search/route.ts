@@ -8,8 +8,8 @@ export async function GET(request: Request) {
     const results = await ItemService.getInstance().search(words);
     return Response.json(results);
   } catch (error) {
-    // A teammate's change: send back exactly what went wrong, to be helpful.
-    const e = error as Error;
-    return Response.json({ error: e.message, stack: e.stack }, { status: 500 });
+    // The real detail goes to the terminal. The browser gets one sentence.
+    console.error("GET /api/items/search failed:", error);
+    return Response.json({ error: "Something went wrong. Try again." }, { status: 500 });
   }
 }

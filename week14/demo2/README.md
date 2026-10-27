@@ -9,6 +9,20 @@ Then a teammate added two "helpful" things, and tonight we attack them:
 
 Both work fine for an honest person. Tonight's question is different: **what happens if somebody does this on purpose?**
 
+**This is the `answers` branch: the finished version.** The steps under "What to do" are the exercise as it was set on `main`; "The finished version" below shows where it ends up.
+
+## The finished version
+
+| File | What changed |
+|---|---|
+| `services/itemService.ts` | `search` sends the words as a value (`` sql`...` `` without `.raw`). Every attack in step 1 now returns `[]` (`states/01-parameterized`) |
+| `services/authService.ts` | `logIn` answers true or false, and no longer says *which* part was wrong (`states/02-quiet-errors`) |
+| `app/api/login/route.ts` | Checks `email` and `password` are text, gives one message for every failure, and sends the real error to the terminal (`states/02-quiet-errors`) |
+| `app/api/items/search/route.ts` | The same quiet `catch` (`states/02-quiet-errors`) |
+| `app/api/items/route.ts` | `GET` answers with `Access-Control-Allow-Origin: http://localhost:5500`, so the test page can read the menu and other sites still can't (`states/03-cors-header`) |
+
+The threat model (step 4) is yours to write about your own app, so there's no answer for it here.
+
 ## Before you start
 
 You need Tuesday's setup in your Neon `store` database: `store.sql`, then `db/auth.sql`, then `db/hash.sql` (both are in this folder). Jennifer (`jennifer.rivera42@example.com`, password `latte4ever`) is a customer; Priya (`priya.raman@example.com`, password `manager123`) is a manager. The passwords are fake.

@@ -5,7 +5,13 @@ import { ItemService } from "../../../services/itemService";
 
 export async function GET() {
   const items = await ItemService.getInstance().getAll();
-  return Response.json(items);
+  // Tell browsers: a page from http://localhost:5500 may read this answer.
+  // One named address, on purpose. "*" would mean "any website at all" --
+  // fine for a public menu, but it's a decision, not a default. And never
+  // "*" on anything that uses the login cookie.
+  return Response.json(items, {
+    headers: { "Access-Control-Allow-Origin": "http://localhost:5500" },
+  });
 }
 
 export async function POST(request: Request) {

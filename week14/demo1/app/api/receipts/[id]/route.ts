@@ -13,7 +13,11 @@ export async function GET(
 
   const { id } = await params;
   const receipt = await ReceiptService.getInstance().getById(Number(id));
-  if (!receipt) {
+
+  // Logged in isn't enough. It has to be YOUR receipt.
+  // Someone else's gets the same 404 as one that doesn't exist,
+  // so we don't even admit it's there.
+  if (!receipt || receipt.customerId !== user.id) {
     return Response.json({ error: `No receipt with id ${id}` }, { status: 404 });
   }
   return Response.json(receipt);

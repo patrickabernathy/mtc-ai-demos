@@ -77,12 +77,13 @@ export class ItemService {
     return item;
   }
 
-  // A teammate's search box. Builds the SQL by gluing the words in.
+  // The search box, fixed. Same query, but sql`...` (no .raw) sends the
+  // words SEPARATELY from the SQL, as a value. Postgres never reads
+  // them as code, so a quote in them is just a quote.
   public async search(words: string) {
+    const pattern = "%" + words + "%";
     const result = await this.getDb().execute(
-      sql.raw(
-        `SELECT id, name, price FROM items WHERE is_available = true AND name ILIKE '%${words}%'`
-      )
+      sql`SELECT id, name, price FROM items WHERE is_available = true AND name ILIKE ${pattern}`
     );
     return result.rows;
   }
