@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Someone else's page</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; }
+  button { padding: 0.4rem 0.9rem; font: inherit; }
+  pre { white-space: pre-wrap; background: #f4f4f4; padding: 1rem; }
+</style>
+</head>
+<body>
+  <h1>Someone else's page</h1>
+  <p>This page is NOT part of the Corner Store. It's served from a different address
+     (port 5500). It asks the Corner Store's API for the menu.</p>
+  <button id="go">Ask the Corner Store for its menu</button>
+  <pre id="out">Nothing yet.</pre>
+
+  <script>
+    document.getElementById("go").onclick = async function () {
+      const out = document.getElementById("out");
+      out.textContent = "Asking...";
+      try {
+        const res = await fetch("http://localhost:3000/api/items");
+        const items = await res.json();
+        out.textContent = "Got " + items.length + " items: " + items.map(function (i) { return i.name; }).join(", ");
+      } catch (error) {
+        // The browser won't say why here. The real reason is in the Console (F12).
+        out.textContent = "Failed: " + error.message + "\n\nOpen the Console (F12) to see why.";
+      }
+    };
+  </script>
+</body>
+</html>

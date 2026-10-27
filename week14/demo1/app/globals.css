@@ -1,0 +1,78 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 2rem auto;
+  max-width: 40rem;
+  padding: 0 1rem;
+  color: #222;
+}
+
+header h1 {
+  margin-bottom: 0.25rem;
+}
+
+.tagline {
+  color: #555;
+  margin-top: 0;
+}
+
+.card {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.1rem;
+}
+
+.description {
+  margin: 0 0 0.5rem;
+  color: #555;
+}
+
+.price {
+  margin: 0;
+  font-weight: 600;
+}
+
+.sold-out {
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  background: #a12b2b;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.empty {
+  color: #777;
+}
+
+.error {
+  color: #a12b2b;
+  font-weight: 600;
+}
+
+/* Week 14: the login form */
+label {
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+input {
+  display: block;
+  width: 100%;
+  padding: 0.4rem;
+  font: inherit;
+}
+
+button {
+  padding: 0.4rem 0.9rem;
+  font: inherit;
+}
+
+.status {
+  font-weight: 600;
+}
