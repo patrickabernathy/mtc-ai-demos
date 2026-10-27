@@ -81,6 +81,7 @@ export class AuthService {
     const cookieStore = await cookies();
     cookieStore.set("session", sessionId, {
       httpOnly: true, // the page's JavaScript can't read it
+      secure: process.env.NODE_ENV === "production", // https only on the live site; localhost is plain http
       sameSite: "lax", // other websites can't send it for you
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // the browser forgets it after 7 days too
