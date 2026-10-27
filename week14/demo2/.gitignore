@@ -1,0 +1,6 @@
+node_modules/
+.next/
+# The connection string lives here. It never gets committed.
+.env*.local
+# The blank copy with no secret in it does get committed.
+!.env.example

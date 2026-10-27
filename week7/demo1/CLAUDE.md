@@ -15,7 +15,7 @@ file only adds what is specific to this demo.
 
 Straight `create-next-app` output, deliberately unmodified:
 
-- Next.js **16.3.4** (App Router), React **19.2.8** — both pinned exactly
+- Next.js **16.4.3** (App Router), React **19.2.8** — both pinned exactly
 - TypeScript 5, `strict: true`, `noEmit: true`
 - Tailwind CSS **v4** via `@tailwindcss/postcss` (no `tailwind.config`, config
   lives in `globals.css` under `@theme inline`)
