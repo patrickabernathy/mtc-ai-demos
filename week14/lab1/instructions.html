@@ -1,0 +1,1166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab W14 - Paws &amp; Whiskers</title>
+  <style>
+  :root {
+    --paper: #f7f6f3;
+    --card: #ffffff;
+    --ink: #191d1f;
+    --ink-2: #4a5257;
+    --ink-3: #7b848a;
+    --rule: #e2e0da;
+    --accent: #0f6b6b;
+    --accent-soft: #e2efee;
+    --warn-soft: #f8efe2;
+    --warn-edge: #c08a3e;
+    --check-soft: #e8f0e9;
+    --check-edge: #4d8a5c;
+    --ai-soft: #eef0fb;
+    --ai-edge: #5a5ec2;
+    --bad: #b3412f;
+  }
+  @media screen and (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12161a;
+      --card: #1a2026;
+      --ink: #e9ecee;
+      --ink-2: #b0b8bd;
+      --ink-3: #848d93;
+      --rule: #2a333b;
+      --accent: #5cb8b0;
+      --accent-soft: #15272a;
+      --warn-soft: #2b2114;
+      --warn-edge: #b98b45;
+      --check-soft: #16281a;
+      --check-edge: #5f9c6e;
+      --ai-soft: #1b1d33;
+      --ai-edge: #8b8ff0;
+      --bad: #e0806f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0 auto; padding: 0 22px 80px; max-width: 800px; background: var(--paper); color: var(--ink); font: 16px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif; }
+  header.top { padding: 44px 0 22px; border-bottom: 2px solid var(--ink); margin-bottom: 26px; }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; }
+  .lede { margin: 0; max-width: 62ch; font-size: 17px; color: var(--ink-2); }
+  h2 { margin: 44px 0 12px; font-size: 23px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+  h2 .step { display: inline-block; min-width: 2.2em; color: var(--accent); }
+  h3 { margin: 24px 0 8px; font-size: 17px; }
+  p { margin: 0 0 12px; max-width: 70ch; }
+  ul, ol { max-width: 70ch; padding-left: 22px; }
+  li { margin-bottom: 5px; }
+  code { font: 13.5px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 6px; padding: 12px 14px; overflow-x: auto; font: 13px/1.5 "Cascadia Code", Consolas, ui-monospace, monospace; margin: 0 0 14px; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  pre { tab-size: 4; }
+  /* Cascadia Code turns !== and -> into single symbols; students need to see the real characters. */
+  code, pre { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+  pre.term { border-left-color: var(--ink-3); color: var(--ink-2); }
+  pre.bad { border-left-color: var(--bad); }
+  .file { margin: 14px 0 4px; font: 12px/1.4 "Cascadia Code", Consolas, monospace; color: var(--ink-3); }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 14.5px; }
+  th, td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  td code { font-size: 12.5px; overflow-wrap: break-word; }
+  td:first-child code { white-space: nowrap; }
+  td.status { font-weight: 700; white-space: nowrap; }
+  .callout { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 16px; margin: 0 0 16px; }
+  .callout > :last-child { margin-bottom: 0; }
+  .callout h4 { margin: 0 0 8px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .warn { background: var(--warn-soft); border-color: var(--warn-edge); }
+  .warn h4 { color: var(--warn-edge); }
+  .check { background: var(--check-soft); border-color: var(--check-edge); }
+  .check h4 { color: var(--check-edge); }
+  .ai { background: var(--ai-soft); border-color: var(--ai-edge); }
+  .ai h4 { color: var(--ai-edge); }
+  .ai .prompt { font-style: italic; border-left: 2px solid var(--ai-edge); padding-left: 10px; margin-left: 2px; }
+  .stuck { font-size: 14.5px; color: var(--ink-2); }
+  .back { font-size: 13px; margin: -4px 0 8px; }
+  .toc { columns: 2; column-gap: 32px; font-size: 15px; padding-left: 20px; }
+  .toc li { break-inside: avoid; }
+  footer { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  a { color: var(--accent); }
+
+  @page { size: Letter; margin: 15mm 14mm; }
+  @media print {
+    body { max-width: none; padding: 0; font-size: 10pt; line-height: 1.45; background: #fff; }
+    /* Appendix code is long; let it flow across pages instead of leaving orphans. */
+    h2#code ~ pre { break-inside: auto; }
+    p { margin-bottom: 9px; }
+    header.top { padding-top: 0; }
+    pre { white-space: pre-wrap; break-inside: avoid; font-size: 8.4pt; }
+    /* Big test-table boxes may split between rows; keeping them whole left half-empty pages. */
+    tr, .callout p, .callout h4, .file { break-inside: avoid; }
+    .callout h4 { break-after: avoid; }
+    h2, h3, .file { break-after: avoid; }
+    h2 { margin-top: 30px; }
+    .appendix-start { break-before: page; }
+    a { text-decoration: none; }
+  }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Lab W14 &middot; one lab, nineteen steps, each one builds on the last</p>
+  <h1>Paws &amp; Whiskers: who are you, and is this yours?</h1>
+  <p class="lede">A pet shelter's website. Anyone can see the pets waiting for a home. People who adopted one should be able to log in and see their own pet's private record. Tonight you add logins with Better Auth, straight from its own documentation, on a brand-new database. Then you make the API ask two questions before it hands over anything private: <b>can you get in?</b> and <b>is this yours?</b></p>
+</header>
+
+<p>This lab is meant to stretch you. Every step tells you what to build and how to check it. If you get stuck, every step links to the full code for that step in the <a href="#code">Code reference</a> at the back. Try it yourself first, then look.</p>
+
+<p><b>Better Auth is a library</b>: code someone else wrote, that you install and use. On Tuesday we wrote logins by hand: hashing passwords, a sessions table, a cookie, expiry. Better Auth does all of that for us, more carefully. Part of tonight is learning to read its documentation, so several steps send you to the Better Auth website and tell you which part to read. Keep that tab open.</p>
+
+<h3>Contents</h3>
+<p><b>Part 1 &middot; A new database</b></p>
+<ol class="toc" start="1">
+  <li><a href="#step1">A new Neon project, and <code>.env.local</code></a></li>
+  <li><a href="#step2">The shelter's tables: <code>db/init.sql</code></a></li>
+  <li><a href="#step3">Run it, and find the open door</a></li>
+</ol>
+<p><b>Part 2 &middot; Better Auth: who are you?</b></p>
+<ol class="toc" start="4">
+  <li><a href="#step4">Install Better Auth</a></li>
+  <li><a href="#step5">The secret and the address</a></li>
+  <li><a href="#step6"><code>lib/auth.ts</code></a></li>
+  <li><a href="#step7">Better Auth's tables</a></li>
+  <li><a href="#step8">The route that answers <code>/api/auth/...</code></a></li>
+  <li><a href="#step9">Close the doors you don't use</a></li>
+  <li><a href="#step10">The browser half: <code>lib/auth-client.ts</code></a></li>
+  <li><a href="#step11">The login screen</a></li>
+</ol>
+<p><b>Part 3 &middot; The API: can you get in? Is this yours?</b></p>
+<ol class="toc" start="12">
+  <li><a href="#step12">Can you get in? <code>/api/my-pets</code></a></li>
+  <li><a href="#step13">Is this yours? <code>/api/my-pets/4</code></a></li>
+  <li><a href="#step14">The five cases</a></li>
+</ol>
+<p><b>Part 4 &middot; Together: protect the page</b></p>
+<ol class="toc" start="15">
+  <li><a href="#step15">The cookie way: <code>proxy.ts</code></a></li>
+  <li><a href="#step16">Break it with a fake cookie</a></li>
+  <li><a href="#step17">The <code>UserContext</code> wrapper</a></li>
+  <li><a href="#step18">The layout fills it in</a></li>
+  <li><a href="#step19">The pages use it, and the proxy goes</a></li>
+</ol>
+<p><a href="#done">What "done" looks like</a> &middot; <a href="#further">Going further</a> &middot; <a href="#bite">Things that will bite you</a> &middot; <a href="#code">Code reference</a></p>
+
+<h3>Words you'll see tonight</h3>
+<table>
+  <tr><th>Word</th><th>What it means here</th></tr>
+  <tr><td><b>Authentication</b></td><td>"Who are you?" Proving you're the person you say you are, usually with a password. Better Auth's job.</td></tr>
+  <tr><td><b>Authorization</b></td><td>"What are you allowed to do?" Deciding whether this person may see or change this thing. Always our job.</td></tr>
+  <tr><td><b>Session</b></td><td>A row in the database that says "this browser is logged in as this person, until this time." Tuesday's coat-check ticket.</td></tr>
+  <tr><td><b>Cookie</b></td><td>A small piece of text the server asks the browser to keep and send back with every request. Here it holds the session's ticket number.</td></tr>
+  <tr><td><b>401</b></td><td>"I don't know who you are." Not logged in.</td></tr>
+  <tr><td><b>404</b></td><td>"There's nothing here." We also send it for somebody else's pet, so we never admit it exists.</td></tr>
+  <tr><td><b>Context</b> (React)</td><td>A value that every component inside a wrapper can read, without passing it down by hand. Part 4.</td></tr>
+</table>
+
+<h3>Who's who in the database</h3>
+<p><code>db/init.sql</code> already says who owns which pet. You'll sign these people up yourself in Step 11. The passwords are made up for this lab; use them so your classmates' answers match yours.</p>
+<table>
+  <tr><th>Name</th><th>Email</th><th>Password</th><th>Owns</th></tr>
+  <tr><td>Ana Ortiz</td><td><code>ana@example.com</code></td><td><code>ana-password-1</code></td><td>Duke (4), Clementine (5)</td></tr>
+  <tr><td>Ben Carter</td><td><code>ben@example.com</code></td><td><code>ben-password-1</code></td><td>Juniper (7), Noodle (8)</td></tr>
+  <tr><td>Dr. Sam Lee</td><td><code>dr.lee@example.com</code></td><td><code>vet-password-1</code></td><td>Nobody. A vet. Only for <a href="#further">Going further</a>.</td></tr>
+</table>
+<p>Pets 1, 2, 3 and 6 are still at the shelter. Nobody owns them.</p>
+
+<!-- ============================================================ PART 1 -->
+<!-- ============================================================ STEP 1 -->
+<h2 id="step1"><span class="step">1</span>A new Neon project, and <code>.env.local</code></h2>
+
+<p>This lab gets its <b>own</b> Neon project, not the Corner Store one. A project is a separate database server with its own address and password. Every real app you start begins with an empty database, so tonight you see the whole setup from zero, and nothing you do can break your store.</p>
+
+<ol>
+  <li>Go to <a href="https://console.neon.tech">console.neon.tech</a> and log in, the same way as in week 12.</li>
+  <li>You land on your list of projects. Click <b>New project</b>. (If you land inside your store project instead, click the project name at the top left, then <b>New project</b>.)</li>
+  <li>Fill in the form:
+    <ul>
+      <li><b>Project name:</b> <code>pet-shelter</code></li>
+      <li><b>Postgres version:</b> leave it as it is.</li>
+      <li><b>Cloud provider:</b> AWS.</li>
+      <li><b>Region:</b> <b>AWS US East 1 (N. Virginia)</b>, the closest one to us. Any US East region is fine.</li>
+      <li>If there's an option for <b>Neon Auth</b>, leave it <b>off</b>. Neon Auth is Neon's own login feature. We're adding Better Auth ourselves, so you can see every piece.</li>
+    </ul>
+  </li>
+  <li>Click <b>Create</b>. You land on the new project's dashboard.</li>
+  <li>Click <b>Connect</b> (top right of the dashboard). A box opens. Leave every dropdown as it is: database <code>neondb</code> is the right one this time, because this project only has one.</li>
+  <li>Click <b>Show password</b>, then copy the connection string. It starts with <code>postgresql://</code>.</li>
+</ol>
+
+<div class="callout warn">
+  <h4>Neon says you've reached your project limit?</h4>
+  <p>Neon's free plan only allows a few projects. Delete one you don't need any more (that project's <b>Settings</b> &rarr; <b>Delete project</b>), but <b>not</b> your Corner Store one. Not sure? Ask before you delete anything.</p>
+</div>
+
+<p>Now put that string where the app can read it:</p>
+<ol>
+  <li>In VS Code, make a new file called <code>.env.local</code> in the <code>week14/lab1</code> folder, next to <code>package.json</code>. Make it <b>in VS Code</b>, not Notepad, so it doesn't secretly become <code>.env.local.txt</code>.</li>
+  <li>Copy the three lines from <code>.env.example</code> into it.</li>
+  <li>Paste your string after <code>NEON_DATABASE_URL=</code>. No quotes, no spaces.</li>
+  <li>In the string, find <code>sslmode=require</code> and change it to <code>sslmode=verify-full</code>.</li>
+</ol>
+<pre><code>NEON_DATABASE_URL=postgresql://neondb_owner:****@ep-something-pooler.us-east-1.aws.neon.tech/neondb?sslmode=verify-full&amp;channel_binding=require
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=</code></pre>
+<p><b>Why change <code>sslmode</code>?</b> <code>sslmode</code> says how carefully the app checks it's really talking to Neon before sending the password. This lab talks to Neon with a package called <code>pg</code>, and when <code>pg</code> sees <code>require</code> it prints a long <code>SECURITY WARNING</code> every time the app starts. It's warning that the meaning of <code>require</code> will get weaker in a future version. <code>verify-full</code> is the strict check it already does today, written out, so the warning goes away and nothing else changes. Leave the two lines below it empty until Step 5.</p>
+
+<div class="callout check">
+  <h4>Check it</h4>
+  <p>Run <code>git status</code>. <code>.env.local</code> must <b>not</b> be listed. If it is, stop and ask: that string is a password, and this repo is public.</p>
+</div>
+
+<!-- ============================================================ STEP 2 -->
+<h2 id="step2"><span class="step">2</span>The shelter's tables: <code>db/init.sql</code></h2>
+
+<p>The new database is empty. <code>db/init.sql</code> makes the shelter's two tables, <code>pets</code> and <code>vets</code>, and fills them. Open it in VS Code and read the comments first: they say which columns are public and which are private.</p>
+<ol>
+  <li>In Neon, on your <code>pet-shelter</code> project, click <b>SQL Editor</b> on the left.</li>
+  <li>Copy <b>all</b> of <code>db/init.sql</code>, paste it in, and click <b>Run</b>.</li>
+</ol>
+<div class="callout check">
+  <h4>Check it</h4>
+  <p>The result at the bottom shows <b>8 pets</b>: 4 marked <code>(at the shelter)</code>, 2 for <code>ana@example.com</code>, 2 for <code>ben@example.com</code>.</p>
+  <p>Now click <b>Run</b> again. Same 8 rows, no error, no duplicates. The file only makes what's missing, so running it twice is safe.</p>
+</div>
+<p><b>Notice what's missing:</b> there's no table of users, no passwords, no sessions. Those are Better Auth's tables, and Better Auth will write them for you in Step 7. Look at <code>owner_email</code> in the file: a pet's owner is written as an email, because nobody has signed up yet, so there's no user to point at. The comment in the file says more.</p>
+
+<!-- ============================================================ STEP 3 -->
+<h2 id="step3"><span class="step">3</span>Run it, and find the open door</h2>
+<pre class="term"><code>cd week14/lab1
+npm install
+npm run dev</code></pre>
+<p>Open <a href="http://localhost:3000">http://localhost:3000</a>. Click around:</p>
+<table>
+  <tr><th>Page</th><th>What you should see</th></tr>
+  <tr><td><code>/</code></td><td>Biscuit, Miso, Pepper and Waffles. The public page. It works.</td></tr>
+  <tr><td><code>/my-pets</code></td><td><code>501: Not built yet. That's Step 12.</code> The page opens for anyone.</td></tr>
+  <tr><td><code>/login</code></td><td>A form. Every button says "Not built yet."</td></tr>
+</table>
+<p>Now, before you click it, guess: <b>you are not logged in. Nobody can log in yet. What happens when you open <a href="http://localhost:3000/api/my-pets/4">localhost:3000/api/my-pets/4</a>?</b></p>
+<p>Open it. That's Duke's private record: Ana's email, his microchip number, his vet notes. Change the <code>4</code> to <code>7</code>: Ben's cat. Anyone on the internet could walk through every pet just by counting. <b>This is the open door you'll close in Step 13.</b> Open <code>app/api/my-pets/[id]/route.ts</code>: nothing in it asks who's calling.</p>
+
+<!-- ============================================================ PART 2 -->
+<!-- ============================================================ STEP 4 -->
+<h2 id="step4"><span class="step">4</span>Install Better Auth</h2>
+<p>Open the Better Auth docs in a new tab: <a href="https://www.better-auth.com/docs/installation"><b>better-auth.com/docs/installation</b></a>. This page is the recipe for Steps 4 to 10. Read the <b>Install the Package</b> part, then stop your app (<code>Ctrl + C</code>) and run:</p>
+<pre class="term"><code>npm install better-auth</code></pre>
+<p>The page also shows <code>pnpm</code>, <code>yarn</code> and <code>bun</code>. Those are other tools that do the same job as <code>npm</code>. We use <code>npm</code>.</p>
+<div class="callout check">
+  <h4>Check it</h4>
+  <p>Open <code>package.json</code>. Under <code>"dependencies"</code> there's a new line, <code>"better-auth"</code>, with a version number. That line is how the next person to run <code>npm install</code> gets it too.</p>
+</div>
+
+<!-- ============================================================ STEP 5 -->
+<h2 id="step5"><span class="step">5</span>The secret and the address</h2>
+<p>In the docs, read <b>Set Environment Variables</b>. Better Auth needs two values in <code>.env.local</code>:</p>
+<ul>
+  <li><b><code>BETTER_AUTH_SECRET</code></b>: a long random password that only your app knows. Better Auth uses it to <b>sign</b> each login cookie: it mixes the cookie's value with the secret and attaches the result, so if anyone changes the cookie, the signature stops matching and Better Auth refuses it.</li>
+  <li><b><code>BETTER_AUTH_URL</code></b>: the address your app runs at. Better Auth uses it to refuse requests sent from other websites.</li>
+</ul>
+<p>The docs page has a <b>Generate Secret</b> button, and suggests an <code>openssl</code> command, which Windows doesn't have. This works on every computer:</p>
+<pre class="term"><code>node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"</code></pre>
+<p>Paste what it prints after <code>BETTER_AUTH_SECRET=</code>, and fill in the address:</p>
+<pre><code>BETTER_AUTH_SECRET=6f1c...a long line of letters and numbers...9e2b
+BETTER_AUTH_URL=http://localhost:3000</code></pre>
+<p>Your secret is yours: don't paste it in Slack, in a screenshot, or into a prompt. A deployed app gets its own, different secret.</p>
+
+<!-- ============================================================ STEP 6 -->
+<h2 id="step6"><span class="step">6</span><code>lib/auth.ts</code></h2>
+<p>In the docs, read <b>Create A Better Auth Instance</b>, then <b>Configure Database</b> (click the <b>postgres</b> tab), then <b>Authentication Methods</b>. Together they say: make a file called <code>auth.ts</code>, give Better Auth a database, and turn on email and password.</p>
+<p>Make a new folder <code>lib</code> next to <code>app</code>, and in it a file <code>auth.ts</code>. The docs make a brand-new <code>Pool</code> (a set of open connections to the database). We already have one in <code>providers/neon/neonDatabaseProvider.ts</code>, so Better Auth gets ours:</p>
+<p class="file">lib/auth.ts</p>
+<pre><code>import { betterAuth } from "better-auth";
+import { NeonDatabaseProvider } from "../providers/neon/neonDatabaseProvider";
+
+export const auth = betterAuth({
+  database: NeonDatabaseProvider.getInstance().getPool(),
+  emailAndPassword: { enabled: true },
+});</code></pre>
+<p>That's the whole thing. Everything from Tuesday (hashing, sessions, the cookie, expiry, logging out) now lives behind those few lines.</p>
+<p class="stuck">Stuck? <a href="#c1">C1</a> has the file with comments.</p>
+
+<!-- ============================================================ STEP 7 -->
+<h2 id="step7"><span class="step">7</span>Better Auth's tables</h2>
+<p>Better Auth needs four tables of its own. In the docs, read <b>Create Database Tables</b>, then follow its link to the <a href="https://www.better-auth.com/docs/concepts/database#core-schema"><b>Core Schema</b></a> and read what each table is for:</p>
+<table>
+  <tr><th>Table</th><th>One row per</th><th>Tuesday's version</th></tr>
+  <tr><td><code>user</code></td><td>person</td><td>the <code>users</code> table</td></tr>
+  <tr><td><code>session</code></td><td>logged-in browser</td><td>the <code>sessions</code> table</td></tr>
+  <tr><td><code>account</code></td><td>way that person logs in. Email and password is one; "Sign in with Google" would be another. <b>The hashed password lives here.</b></td><td>the <code>password_hash</code> column</td></tr>
+  <tr><td><code>verification</code></td><td>short-lived code, like a "check your email" link</td><td>none</td></tr>
+</table>
+<p>You don't type these tables out. The docs give two commands: <code>migrate</code> makes the tables straight in your database; <code>generate</code> writes the SQL to a file so you can read it first and run it yourself. <b>We use <code>generate</code></b>: you see exactly what's about to change in your database before it happens, which is how it's done on a real team. Run it in the <code>lab1</code> folder:</p>
+<pre class="term"><code>npx auth@latest generate</code></pre>
+<p>If it asks to install the <code>auth</code> package, or whether to write the file, type <code>y</code> and press Enter. It reads <code>lib/auth.ts</code>, connects to your database using <code>.env.local</code>, sees what's missing, and writes a file. <b>Expect some scary-looking output that's fine:</b></p>
+<pre class="term"><code>Warning: Module type of file:///.../lib/auth.ts is not specified ...
+ERROR [Better Auth]: Database schema mismatch
+  Missing tables
+    user, session, account, verification
+  help: Run `npx auth migrate` to add the missing tables and columns.
+🚀 Schema was generated successfully!</code></pre>
+<p>The red <code>ERROR</code> is Better Auth looking at your database and listing the four tables it doesn't have yet. That's exactly what the file it just wrote will fix. The last line is the one that matters.</p>
+<p>There's a new folder, <code>better-auth_migrations</code>, with one <code>.sql</code> file in it, named with today's date and time. <b>Open it and read it.</b> It's four <code>create table</code> lines and three <code>create index</code> lines (an index is what lets the database find one row fast without reading them all). See <a href="#c2">C2</a> for what yours should look like.</p>
+<ol>
+  <li>Copy the whole file.</li>
+  <li>Neon &rarr; <b>SQL Editor</b> on your <code>pet-shelter</code> project &rarr; paste &rarr; <b>Run</b>.</li>
+</ol>
+<div class="callout check">
+  <h4>Check it</h4>
+  <p>In Neon, click <b>Tables</b> on the left. You should see six: <code>pets</code>, <code>vets</code>, and Better Auth's <code>user</code>, <code>session</code>, <code>account</code>, <code>verification</code>. All four of Better Auth's are empty.</p>
+  <p>Running the file a second time says <code>relation "user" already exists</code>. That just means you already did it.</p>
+</div>
+<div class="callout ai">
+  <h4>Ask your Claude</h4>
+  <p class="prompt">"Here's a SQL file a library generated for my Postgres database: [paste it]. Explain each table in plain words. Why are some column names in double quotes, like "userId"? What does 'references "user" ("id") on delete cascade' do?"</p>
+</div>
+
+<!-- ============================================================ STEP 8 -->
+<h2 id="step8"><span class="step">8</span>The route that answers <code>/api/auth/...</code></h2>
+<p>In the docs, read <b>Mount Handler</b> and click the <b>Next.js</b> tab (the App Router one, not Pages Router). Better Auth answers a lot of addresses: <code>/api/auth/sign-in/email</code>, <code>/api/auth/sign-up/email</code>, <code>/api/auth/sign-out</code>, and more. You don't write a route for each. One file with a special name catches them all.</p>
+<p>Make the folders <code>app/api/auth/[...all]/</code> (yes, with the square brackets and the three dots) and in it <code>route.ts</code>, with the code from the docs:</p>
+<p class="file">app/api/auth/[...all]/route.ts</p>
+<pre><code>import { auth } from "@/lib/auth";
+import { toNextJsHandler } from "better-auth/next-js";
+
+export const { POST, GET } = toNextJsHandler(auth);</code></pre>
+<p><b><code>[...all]</code></b> means "anything under here, however many slashes." <b><code>@/lib/auth</code></b> is a shortcut: <code>@/</code> means "the top folder of this project," so you don't have to count <code>../</code>. It's set up in <code>tsconfig.json</code>.</p>
+<p>Start the app again (<code>npm run dev</code>).</p>
+<div class="callout check">
+  <h4>Check it</h4>
+  <p>Open <a href="http://localhost:3000/api/auth/get-session">localhost:3000/api/auth/get-session</a>. It says <code>null</code>: Better Auth is answering, and nobody is logged in.</p>
+  <p>Now open <a href="http://localhost:3000/api/auth/ok">localhost:3000/api/auth/ok</a>. It says <code>{"ok":true}</code>. Did you ask for that address? Remember it for the next step.</p>
+</div>
+
+<!-- ============================================================ STEP 9 -->
+<h2 id="step9"><span class="step">9</span>Close the doors you don't use</h2>
+<p>That one line from the docs opens <b>every</b> address Better Auth knows. That's about thirty of them, including <code>/update-user</code>, <code>/delete-user</code>, <code>/change-password</code> and <code>/list-sessions</code>. Our pages will call four. Every open address is one more thing somebody can poke at, and you'd never know, because you never wrote it.</p>
+<p>Tuesday's rule was <b>deny by default</b>: start with everything closed and open only what you need. Do it here:</p>
+<ol>
+  <li>Replace <code>route.ts</code> with the version in <a href="#c4">C4</a>. It keeps a short list of the four addresses we use, and answers <code>404</code> to everything else without ever asking Better Auth.</li>
+  <li>In <code>lib/auth.ts</code>, add the <code>disabledPaths</code> list from <a href="#c1">C1</a>. That tells Better Auth itself to switch those addresses off too. It's a second lock behind the first: if somebody later loosens the list in <code>route.ts</code>, the riskiest ones stay shut.</li>
+</ol>
+<div class="callout check">
+  <h4>Check it</h4>
+  <table>
+    <tr><th>Open</th><th>Before</th><th>Now</th></tr>
+    <tr><td><code>/api/auth/ok</code></td><td><code>{"ok":true}</code></td><td class="status">Not found</td></tr>
+    <tr><td><code>/api/auth/list-sessions</code></td><td><code>Unauthorized</code> (it's there, you just weren't let in)</td><td class="status">Not found</td></tr>
+    <tr><td><code>/api/auth/get-session</code></td><td><code>null</code></td><td class="status"><code>null</code> (still open: we use it)</td></tr>
+  </table>
+</div>
+<p>When you add a feature that needs another Better Auth address, add that one address to the list. If something you expect to work answers <code>Not found</code>, this list is the first place to look.</p>
+
+<!-- ============================================================ STEP 10 -->
+<h2 id="step10"><span class="step">10</span>The browser half: <code>lib/auth-client.ts</code></h2>
+<p>In the docs, read <b>Create Client Instance</b> and click the <b>React</b> tab. <code>lib/auth.ts</code> runs on the server. The pages run in the browser and need their own half, which sends requests to <code>/api/auth/...</code> for them.</p>
+<p class="file">lib/auth-client.ts</p>
+<pre><code>import { createAuthClient } from "better-auth/react";
+
+export const authClient = createAuthClient();</code></pre>
+<p>The docs pass <code>baseURL: "http://localhost:3000"</code>. Their own comment says it's optional when the pages and the API are the same website, which ours are. Leaving it out means it still works once the app is deployed somewhere that isn't <code>localhost</code>.</p>
+
+<!-- ============================================================ STEP 11 -->
+<h2 id="step11"><span class="step">11</span>The login screen</h2>
+<p>Read <a href="https://www.better-auth.com/docs/basic-usage#email--password"><b>Basic Usage &rarr; Email &amp; Password</b></a> in the docs. It shows three calls: <code>authClient.signUp.email</code>, <code>authClient.signIn.email</code>, and <code>authClient.signOut</code>.</p>
+<p>Open <code>app/login/page.tsx</code>. The form is built. Fill in the three functions:</p>
+<ol>
+  <li>At the top, import <code>authClient</code> from <code>"../../lib/auth-client"</code>.</li>
+  <li><b><code>signUp</code></b>: call <code>authClient.signUp.email({ name, email, password })</code>. You get back <code>{ data, error }</code>. If there's an <code>error</code>, show <code>error.message</code>. If not, show <code>"Signed up and logged in as "</code> plus <code>data.user.name</code>.</li>
+  <li><b><code>logIn</code></b>: the same with <code>authClient.signIn.email({ email, password })</code>.</li>
+  <li><b><code>logOut</code></b>: <code>await authClient.signOut()</code>, then show <code>"Logged out"</code>.</li>
+</ol>
+<p class="stuck">Stuck? <a href="#c6">C6</a> is the whole page.</p>
+<p>Now sign people up, using the table at the top of this handout:</p>
+<ol>
+  <li>On <code>/login</code>: name <code>Ana Ortiz</code>, email <code>ana@example.com</code>, password <code>ana-password-1</code>, click <b>Sign up</b>.</li>
+  <li><b>Log out.</b> Sign up <code>Ben Carter</code> the same way, then log out again.</li>
+  <li>Log in as Ana: email and password only, click <b>Log in</b>.</li>
+</ol>
+<div class="callout check">
+  <h4>Check it: look in three places</h4>
+  <ul>
+    <li><b>DevTools</b> (<code>F12</code>) &rarr; <b>Application</b> &rarr; <b>Cookies</b> &rarr; <code>http://localhost:3000</code>: a cookie called <code>better-auth.session_token</code>. Its <b>HttpOnly</b> box is ticked, which means JavaScript in the page can't read it. Only the browser sends it.</li>
+    <li><b>Neon SQL Editor:</b> <code>SELECT * FROM "user";</code> shows Ana and Ben, each with a long random <code>id</code> that Better Auth made up. (Don't forget the double quotes. See <a href="#bite">Things that will bite you</a>.)</li>
+    <li><b>Neon SQL Editor:</b> <code>SELECT "userId", "providerId", left(password, 25) FROM account;</code> shows one row each, <code>credential</code>, and a password that's a jumble. That's the hash. Not even you can read it back.</li>
+    <li>Open <a href="http://localhost:3000/api/auth/get-session">/api/auth/get-session</a>: the session and the user, with an <code>expiresAt</code> seven days away.</li>
+  </ul>
+</div>
+<p>Now try to get it wrong, and read each message:</p>
+<table>
+  <tr><th>Try</th><th>Message</th></tr>
+  <tr><td>Ana with the password <code>wrong-password</code></td><td><code>Invalid email or password</code></td></tr>
+  <tr><td><code>nobody@example.com</code> with any password</td><td><code>Invalid email or password</code>: the <b>same</b> message. Wednesday's lesson: it never tells an attacker which emails have accounts.</td></tr>
+  <tr><td>Sign up with the password <code>short</code></td><td><code>Password too short</code> (8 characters at least)</td></tr>
+</table>
+<p>The terminal running <code>npm run dev</code> says what really happened (<code>Invalid password</code>, <code>User not found</code>). The page doesn't. That's on purpose.</p>
+
+<!-- ============================================================ PART 3 -->
+<!-- ============================================================ STEP 12 -->
+<h2 id="step12"><span class="step">12</span>Can you get in? <code>/api/my-pets</code></h2>
+<p>Logins work. But the API still doesn't ask who's calling. First, one file whose job is to answer "who is this?", the same job as Tuesday's <code>authService</code>. Make <code>services/authService.ts</code> (full file in <a href="#c7">C7</a>). The part that matters:</p>
+<pre><code>const result = await auth.api.getSession({ headers: await headers() });</code></pre>
+<p><code>headers()</code> (from <code>"next/headers"</code>) is the request that just came in, cookie included. <code>auth.api.getSession</code> reads the cookie, checks its signature with your secret, looks the session up in the <code>session</code> table, and checks it hasn't expired. All four pass: you get the user back. Any one fails: <code>null</code>. Your method gives back <code>{ id, name, email }</code>, or <code>undefined</code> when nobody is logged in.</p>
+<p>Then open <code>app/api/my-pets/route.ts</code> and replace the TODOs:</p>
+<ol>
+  <li>Ask <code>AuthService.getInstance().getCurrentUser()</code> who this is.</li>
+  <li>Nobody? Answer <code>{ error: "Log in first" }</code> with status <code>401</code>.</li>
+  <li>Somebody? Answer with <code>PetService.getInstance().getPetsOwnedBy(user.email)</code>.</li>
+</ol>
+<p><b>Where does "my" come from?</b> From the session. Never from the request: there's no <code>?email=</code> on the address for anyone to change to somebody else's.</p>
+<div class="callout check">
+  <h4>Check it</h4>
+  <p>Logged in as Ana, open <code>/my-pets</code>: Duke and Clementine, with their microchips and vet notes. Log out and open it again: <code>401: Log in first</code>. Log in as Ben: Juniper and Noodle.</p>
+</div>
+<p class="stuck">Stuck? <a href="#c7">C7</a> and <a href="#c8">C8</a>.</p>
+
+<!-- ============================================================ STEP 13 -->
+<h2 id="step13"><span class="step">13</span>Is this yours? <code>/api/my-pets/4</code></h2>
+<p>Now the open door from Step 3. Open <code>app/api/my-pets/[id]/route.ts</code>. It needs both questions, <b>in this order</b>:</p>
+<ol>
+  <li><b>Can you get in?</b> The same three lines as Step 12: no user, <code>401</code>.</li>
+  <li><b>Is this yours?</b> After the pet is looked up: if there's no pet, <b>or</b> <code>pet.ownerEmail</code> isn't <code>user.email</code>, answer <code>404</code> with <code>No pet of yours with id ...</code>.</li>
+</ol>
+<p><b>Why 404 and not 403?</b> <code>403</code> means "it's here, and you can't have it." That tells somebody counting through ids which ones exist. <code>404</code> for both "doesn't exist" and "not yours" gives nothing away. Same choice as Tuesday's receipts.</p>
+<p>Before you test, guess: <b>Ana is properly logged in. She isn't faking anything. What happens when she changes 4 to 7?</b></p>
+<div class="callout check">
+  <h4>Check it: logged in as Ana</h4>
+  <table>
+    <tr><th>Open</th><th>Whose</th><th>Answer</th></tr>
+    <tr><td><code>/api/my-pets/4</code></td><td>Ana's (Duke)</td><td class="status">200, the record</td></tr>
+    <tr><td><code>/api/my-pets/7</code></td><td>Ben's</td><td class="status">404</td></tr>
+    <tr><td><code>/api/my-pets/1</code></td><td>Nobody's, still at the shelter</td><td class="status">404</td></tr>
+    <tr><td><code>/api/my-pets/99</code></td><td>Doesn't exist</td><td class="status">404</td></tr>
+  </table>
+  <p>Log out, and <code>/api/my-pets/4</code> is <b>401</b>.</p>
+</div>
+<p>Notice what made the difference: Ana was logged in for all four. <b>Authentication did its whole job every time. That's the other question, and it's ours.</b></p>
+<p class="stuck">Stuck? <a href="#c9">C9</a>.</p>
+
+<!-- ============================================================ STEP 14 -->
+<h2 id="step14"><span class="step">14</span>The five cases</h2>
+<p>A login that "works" has only been tested once. Here are five ways to test it on purpose, including two attacks. Run each one and tick it. Then be ready to show <b>one</b> of them failing and passing, on your own screen, in your own words.</p>
+<table>
+  <tr><th>#</th><th>The case</th><th>How to run it</th><th>Expect</th><th>&check;</th></tr>
+  <tr><td>1</td><td><b>The right person gets in</b></td><td>Log in as Ana, open <code>/my-pets</code></td><td>Duke and Clementine</td><td>&#9744;</td></tr>
+  <tr><td>2</td><td><b>Nobody logged in is turned away</b></td><td>Log out, open <code>/api/my-pets/4</code></td><td><code>401</code></td><td>&#9744;</td></tr>
+  <tr><td>3</td><td><b>Logged in, but not yours, is turned away</b></td><td>As Ana, open <code>/api/my-pets/7</code></td><td><code>404</code></td><td>&#9744;</td></tr>
+  <tr><td>4</td><td><b>A fake or changed session is turned away</b></td><td>As Ana, DevTools &rarr; Application &rarr; Cookies &rarr; double-click the <code>better-auth.session_token</code> value and add an <code>x</code> to the end. Open <code>/api/my-pets</code></td><td><code>401</code>. The signature no longer matches</td><td>&#9744;</td></tr>
+  <tr><td>5</td><td><b>A malicious input is handled</b></td><td>(a) Open <code>/api/my-pets/4 OR 1=1</code><br>(b) On <code>/login</code>, email <code>' OR '1'='1</code>, any password, <b>Log in</b></td><td>(a) <code>404</code>, not every pet<br>(b) <code>Invalid email</code></td><td>&#9744;</td></tr>
+</table>
+<p><b>Why 5(a) is safe:</b> <code>"4 OR 1=1"</code> isn't a whole number, so <code>getPetRecord</code> never even asks the database. Even if it did, the id goes in as <code>$1</code>, a value and never part of the SQL. That's Wednesday's Bobby Tables, closed twice.</p>
+<p><b>A sixth, if you have time:</b> log in as Ana, and in DevTools copy the cookie's value somewhere. Log out. Put the old value back in the cookie and open <code>/api/my-pets</code>. <code>401</code>: logging out deleted the session row, so the old ticket is worth nothing. In Neon, <code>SELECT count(*) FROM session;</code> before and after shows it. That's Tuesday's "session that never expires," fixed.</p>
+
+<!-- ============================================================ PART 4 -->
+<!-- ============================================================ STEP 15 -->
+<h2 id="step15"><span class="step">15</span>Together: the cookie way, <code>proxy.ts</code></h2>
+<p><b>Part 4 is done together, on the projector.</b> Follow along, or watch and come back to it at home.</p>
+<p>The API is locked. But the <b>page</b> <code>/my-pets</code> still opens for anyone, then shows an error. It would be nicer to send logged-out people to <code>/login</code> before the page even loads. Week 11's <code>proxy.ts</code> runs before every request, so it's the obvious place.</p>
+<p>The docs show how: <a href="https://www.better-auth.com/docs/integrations/next"><b>Integrations &rarr; Next.js</b></a>, the <b>Middleware</b> part. (<code>proxy.ts</code> is what Next 16 calls what older versions called <code>middleware.ts</code>.) Better Auth gives you <code>getSessionCookie</code>, which looks for the login cookie. Make <code>proxy.ts</code> at the top of the project, next to <code>package.json</code>, from <a href="#c10">C10</a>.</p>
+<div class="callout check">
+  <h4>Check it</h4>
+  <p>Log out. Click <b>My pets</b>. You land on <code>/login</code> instead. Log in as Ana, click <b>My pets</b>: her pets.</p>
+</div>
+
+<!-- ============================================================ STEP 16 -->
+<h2 id="step16"><span class="step">16</span>Break it with a fake cookie</h2>
+<p>Read the docs again, just below that code. There's a warning: <code>getSessionCookie</code> <b>"only checks for the existence of a session cookie; it does not validate it."</b> They mark that approach <b>NOT SECURE</b>.</p>
+<p>Guess first: <b>the proxy says "no cookie, no entry." What if I just make one up?</b></p>
+<ol>
+  <li>Log out.</li>
+  <li>DevTools &rarr; <b>Console</b>. Type this and press Enter:
+<pre><code>document.cookie = "better-auth.session_token=nope; path=/"</code></pre></li>
+  <li>Click <b>My pets</b>.</li>
+</ol>
+<p>The page opens. The proxy saw a cookie with the right <b>name</b> and let you through. It never asked the database whether <code>nope</code> was a real session. What does the page show? <code>401: Log in first</code>. <b>The page let a stranger in. The data didn't</b>, because the API asks the real question. That's why the API check from Steps 12 and 13 is the one that matters.</p>
+<p>Leave the fake cookie there for Step 19.</p>
+
+<!-- ============================================================ STEP 17 -->
+<h2 id="step17"><span class="step">17</span>The <code>UserContext</code> wrapper</h2>
+<p>So the page needs to know who you <b>really</b> are, checked against the database the way the API does it. And it isn't only this page: the header should say "Hi, Ana," the login page should say who's logged in. Every one of them asking separately would be a mess.</p>
+<p><b>React context</b> is made for this. You put a value into a <b>wrapper</b> high up, around the whole app, and any component inside can read it with <code>useContext</code>, without anyone passing it down by hand through every component in between.</p>
+<p>Make <code>app/UserContext.tsx</code> from <a href="#c11">C11</a>. It has three parts:</p>
+<ul>
+  <li><b><code>User</code></b>: what we know about the person. <code>id</code>, <code>name</code>, <code>email</code>.</li>
+  <li><b><code>UserContext</code></b>, made with <code>createContext&lt;User | null&gt;(null)</code>. <code>null</code> means nobody is logged in.</li>
+  <li><b><code>UserProvider</code></b>, the wrapper. It takes a <code>user</code> and puts it into the context for everything inside it.</li>
+</ul>
+<p><b>Why a separate wrapper component?</b> The layout is a <b>server component</b>: it runs on the server and can ask the database things. Context only works in the browser, in a <b>client component</b> (that's what <code>"use client"</code> at the top means). So the layout finds out who you are, and hands it to this small client component to share.</p>
+
+<!-- ============================================================ STEP 18 -->
+<h2 id="step18"><span class="step">18</span>The layout fills it in</h2>
+<p>Open <code>app/layout.tsx</code> and change it to <a href="#c12">C12</a>. Three changes:</p>
+<ol>
+  <li><code>export default <b>async</b> function RootLayout</code>: it waits for an answer now.</li>
+  <li>First line inside: <code>const user = await AuthService.getInstance().getCurrentUser();</code>. The <b>same</b> real check the API uses: cookie, signature, session table, expiry.</li>
+  <li>Wrap everything inside <code>&lt;body&gt;</code> in <code>&lt;UserProvider user={user ?? null}&gt;</code>. (<code>??</code> means "if it's <code>undefined</code>, use <code>null</code> instead.") The <b>Log in</b> link becomes <code>{user ? "Hi, " + user.name : "Log in"}</code>.</li>
+</ol>
+<div class="callout check">
+  <h4>Check it</h4>
+  <p>Log in as Ana and reload any page: the header says <b>Hi, Ana Ortiz</b>.</p>
+</div>
+
+<!-- ============================================================ STEP 19 -->
+<h2 id="step19"><span class="step">19</span>The pages use it, and the proxy goes</h2>
+<p><b><code>app/my-pets/page.tsx</code></b> (<a href="#c13">C13</a>): get the user with <code>const user = useContext(UserContext);</code>. Only call the API when there <b>is</b> a user. When there isn't, show <i>"This page is only for people who adopted a pet. Log in to see yours."</i> and a link to <code>/login</code>. The heading can say whose pets these are, too.</p>
+<p><b><code>app/login/page.tsx</code></b> (<a href="#c14">C14</a>): the top line comes from the context now, <i>"Logged in as Ana Ortiz (ana@example.com)"</i> or <i>"Not logged in"</i>. After a successful log in, sign up or log out, call <code>router.refresh()</code> (from <code>useRouter</code> in <code>"next/navigation"</code>).</p>
+<p><b>Why <code>router.refresh()</code>?</b> The layout found out who you are when the page loaded, before you clicked <b>Log in</b>. <code>refresh()</code> runs the layout again, so it asks again and the context, the header and this page all catch up. Forget it, and you log in and the page still says "Not logged in."</p>
+<p>Now <b>delete <code>proxy.ts</code></b>. The page doesn't need it any more, and a check that a fake cookie walks through isn't worth keeping.</p>
+<p>Your fake cookie from Step 16 is still there. Guess first, then click <b>My pets</b>.</p>
+<div class="callout check">
+  <h4>Check it</h4>
+  <table>
+    <tr><th>Who</th><th>Header</th><th><code>/my-pets</code> shows</th></tr>
+    <tr><td>The fake <code>nope</code> cookie</td><td>Log in</td><td>"This page is only for people who adopted a pet." The API isn't even asked.</td></tr>
+    <tr><td>Logged in as Ana</td><td>Hi, Ana Ortiz</td><td>Ana Ortiz's pets</td></tr>
+    <tr><td>Logged out</td><td>Log in</td><td>"This page is only for people who adopted a pet."</td></tr>
+  </table>
+</div>
+<p><b>The cookie was a ticket stub. The context is the person, checked.</b> The proxy asked "is there a ticket?" The layout asks "whose ticket, is it real, has it run out?" and then every page knows the answer.</p>
+<p><b>And the API check stays.</b> The page check is for the person using it: a friendly message instead of an error. The API check is the lock. Somebody can skip your page completely and call <code>/api/my-pets/4</code> straight from Postman. Only the API stops them.</p>
+<p>Clear the fake cookie when you're done:</p>
+<pre><code>document.cookie = "better-auth.session_token=; path=/; max-age=0"</code></pre>
+
+<!-- ============================================================ DONE -->
+<h2 id="done">What "done" looks like</h2>
+<ul>
+  <li>Your own Neon project, <code>pet-shelter</code>, with <code>pets</code>, <code>vets</code>, and Better Auth's four tables, made from the SQL Better Auth generated.</li>
+  <li>Ana and Ben can sign up, log in and log out on <code>/login</code>. The home page works for anyone.</li>
+  <li><code>/api/my-pets</code> is <code>401</code> for nobody and the right pets for each person.</li>
+  <li><code>/api/my-pets/[id]</code> is <code>401</code> for nobody, <code>404</code> for somebody else's pet, and the record for your own.</li>
+  <li>All five cases in Step 14 pass, and you can show one failing and passing.</li>
+  <li><code>/api/auth/ok</code> is <code>Not found</code>.</li>
+  <li><code>/my-pets</code> knows who you are from <code>UserContext</code>, and a fake cookie doesn't fool it.</li>
+  <li><code>git status</code> doesn't list <code>.env.local</code>. <code>npm run build</code> finishes with no errors.</li>
+</ul>
+
+<!-- ============================================================ FURTHER -->
+<h2 id="further">Going further</h2>
+<ol>
+  <li><b>Vets can see every pet.</b> Sign up Dr. Sam Lee (<code>dr.lee@example.com</code>, <code>vet-password-1</code>). <code>db/init.sql</code> already put that email in the <code>vets</code> table. Make <code>/api/my-pets/[id]</code> answer for a pet that's yours <b>or</b> when you're a vet. Better Auth has never heard of vets: this is a row in <b>our</b> table, checked by <b>our</b> code. Add an <code>isVet(email)</code> method to <code>AuthService</code>. Ask the cheap question (is it yours?) first, and only ask the database about vets when it isn't. <b>Restart <code>npm run dev</code></b> after adding the method. Answer in <a href="#c15">C15</a>.</li>
+  <li><b>Swap seats and attack.</b> Sit at a classmate's computer, with their app running. Run all five cases from Step 14 against <b>their</b> app, then try anything else you can think of: other ids, other Better Auth addresses, editing the cookie. Attacking somebody else's code is a better test than attacking your own, because you don't know where the checks are.</li>
+  <li><b>Rename your pet.</b> Add a <code>PATCH</code> to <code>/api/my-pets/[id]</code> that changes a pet's name, and a box on <code>/my-pets</code> to use it. It needs the same two checks, plus checking the body (week 11). Who should be allowed: the owner, a vet, or both?</li>
+  <li><b>Read your own tables.</b> In Neon: <code>SELECT * FROM session;</code>. What's in <code>ipAddress</code> and <code>userAgent</code>? Log in from a second browser: how many rows does Ana have now? What would you build with that?</li>
+</ol>
+
+<!-- ============================================================ BITE -->
+<h2 id="bite">Things that will bite you</h2>
+<ul>
+  <li><b><code>SELECT * FROM user;</code> gives back one row that says <code>neondb_owner</code>.</b> <code>user</code> is a word Postgres already uses: it means "the database login running this query." Put the table name in double quotes: <code>SELECT * FROM "user";</code>. Same for Better Auth's camelCase columns: <code>"userId"</code>, <code>"expiresAt"</code>.</li>
+  <li><b>Restart after changing <code>.env.local</code>.</b> Next only reads it when it starts.</li>
+  <li><b>Restart after adding a method to a service.</b> The dev server keeps the copy of <code>AuthService</code> it already made, and the old copy doesn't have your new method: <code>isVet is not a function</code>. Stop it with <code>Ctrl + C</code> and <code>npm run dev</code> again.</li>
+  <li><b>A <code>SECURITY WARNING</code> about SSL modes</b> every time the app starts: you skipped changing <code>sslmode=require</code> to <code>sslmode=verify-full</code> in Step 1. It still works; the warning is just noise.</li>
+  <li><b><code>Not found</code> from <code>/api/auth/...</code></b> after Step 9: the address isn't on your list in <code>route.ts</code>. Check for a typo before adding anything.</li>
+  <li><b><code>Invalid origin</code></b> when you log in: <code>BETTER_AUTH_URL</code> doesn't match the address in your browser. If Next said <b>port 3001</b> because 3000 was taken, either stop the other app or change <code>BETTER_AUTH_URL</code> to <code>http://localhost:3001</code> and restart.</li>
+  <li><b>Postman and <code>/api/auth/...</code>:</b> Better Auth refuses a <code>POST</code> with no <code>Origin</code> header once there's a cookie (<code>403 Missing or null Origin</code>). Browsers always send one; Postman doesn't. Add a header <code>Origin</code> with the value <code>http://localhost:3000</code>. Our own <code>/api/my-pets</code> routes don't need it.</li>
+  <li><b>You logged in, and the page still says "Not logged in"</b> (Part 4): <code>router.refresh()</code> is missing after the log in.</li>
+  <li><b><code>npx auth@latest generate</code> can't connect</b>: it reads <code>NEON_DATABASE_URL</code> from <code>.env.local</code>. Run it from the <code>lab1</code> folder, and check the string.</li>
+  <li><b>Claude writes the tables by hand, uses Prisma or Drizzle, or puts <code>getSession</code> in every route.</b> Remind it: Better Auth on a <code>pg</code> Pool, tables from <code>npx auth@latest generate</code>, and one <code>AuthService</code> that the routes ask.</li>
+  <li><b>The first <code>npm run dev</code> writes <code>AGENTS.md</code>.</b> Notes from Next for AI coding tools. Leave it.</li>
+</ul>
+
+<!-- ============================================================ CODE -->
+<h2 id="code" class="appendix-start">Code reference</h2>
+<p>The code at the end of each step. Try the step first; come here when you're stuck or want to compare. Each block says which file it goes in and links back to its step.</p>
+
+<h3 id="c1">C1 &middot; Better Auth on our database</h3>
+<p class="back"><a href="#step6">&uarr; back to Step 6</a> &middot; <a href="#step9">Step 9</a> adds <code>disabledPaths</code></p>
+<p class="file">lib/auth.ts</p>
+<pre><code>// Better Auth: the library that answers "who are you?"
+// Hashing passwords, making sessions, the cookie, expiry, logging out:
+// all of it happens in here, so we don't write it by hand like Tuesday.
+// It does NOT answer "what are you allowed to do?" That's still our code.
+import { betterAuth } from "better-auth";
+import { NeonDatabaseProvider } from "../providers/neon/neonDatabaseProvider";
+
+export const auth = betterAuth({
+  // The docs make a new Pool here. We already have one, so Better Auth
+  // gets ours: same database, same connection string.
+  database: NeonDatabaseProvider.getInstance().getPool(),
+
+  // Log in with an email and a password.
+  emailAndPassword: { enabled: true },
+
+  // Better Auth can do far more than this app uses. These are switched
+  // off completely, even for someone who is logged in. (Step 9.)
+  disabledPaths: [
+    "/update-user",
+    "/change-email",
+    "/change-password",
+    "/set-password",
+    "/delete-user",
+    "/delete-user/callback",
+  ],
+});</code></pre>
+
+<h3 id="c2">C2 &middot; What <code>npx auth@latest generate</code> wrote</h3>
+<p class="back"><a href="#step7">&uarr; back to Step 7</a></p>
+<p>Yours will have a different date in its name. The inside should match.</p>
+<p class="file">better-auth_migrations/2026-10-29T14-33-39.433Z.sql</p>
+<pre><code>create table "user" ("id" text not null primary key, "name" text not null, "email" text not null unique, "emailVerified" boolean not null, "image" text, "createdAt" timestamptz default CURRENT_TIMESTAMP not null, "updatedAt" timestamptz default CURRENT_TIMESTAMP not null);
+
+create table "session" ("id" text not null primary key, "expiresAt" timestamptz not null, "token" text not null unique, "createdAt" timestamptz default CURRENT_TIMESTAMP not null, "updatedAt" timestamptz not null, "ipAddress" text, "userAgent" text, "userId" text not null references "user" ("id") on delete cascade);
+
+create table "account" ("id" text not null primary key, "accountId" text not null, "providerId" text not null, "userId" text not null references "user" ("id") on delete cascade, "accessToken" text, "refreshToken" text, "idToken" text, "accessTokenExpiresAt" timestamptz, "refreshTokenExpiresAt" timestamptz, "scope" text, "password" text, "createdAt" timestamptz default CURRENT_TIMESTAMP not null, "updatedAt" timestamptz not null);
+
+create table "verification" ("id" text not null primary key, "identifier" text not null, "value" text not null, "expiresAt" timestamptz not null, "createdAt" timestamptz default CURRENT_TIMESTAMP not null, "updatedAt" timestamptz default CURRENT_TIMESTAMP not null);
+
+create index "session_userId_idx" on "session" ("userId");
+
+create index "account_userId_idx" on "account" ("userId");
+
+create index "verification_identifier_idx" on "verification" ("identifier");</code></pre>
+
+<h3 id="c3">C3 &middot; The route, straight from the docs</h3>
+<p class="back"><a href="#step8">&uarr; back to Step 8</a></p>
+<p class="file">app/api/auth/[...all]/route.ts</p>
+<pre><code>// /api/auth/... -- the addresses Better Auth answers.
+// [...all] catches anything under /api/auth: /api/auth/sign-in/email,
+// /api/auth/sign-up/email, /api/auth/sign-out, /api/auth/get-session...
+import { auth } from "@/lib/auth";
+import { toNextJsHandler } from "better-auth/next-js";
+
+export const { POST, GET } = toNextJsHandler(auth);</code></pre>
+
+<h3 id="c4">C4 &middot; The route, deny by default</h3>
+<p class="back"><a href="#step9">&uarr; back to Step 9</a></p>
+<p class="file">app/api/auth/[...all]/route.ts</p>
+<pre><code>// /api/auth/... -- the addresses Better Auth answers.
+// [...all] catches anything under /api/auth: /api/auth/sign-in/email,
+// /api/auth/sign-up/email, /api/auth/sign-out, /api/auth/get-session...
+import { toNextJsHandler } from "better-auth/next-js";
+import { auth } from "@/lib/auth";
+
+// The docs stop at this one line, which opens EVERY address Better Auth
+// knows -- about thirty -- when our pages call four of them.
+const betterAuth = toNextJsHandler(auth);
+
+// Deny by default (Tuesday's rule): only the addresses we actually use.
+// Anything else gets a 404 and never reaches Better Auth at all.
+const allowed = {
+  GET: ["/get-session"],
+  POST: ["/sign-up/email", "/sign-in/email", "/sign-out"],
+};
+
+// "/api/auth/sign-in/email" -&gt; "/sign-in/email"
+function pathOf(request: Request) {
+  return new URL(request.url).pathname.replace("/api/auth", "");
+}
+
+export async function GET(request: Request) {
+  if (!allowed.GET.includes(pathOf(request))) {
+    return new Response("Not found", { status: 404 });
+  }
+  return betterAuth.GET(request);
+}
+
+export async function POST(request: Request) {
+  if (!allowed.POST.includes(pathOf(request))) {
+    return new Response("Not found", { status: 404 });
+  }
+  return betterAuth.POST(request);
+}</code></pre>
+
+<h3 id="c5">C5 &middot; The browser half</h3>
+<p class="back"><a href="#step10">&uarr; back to Step 10</a></p>
+<p class="file">lib/auth-client.ts</p>
+<pre><code>// The browser half of Better Auth. Pages call authClient.signIn.email(...)
+// and it sends the request to /api/auth/... for them.
+import { createAuthClient } from "better-auth/react";
+
+export const authClient = createAuthClient();</code></pre>
+
+<h3 id="c6">C6 &middot; The login screen</h3>
+<p class="back"><a href="#step11">&uarr; back to Step 11</a> &middot; <a href="#c14">C14</a> is the Part 4 version</p>
+<p class="file">app/login/page.tsx</p>
+<pre><code>"use client";
+
+import { useState } from "react";
+import { authClient } from "../../lib/auth-client";
+
+// The login screen. authClient sends each button's request to Better Auth
+// at /api/auth/..., and Better Auth sets (or clears) the cookie.
+export default function Login() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+
+  async function signUp() {
+    const { data, error } = await authClient.signUp.email({ name, email, password });
+    if (error) {
+      setMessage(error.message ?? "Could not sign up");
+      return;
+    }
+    // Signing up logs you straight in, so there's already a cookie.
+    setMessage("Signed up and logged in as " + data.user.name);
+  }
+
+  async function logIn(e: React.FormEvent) {
+    e.preventDefault();
+    const { data, error } = await authClient.signIn.email({ email, password });
+    if (error) {
+      setMessage(error.message ?? "Could not log in");
+      return;
+    }
+    setMessage("Logged in as " + data.user.name);
+  }
+
+  async function logOut() {
+    await authClient.signOut();
+    setMessage("Logged out");
+  }
+
+  return (
+    &lt;main&gt;
+      &lt;p className="status"&gt;{message}&lt;/p&gt;
+      &lt;form onSubmit={logIn} className="card login"&gt;
+        &lt;label&gt;
+          Name &lt;span className="hint"&gt;(only needed to sign up)&lt;/span&gt;
+          &lt;input value={name} onChange={(e) =&gt; setName(e.target.value)} /&gt;
+        &lt;/label&gt;
+        &lt;label&gt;
+          Email
+          &lt;input value={email} onChange={(e) =&gt; setEmail(e.target.value)} /&gt;
+        &lt;/label&gt;
+        &lt;label&gt;
+          Password
+          &lt;input type="password" value={password} onChange={(e) =&gt; setPassword(e.target.value)} /&gt;
+        &lt;/label&gt;
+        &lt;div className="actions"&gt;
+          &lt;button type="submit"&gt;Log in&lt;/button&gt;
+          &lt;button type="button" onClick={signUp}&gt;
+            Sign up
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/form&gt;
+      &lt;p&gt;
+        &lt;button onClick={logOut}&gt;Log out&lt;/button&gt;
+      &lt;/p&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+
+<h3 id="c7">C7 &middot; Who is this?</h3>
+<p class="back"><a href="#step12">&uarr; back to Step 12</a></p>
+<p class="file">services/authService.ts</p>
+<pre><code>// The ONE file that knows who is logged in. Same job as Tuesday's.
+// Routes ask this file "who is this?" and never read the cookie themselves.
+import { headers } from "next/headers";
+import { auth } from "../lib/auth";
+
+export class AuthService {
+  private static instance: AuthService;
+
+  public static getInstance(): AuthService {
+    if (!AuthService.instance) {
+      AuthService.instance = new AuthService();
+    }
+    return AuthService.instance;
+  }
+
+  // Who sent this request? Better Auth reads the cookie, looks the session
+  // up in the session table, and checks it hasn't expired.
+  // Gives back undefined when nobody is logged in -- or when the cookie
+  // is fake, expired, or for a session that was logged out.
+  public async getCurrentUser() {
+    const result = await auth.api.getSession({ headers: await headers() });
+    if (!result) {
+      return undefined;
+    }
+    return {
+      id: result.user.id,
+      name: result.user.name,
+      email: result.user.email,
+    };
+  }
+}</code></pre>
+
+<h3 id="c8">C8 &middot; Can you get in?</h3>
+<p class="back"><a href="#step12">&uarr; back to Step 12</a></p>
+<p class="file">app/api/my-pets/route.ts</p>
+<pre><code>// GET /api/my-pets -- every pet the logged-in person has adopted.
+// "My" pets only means something once the server knows who "me" is.
+import { AuthService } from "../../../services/authService";
+import { PetService } from "../../../services/petService";
+
+export async function GET() {
+  // Can you get in? Better Auth checks the cookie against the session table.
+  const user = await AuthService.getInstance().getCurrentUser();
+  if (!user) {
+    return Response.json({ error: "Log in first" }, { status: 401 });
+  }
+
+  // "Mine" comes from the session, never from the request. There's no
+  // ?email= here for anyone to change.
+  const pets = await PetService.getInstance().getPetsOwnedBy(user.email);
+  return Response.json(pets);
+}</code></pre>
+
+<h3 id="c9">C9 &middot; Is this yours?</h3>
+<p class="back"><a href="#step13">&uarr; back to Step 13</a></p>
+<p class="file">app/api/my-pets/[id]/route.ts</p>
+<pre><code>// GET /api/my-pets/4 -- one pet's full record: microchip, vet notes, owner.
+// Private information, so two questions, in this order.
+import { AuthService } from "../../../../services/authService";
+import { PetService } from "../../../../services/petService";
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  // 1. Can you get in? Nobody logged in: 401.
+  const user = await AuthService.getInstance().getCurrentUser();
+  if (!user) {
+    return Response.json({ error: "Log in first" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const pet = await PetService.getInstance().getPetRecord(Number(id));
+
+  // 2. Do you own this record? Logged in isn't enough. It has to be YOURS.
+  // Someone else's pet gets the same 404 as a pet that doesn't exist,
+  // so we don't even admit it's there.
+  if (!pet || pet.ownerEmail !== user.email) {
+    return Response.json({ error: `No pet of yours with id ${id}` }, { status: 404 });
+  }
+  return Response.json(pet);
+}</code></pre>
+
+<h3 id="c10">C10 &middot; The cookie check (Part 4 deletes it again)</h3>
+<p class="back"><a href="#step15">&uarr; back to Step 15</a></p>
+<p class="file">proxy.ts</p>
+<pre><code>// proxy.ts -- runs before every request to the addresses in config.matcher.
+// No login cookie? Send them to the login page instead of /my-pets.
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
+
+export function proxy(request: NextRequest) {
+  // This only checks that a cookie with the right NAME is there.
+  // It never asks the database whether the session is real.
+  if (!getSessionCookie(request)) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/my-pets"],
+};</code></pre>
+
+<h3 id="c11">C11 &middot; The wrapper</h3>
+<p class="back"><a href="#step17">&uarr; back to Step 17</a></p>
+<p class="file">app/UserContext.tsx</p>
+<pre><code>"use client";
+
+// UserContext: who is logged in, handed to every page and component
+// without passing it down as a prop through each one.
+// The layout fills it in on the server, from Better Auth's real check.
+import { createContext } from "react";
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+// null means nobody is logged in.
+export const UserContext = createContext&lt;User | null&gt;(null);
+
+// The wrapper. The layout is a server component, and server components
+// can't hold a context, so this small client component does it for them.
+export function UserProvider({
+  user,
+  children,
+}: {
+  user: User | null;
+  children: React.ReactNode;
+}) {
+  return &lt;UserContext value={user}&gt;{children}&lt;/UserContext&gt;;
+}</code></pre>
+
+<h3 id="c12">C12 &middot; The layout fills it in</h3>
+<p class="back"><a href="#step18">&uarr; back to Step 18</a></p>
+<p class="file">app/layout.tsx</p>
+<pre><code>import type { Metadata } from "next";
+import Link from "next/link";
+import { AuthService } from "../services/authService";
+import { UserProvider } from "./UserContext";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Paws &amp; Whiskers",
+  description: "The shelter's pets, and a private page for the people who adopted one",
+};
+
+// async now: before drawing any page, ask Better Auth who this is.
+// That's the real check -- cookie, session table, expiry -- once per page.
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const user = await AuthService.getInstance().getCurrentUser();
+
+  return (
+    &lt;html lang="en"&gt;
+      &lt;body&gt;
+        &lt;UserProvider user={user ?? null}&gt;
+          &lt;header&gt;
+            &lt;h1&gt;
+              &lt;Link href="/"&gt;Paws &amp;amp; Whiskers&lt;/Link&gt;
+            &lt;/h1&gt;
+            &lt;nav&gt;
+              &lt;Link href="/"&gt;At the shelter&lt;/Link&gt; &amp;middot; &lt;Link href="/my-pets"&gt;My pets&lt;/Link&gt;{" "}
+              &amp;middot; &lt;Link href="/login"&gt;{user ? "Hi, " + user.name : "Log in"}&lt;/Link&gt;
+            &lt;/nav&gt;
+          &lt;/header&gt;
+          {children}
+        &lt;/UserProvider&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  );
+}</code></pre>
+
+<h3 id="c13">C13 &middot; My pets, from the context</h3>
+<p class="back"><a href="#step19">&uarr; back to Step 19</a></p>
+<p class="file">app/my-pets/page.tsx</p>
+<pre><code>"use client";
+
+import Link from "next/link";
+import { useContext, useEffect, useState } from "react";
+import type { PetRecord } from "../../types/pet";
+import { UserContext } from "../UserContext";
+
+// The page that needs a login: the pets YOU adopted, with their private
+// records. It asks UserContext who you are, and the layout filled that in
+// from Better Auth's real check -- not from "is there a cookie?"
+export default function MyPets() {
+  const user = useContext(UserContext);
+  const [pets, setPets] = useState&lt;PetRecord[]&gt;([]);
+  const [error, setError] = useState("");
+
+  useEffect(() =&gt; {
+    async function load() {
+      const res = await fetch("/api/my-pets");
+      if (!res.ok) {
+        // Show whatever the API said, so you can see which check stopped you.
+        const body = await res.json();
+        setError(res.status + ": " + body.error);
+        return;
+      }
+      setPets(await res.json());
+    }
+    // Nobody logged in? Don't even ask the API.
+    if (user) {
+      load();
+    }
+  }, [user]);
+
+  if (!user) {
+    return (
+      &lt;main&gt;
+        &lt;p&gt;
+          This page is only for people who adopted a pet. &lt;Link href="/login"&gt;Log in&lt;/Link&gt; to see
+          yours.
+        &lt;/p&gt;
+      &lt;/main&gt;
+    );
+  }
+
+  return (
+    &lt;main&gt;
+      &lt;p className="tagline"&gt;{user.name}&amp;apos;s pets, and their private records.&lt;/p&gt;
+      {error &amp;&amp; &lt;p className="error"&gt;{error}&lt;/p&gt;}
+      {pets.map((pet) =&gt; (
+        &lt;div key={pet.id} className="card"&gt;
+          &lt;h2&gt;
+            {pet.name} &lt;span className="species"&gt;{pet.species}, {pet.age}&lt;/span&gt;
+          &lt;/h2&gt;
+          &lt;p className="about"&gt;{pet.about}&lt;/p&gt;
+          &lt;dl&gt;
+            &lt;dt&gt;Adopted&lt;/dt&gt;
+            &lt;dd&gt;{pet.adoptedOn}&lt;/dd&gt;
+            &lt;dt&gt;Microchip&lt;/dt&gt;
+            &lt;dd&gt;{pet.microchip}&lt;/dd&gt;
+            &lt;dt&gt;Vet notes&lt;/dt&gt;
+            &lt;dd&gt;{pet.vetNotes}&lt;/dd&gt;
+          &lt;/dl&gt;
+          &lt;a href={"/api/my-pets/" + pet.id}&gt;Raw record from the API&lt;/a&gt;
+        &lt;/div&gt;
+      ))}
+    &lt;/main&gt;
+  );
+}</code></pre>
+
+<h3 id="c14">C14 &middot; The login screen, from the context</h3>
+<p class="back"><a href="#step19">&uarr; back to Step 19</a></p>
+<p class="file">app/login/page.tsx</p>
+<pre><code>"use client";
+
+import { useRouter } from "next/navigation";
+import { useContext, useState } from "react";
+import { authClient } from "../../lib/auth-client";
+import { UserContext } from "../UserContext";
+
+// The login screen. authClient sends each button's request to Better Auth
+// at /api/auth/..., and Better Auth sets (or clears) the cookie.
+// Who is logged in now comes from UserContext, not from a message we set.
+export default function Login() {
+  const user = useContext(UserContext);
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+
+  async function signUp() {
+    const { error } = await authClient.signUp.email({ name, email, password });
+    if (error) {
+      setMessage(error.message ?? "Could not sign up");
+      return;
+    }
+    setMessage("");
+    // The layout read the user before this login happened. refresh()
+    // runs it again, so UserContext (and the header) catch up.
+    router.refresh();
+  }
+
+  async function logIn(e: React.FormEvent) {
+    e.preventDefault();
+    const { error } = await authClient.signIn.email({ email, password });
+    if (error) {
+      setMessage(error.message ?? "Could not log in");
+      return;
+    }
+    setMessage("");
+    router.refresh();
+  }
+
+  async function logOut() {
+    await authClient.signOut();
+    router.refresh();
+  }
+
+  return (
+    &lt;main&gt;
+      &lt;p className="status"&gt;
+        {user ? "Logged in as " + user.name + " (" + user.email + ")" : "Not logged in"}
+      &lt;/p&gt;
+      {message &amp;&amp; &lt;p className="error"&gt;{message}&lt;/p&gt;}
+      &lt;form onSubmit={logIn} className="card login"&gt;
+        &lt;label&gt;
+          Name &lt;span className="hint"&gt;(only needed to sign up)&lt;/span&gt;
+          &lt;input value={name} onChange={(e) =&gt; setName(e.target.value)} /&gt;
+        &lt;/label&gt;
+        &lt;label&gt;
+          Email
+          &lt;input value={email} onChange={(e) =&gt; setEmail(e.target.value)} /&gt;
+        &lt;/label&gt;
+        &lt;label&gt;
+          Password
+          &lt;input type="password" value={password} onChange={(e) =&gt; setPassword(e.target.value)} /&gt;
+        &lt;/label&gt;
+        &lt;div className="actions"&gt;
+          &lt;button type="submit"&gt;Log in&lt;/button&gt;
+          &lt;button type="button" onClick={signUp}&gt;
+            Sign up
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/form&gt;
+      &lt;p&gt;
+        &lt;button onClick={logOut}&gt;Log out&lt;/button&gt;
+      &lt;/p&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+
+<h3 id="c15">C15 &middot; Going further: vets see every pet</h3>
+<p class="back"><a href="#further">&uarr; back to Going further</a></p>
+<p class="file">services/authService.ts</p>
+<pre><code>// The ONE file that knows who is logged in. Same job as Tuesday's.
+// Routes ask this file "who is this?" and never read the cookie themselves.
+import { headers } from "next/headers";
+import { auth } from "../lib/auth";
+import { NeonDatabaseProvider } from "../providers/neon/neonDatabaseProvider";
+
+export class AuthService {
+  private static instance: AuthService;
+
+  public static getInstance(): AuthService {
+    if (!AuthService.instance) {
+      AuthService.instance = new AuthService();
+    }
+    return AuthService.instance;
+  }
+
+  // Who sent this request? Better Auth reads the cookie, looks the session
+  // up in the session table, and checks it hasn't expired.
+  // Gives back undefined when nobody is logged in -- or when the cookie
+  // is fake, expired, or for a session that was logged out.
+  public async getCurrentUser() {
+    const result = await auth.api.getSession({ headers: await headers() });
+    if (!result) {
+      return undefined;
+    }
+    return {
+      id: result.user.id,
+      name: result.user.name,
+      email: result.user.email,
+    };
+  }
+
+  // Is this person one of the shelter's vets? Better Auth has never heard
+  // of vets. This is authorization, and it's ours: a row in our vets table.
+  public async isVet(email: string) {
+    const result = await NeonDatabaseProvider.getInstance()
+      .getPool()
+      .query("SELECT 1 FROM vets WHERE email = $1", [email]);
+    return result.rows.length &gt; 0;
+  }
+}</code></pre>
+<p class="file">app/api/my-pets/[id]/route.ts</p>
+<pre><code>// GET /api/my-pets/4 -- one pet's full record: microchip, vet notes, owner.
+// Private information, so two questions, in this order.
+// Going further: a vet can see every pet's record, not just their own.
+import { AuthService } from "../../../../services/authService";
+import { PetService } from "../../../../services/petService";
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise&lt;{ id: string }&gt; }
+) {
+  // 1. Can you get in? Nobody logged in: 401.
+  const user = await AuthService.getInstance().getCurrentUser();
+  if (!user) {
+    return Response.json({ error: "Log in first" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const pet = await PetService.getInstance().getPetRecord(Number(id));
+  if (!pet) {
+    return Response.json({ error: `No pet of yours with id ${id}` }, { status: 404 });
+  }
+
+  // 2. Are you allowed this record? Yours, or you're a vet.
+  // Ask the cheap question first: only check the vets table if it isn't yours.
+  const isOwner = pet.ownerEmail === user.email;
+  if (!isOwner &amp;&amp; !(await AuthService.getInstance().isVet(user.email))) {
+    return Response.json({ error: `No pet of yours with id ${id}` }, { status: 404 });
+  }
+  return Response.json(pet);
+}</code></pre>
+
+<footer>
+  <p>MTC AI-Enabled Full-Stack Developer program &middot; Week 14 lab.</p>
+</footer>
+
+</body>
+</html>

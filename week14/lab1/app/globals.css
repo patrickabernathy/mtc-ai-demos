@@ -1,0 +1,100 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 2rem auto;
+  max-width: 40rem;
+  padding: 0 1rem;
+  color: #222;
+}
+
+header h1 {
+  margin-bottom: 0.25rem;
+}
+
+header h1 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+nav {
+  margin-bottom: 1.5rem;
+}
+
+.tagline {
+  color: #555;
+  margin-top: 0;
+}
+
+.card {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.1rem;
+}
+
+.species {
+  font-weight: normal;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.about {
+  margin: 0 0 0.5rem;
+  color: #555;
+}
+
+/* The private part of a pet's record. */
+dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+  margin: 0.75rem 0;
+}
+
+dt {
+  font-weight: 600;
+}
+
+dd {
+  margin: 0;
+}
+
+.error {
+  color: #a12b2b;
+  font-weight: 600;
+}
+
+.status {
+  font-weight: 600;
+}
+
+/* The login form: one label and box per line. */
+form.login label {
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+form.login input {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.hint {
+  color: #777;
+  font-size: 0.85rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+input,
+button {
+  font: inherit;
+  padding: 0.3rem 0.5rem;
+}

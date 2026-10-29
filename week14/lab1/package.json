@@ -1,0 +1,22 @@
+{
+  "name": "mtc-week14-lab1-pet-shelter",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "16.4.3",
+    "pg": "8.23.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.0",
+    "@types/pg": "8.23.1",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
+    "typescript": "5.9.3"
+  }
+}
