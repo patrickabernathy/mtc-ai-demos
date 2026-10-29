@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useContext, useEffect, useState } from "react";
 import type { PetRecord } from "../../types/pet";
+import { UserContext } from "../UserContext";
 
-// The page that should need a login: the pets YOU adopted,
-// with their private records. Right now nothing stops anyone opening it.
-// Part 4 of the instructions protects it.
+// The page that needs a login: the pets YOU adopted, with their private
+// records. It asks UserContext who you are, and the layout filled that in
+// from Better Auth's real check -- not from "is there a cookie?"
 export default function MyPets() {
+  const user = useContext(UserContext);
   const [pets, setPets] = useState<PetRecord[]>([]);
   const [error, setError] = useState("");
 
@@ -21,12 +24,26 @@ export default function MyPets() {
       }
       setPets(await res.json());
     }
-    load();
-  }, []);
+    // Nobody logged in? Don't even ask the API.
+    if (user) {
+      load();
+    }
+  }, [user]);
+
+  if (!user) {
+    return (
+      <main>
+        <p>
+          This page is only for people who adopted a pet. <Link href="/login">Log in</Link> to see
+          yours.
+        </p>
+      </main>
+    );
+  }
 
   return (
     <main>
-      <p className="tagline">The pets you adopted, and their private records.</p>
+      <p className="tagline">{user.name}&apos;s pets, and their private records.</p>
       {error && <p className="error">{error}</p>}
       {pets.map((pet) => (
         <div key={pet.id} className="card">

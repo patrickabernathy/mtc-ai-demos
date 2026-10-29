@@ -1,9 +1,17 @@
 // GET /api/my-pets -- every pet the logged-in person has adopted.
 // "My" pets only means something once the server knows who "me" is.
-// That's tonight's job: each TODO is a step in instructions.pdf.
+import { AuthService } from "../../../services/authService";
+import { PetService } from "../../../services/petService";
 
 export async function GET() {
-  // TODO (Step 12): Who is asking? Nobody logged in? Answer 401.
-  // TODO (Step 12): Ask PetService for the pets owned by that person's email.
-  return Response.json({ error: "Not built yet. That's Step 12." }, { status: 501 });
+  // Can you get in? Better Auth checks the cookie against the session table.
+  const user = await AuthService.getInstance().getCurrentUser();
+  if (!user) {
+    return Response.json({ error: "Log in first" }, { status: 401 });
+  }
+
+  // "Mine" comes from the session, never from the request. There's no
+  // ?email= here for anyone to change.
+  const pets = await PetService.getInstance().getPetsOwnedBy(user.email);
+  return Response.json(pets);
 }

@@ -78,6 +78,26 @@ if (!pet || pet.ownerEmail !== user.email) {
 
 **And the page check isn't the lock.** Hiding a page from logged-out people is good manners. The API refusing them is the security. If you only had time for one, it's always the API.
 
+## On the `answers` branch
+
+This is the finished lab, as it stands after Step 19: Better Auth installed (`lib/auth.ts`, `lib/auth-client.ts`), the deny-by-default route in `app/api/auth/[...all]/route.ts`, both API checks, and the pages reading `UserContext`. There's no `proxy.ts`, because Step 19 deletes it.
+
+`better-auth_migrations/` holds the SQL that `npx auth@latest generate` wrote when this answer was built. Yours will have a different date in its name; the inside should match.
+
+To run it you still need your own `.env.local` (Steps 1 and 5), `db/init.sql` and that SQL file run in your Neon project, and Ana and Ben signed up on `/login`.
+
+## The `states/` folder
+
+Reference only: Next builds only what's under `app/` (and a `proxy.ts` next to `package.json`), so these files do nothing until you copy them over.
+
+| State | Copy to | What it shows |
+|---|---|---|
+| `01-cookie-proxy/proxy.ts` | `proxy.ts`, next to `package.json` | Step 15: the cookie-only check that a fake cookie walks through in Step 16 |
+| `02-going-further-vets/authService.ts` | `services/authService.ts` | Going further 1: `isVet(email)`, a check against our own `vets` table |
+| `02-going-further-vets/route.ts` | `app/api/my-pets/[id]/route.ts` | Going further 1: yours, **or** you're a vet |
+
+Restart `npm run dev` after copying in the new `authService.ts`.
+
 ## Things that will bite you
 
 - **`SELECT * FROM user;` gives back one strange row.** `user` is a word Postgres already uses: it means "the database login running this query." Put it in double quotes: `SELECT * FROM "user";`
